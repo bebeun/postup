@@ -2,7 +2,7 @@ require 'test_helper'
 
 class PostTest < ActiveSupport::TestCase
   def setup
-    @creator = User.new;
+    @creator = User.new
 	@conversation = Conversation.new
     @post = Post.new(creator: @creator, conversation: @conversation, content: "Lorem ipsum...", title: "...Sic amet doloribus...")
   end
