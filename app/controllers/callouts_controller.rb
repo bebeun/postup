@@ -1,0 +1,2 @@
+class CalloutsController < ApplicationController
+end
