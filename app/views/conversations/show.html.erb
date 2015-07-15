@@ -1,7 +1,47 @@
 <% provide(:title, "Show conversation") %>
-Il y a <%= @conversation.posts.count %> post(s) dans cette conversation
+<h1><%= @conversation.posts.first.title %></h1>
 <ul>
-	<%= @conversation.posts.sort { |a,b| a.created_at <=> b.created_at }.each do |ff| %>
+	<% @conversation.posts.each do |ff| %>
 		<%= render '/posts/show', :fff => ff %>
 	<% end %>
 </ul>
+
+<ul>
+	<% @conversation.callouts.each do |ff| %>
+		<%= render '/callouts/show', :fff => ff %>
+	<% end %>
+</ul>
+
+	<% if user_signed_in? %>
+		<br/>
+		<%= form_for [@conversation, @post] do |f| %>
+		
+			<% if @post.errors.any? %>
+				<%= pluralize(@post.errors.count, "error") %> prohibited this post from being added to the conversation:
+				<ul>
+					<% @post.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+				</ul>
+			<% end %>
+			
+			<%= render '/posts/new', :fff => f %><%= f.submit %>
+		<% end %>
+		<br/>
+		<%= form_for [@conversation, @callout] do |f| %>
+		
+			<% if @callout.errors.any? %>
+				<%= pluralize(@callout.errors.count, "error") %> prohibited this callout from being added to the conversation:
+				<ul>
+					<% @callout.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+				</ul>
+			<% end %>
+			
+			<%= render '/callouts/new', :fff => f %> <%= f.submit %>
+		<br/>
+		
+		<% end %>
+		<br/>
+	<% end %>

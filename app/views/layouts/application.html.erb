@@ -2,6 +2,11 @@
 <html>
 	<%= render 'layouts/header' %>
 	<body>
+		<%= render 'layouts/navbar' %>
+	    <% flash.each do |message_type, message| %>
+			<div class="alert alert-<%= message_type %>"><%= message %></div>
+		<% end %>
+
 		<%= yield %>
 	</body>
 </html>

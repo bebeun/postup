@@ -8,4 +8,6 @@ class Post < ActiveRecord::Base
 	validates :conversation, presence: true
 	
 	has_many :supports, as: :supportable
+	
+	#validates :creator, uniqueness: {scope: [:conversation]} ... et en plus idex à mettre sur la table
 end

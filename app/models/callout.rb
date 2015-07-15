@@ -8,4 +8,13 @@ class Callout < ActiveRecord::Base
 	validates :target, presence: true
 	
 	has_many :supports, as: :supportable
+	
+	validate :target_vs_creator
+	def target_vs_creator
+		if target == creator
+			errors.add(:target, "You can\'t call out yourself") 
+		end
+	end
+	
+	validates :target, uniqueness: {scope: [:creator, :conversation]}
 end

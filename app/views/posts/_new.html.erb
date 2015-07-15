@@ -1,13 +1,5 @@
-<br/><br/>
 <%= fff.label :title %>
 <%= fff.text_field :title %>
 
-<br/><br/>	
 <%= fff.label :content %>
 <%= fff.text_area :content %>
-	
-<br/><br/>
-<%= fff.label :creator %>
-<%= fff.collection_select(:user_id, User.all, :id, :name) %> 
-
-<br/><br/>

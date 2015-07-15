@@ -1,0 +1,11 @@
+<header>
+    <%= link_to "PostUp", root_path%><br/>
+	<% if user_signed_in? %>
+		 Welcome <%=current_user.name %> ! <br/>
+		<ul><li><%= link_to "Edit Profile", edit_user_registration_path %></li>
+		<li><%= link_to "Log Out", destroy_user_session_path, method: "delete" %></li></ul>
+	<% else %>
+		<ul><li><%= link_to "Sign Up", new_user_session_path %></li>
+		<li><%= link_to "Sign In", new_user_registration_path %></li></ul>
+    <% end %>
+</header>
