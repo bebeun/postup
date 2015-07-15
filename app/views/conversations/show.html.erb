@@ -1,0 +1,7 @@
+<% provide(:title, "Show conversation") %>
+Il y a <%= @conversation.posts.count %> post(s) dans cette conversation
+<ul>
+	<%= @conversation.posts.sort { |a,b| a.created_at <=> b.created_at }.each do |ff| %>
+		<%= render '/posts/show', :fff => ff %>
+	<% end %>
+</ul>

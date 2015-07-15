@@ -1,0 +1,19 @@
+<% provide(:title, "New conversation") %>
+
+<%= form_for(@conversation) do |f| %>
+	<% if @conversation.errors.any? %>
+		<%= pluralize(@conversation.errors.count, "error") %> prohibited this conversation from being saved:
+ 
+		<ul>
+			<% @conversation.errors.full_messages.each do |msg| %>
+				<li><%= msg %></li>
+			<% end %>
+		</ul>
+	<% end %>
+	
+	<%= f.fields_for :posts do |ff| %>
+		<%= render '/posts/new', :fff => ff %>
+	<% end %>
+	
+<%= f.submit %>
+<% end %>
