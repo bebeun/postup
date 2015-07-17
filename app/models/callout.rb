@@ -2,7 +2,7 @@ class Callout < ActiveRecord::Base
 	belongs_to :conversation, inverse_of: :callouts
 	belongs_to :creator, :class_name => 'User', :foreign_key  => "creator_id", inverse_of: :callouts
 	
-	belongs_to :calloutable, polymorphic: true, class_name: "::Callout"
+	belongs_to :calloutable, polymorphic: true, class_name: "::Callout", :validate => true #putain de , :validate => true  !!!!
 	# + qqch pr dire calloutable_type = User ou PotentialUser ?
 	
 	validates :conversation, presence: true

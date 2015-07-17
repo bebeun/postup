@@ -16,6 +16,8 @@
 	<% @conversation.callouts.each do |ff| %>
 		<%= render '/callouts/show', :fff => ff %>
 	<% end %>
+
+	
 </ul>
 
 	<% if user_signed_in? %>

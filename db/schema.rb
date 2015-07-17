@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(version: 20150716232647) do
     t.string   "description"
   end
 
-  add_index "profiles", ["description"], name: "index_profiles_on_description"
+  add_index "profiles", ["description"], name: "index_profiles_on_description", unique: true
   add_index "profiles", ["profileable_type", "profileable_id"], name: "index_profiles_on_profileable_type_and_profileable_id"
 
   create_table "supports", force: :cascade do |t|

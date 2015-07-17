@@ -9,5 +9,5 @@ class User < ActiveRecord::Base
 	has_many :profiles, as: :profileable
 	
 	validates :name, presence: true
-	validates_uniqueness_of :name, :case_sensitive => false, :message => "This description has already been taken"
+	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
 end

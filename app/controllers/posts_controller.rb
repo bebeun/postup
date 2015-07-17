@@ -5,8 +5,19 @@ class PostsController < ApplicationController
 		@post = Post.new(post_params)
 		@post.creator = current_user
 		@post.conversation = @conversation
-		@callout = Callout.new()
-		(@post.save) ? (redirect_to @conversation) : (render '/conversations/show')
+		if @post.save
+			redirect_to @conversation
+		else
+			@callout = Callout.new()
+			@profiles = Profile.all - current_user.profiles - @conversation.callouts.where(calloutable_type: "User").collect{|x| x.calloutable }.collect{|x| x.profiles }.flatten - @conversation.callouts.where(calloutable_type: "PotentialUser").collect{|x| x.calloutable.profile }
+			if @conversation.posts.any? || @conversation.callouts.any? 
+				render '/conversations/show'
+			else
+				render '/conversations/new'
+			end
+			
+			
+		end
 	end
 	
 	private
