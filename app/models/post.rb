@@ -1,6 +1,6 @@
 class Post < ActiveRecord::Base
 	belongs_to :conversation, inverse_of: :posts
-	belongs_to :creator, :class_name => 'User', :foreign_key  => "user_id" #idéalement il faudra avoir une colonne creator_id...
+	belongs_to :creator, :class_name => 'User', :foreign_key  => "creator_id", inverse_of: :posts
 	
 	validates :title, presence: true
 	validates :content, presence: true
@@ -9,5 +9,5 @@ class Post < ActiveRecord::Base
 	
 	has_many :supports, as: :supportable
 	
-	#validates :creator, uniqueness: {scope: [:conversation]} ... et en plus idex à mettre sur la table
+	#validates :creator, uniqueness: {scope: [:conversation]} ... et en plus index à mettre sur la table
 end

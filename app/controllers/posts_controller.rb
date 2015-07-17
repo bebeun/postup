@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
 
 	def create
-		@conversation = Conversation.find(params[:conversation_id])
+		(params[:conversation_id].nil?) ? (@conversation = Conversation.new) : (@conversation = Conversation.find(params[:conversation_id]))
 		@post = Post.new(post_params)
 		@post.creator = current_user
 		@post.conversation = @conversation

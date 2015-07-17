@@ -1,21 +1,33 @@
 <% provide(:title, "New conversation") %>
 
-<%= form_for(@conversation) do |f| %>
-	<% if @conversation.errors.any? %>
-		<%= pluralize(@conversation.errors.count, "error") %> prohibited this conversation from being saved:
- 
-		<ul>
-			<% @conversation.errors.full_messages.each do |msg| %>
-				<li><%= msg %></li>
+<%= form_for @post do |f| %>
+		
+			<% if @post.errors.any? %>
+				<%= pluralize(@post.errors.count, "error") %> prohibited this conversation from being saved:
+				<ul>
+					<% @post.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+				</ul>
 			<% end %>
-		</ul>
-	<% end %>
-	
-	<%= f.fields_for :posts do |ff| %>
-		<%= render '/posts/new', :fff => ff %>
-	<% end %>
-	
-	<%= f.submit %>	
-
-
-<% end %>
+			
+			<%= render '/posts/new', :fff => f %><%= f.submit %>
+		<% end %>
+		<br/>
+		
+		<%= form_for @callout do |f| %>
+		
+			<% if @callout.errors.any? %>
+				<%= pluralize(@callout.errors.count, "error") %> prohibited this conversation from being saved:
+				<ul>
+					<% @callout.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+				</ul>
+			<% end %>
+			
+			<%= render '/callouts/new', :fff => f %> <%= f.submit %>
+		<br/>
+		
+		<% end %>
+		<br/>

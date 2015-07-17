@@ -1,5 +1,11 @@
 <% provide(:title, "Show conversation") %>
+
+<% if @conversation.posts.any? %>
 <h1><%= @conversation.posts.first.title %></h1>
+<% else %>
+<% user =  @conversation.callouts.first.calloutable %>
+<h1><%= @conversation.callouts.first.creator.name %> >> <%= user.class.name == "User" ? user.name : user.profile.description %> </h1>
+<% end %>
 <ul>
 	<% @conversation.posts.each do |ff| %>
 		<%= render '/posts/show', :fff => ff %>

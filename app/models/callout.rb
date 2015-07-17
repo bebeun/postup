@@ -1,20 +1,22 @@
 class Callout < ActiveRecord::Base
-	belongs_to :conversation
-	belongs_to :creator, :class_name => 'User', :foreign_key  => "creator_id"
-	belongs_to :target, :class_name => 'User', :foreign_key  => "target_id"
+	belongs_to :conversation, inverse_of: :callouts
+	belongs_to :creator, :class_name => 'User', :foreign_key  => "creator_id", inverse_of: :callouts
+	
+	belongs_to :calloutable, polymorphic: true, class_name: "::Callout"
+	# + qqch pr dire calloutable_type = User ou PotentialUser ?
 	
 	validates :conversation, presence: true
 	validates :creator, presence: true
-	validates :target, presence: true
+	validates :calloutable, presence: true
 	
 	has_many :supports, as: :supportable
 	
-	validate :target_vs_creator
-	def target_vs_creator
-		if target == creator
+	validate :calloutable_vs_creator
+	def calloutable_vs_creator
+		if calloutable == creator
 			errors.add(:target, "You can\'t call out yourself") 
 		end
 	end
 	
-	validates :target, uniqueness: {scope: [:creator, :conversation]}
+	validates :calloutable, uniqueness: {scope: [:creator, :conversation]}
 end

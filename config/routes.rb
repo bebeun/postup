@@ -5,12 +5,19 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
+  
+  #scope, namespace, ressources
+  
   root 'static_pages#home'
-  resources :conversations, only: [:new, :show]
-  resources :conversations do 
+  resources :conversations, only: [:new, :show] 
+  resources :conversations do
 		resources :posts, only: [:create]
 		resources :callouts, only: [:create]
-  end
+  end	
+  
+  resources :posts, only: [:create]
+  resources :callouts, only: [:create]
+
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

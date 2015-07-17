@@ -1,2 +1,6 @@
-<%= fff.label :target %>
-<%= fff.collection_select(:target_id, User.where.not(id: current_user.id), :id, :name) %>
+Liste of all profiles you may call out:
+<ul><% @profiles.each do |p| %>
+	<li><%=p.description %> ( ==><%= p.profileable.class.name %>)</li>
+<% end %></ul>
+
+<%= text_field_tag 'callout[description]', 'Copy-Paste or enter a new profile...' %>
