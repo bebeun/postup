@@ -9,7 +9,9 @@ class PostsController < ApplicationController
 			redirect_to @conversation
 		else
 			@callout = Callout.new()
-			@profiles = Profile.all - current_user.profiles - @conversation.callouts.where(calloutable_type: "User").collect{|x| x.calloutable }.collect{|x| x.profiles }.flatten - @conversation.callouts.where(calloutable_type: "PotentialUser").collect{|x| x.calloutable.profile }
+			@profilesUser = @conversation.callouts.where(calloutable_type: "User", creator: current_user).collect{|x| x.calloutable }.collect{|x| x.profiles }.flatten
+			@profilesPotentialUser = @conversation.callouts.where(calloutable_type: "PotentialUser", creator: current_user).collect{|x| x.calloutable.profile }
+			@profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser
 			if @conversation.posts.any? || @conversation.callouts.any? 
 				render '/conversations/show'
 			else

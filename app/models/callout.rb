@@ -18,5 +18,6 @@ class Callout < ActiveRecord::Base
 		end
 	end
 	
-	validates :calloutable, uniqueness: {scope: [:creator, :conversation]}
+	#validates :calloutable, uniqueness: {scope: [:creator, :conversation]} ....ne voit que uniqness id et confond les id même avec des types différents
+	validates_uniqueness_of :calloutable_id, :scope => [:creator_id, :conversation_id, :calloutable_type]
 end

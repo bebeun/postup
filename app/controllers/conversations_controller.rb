@@ -15,7 +15,10 @@ class ConversationsController < ApplicationController
 		if user_signed_in? 
 			@post = Post.new() 
 			@callout = Callout.new()
-			@profiles = Profile.all - current_user.profiles - @conversation.callouts.where(calloutable_type: "User", creator: current_user).collect{|x| x.calloutable }.collect{|x| x.profiles }.flatten - @conversation.callouts.where(calloutable_type: "PotentialUser", creator: current_user).collect{|x| x.calloutable.profile }
+			@profilesUser = @conversation.callouts.where(calloutable_type: "User", creator: current_user).collect{|x| x.calloutable }.collect{|x| x.profiles }.flatten
+			@profilesPotentialUser = @conversation.callouts.where(calloutable_type: "PotentialUser", creator: current_user).collect{|x| x.calloutable.profile }
+			@profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser
+
 		end
 	end
 

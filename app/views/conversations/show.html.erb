@@ -15,9 +15,7 @@
 <ul>
 	<% @conversation.callouts.each do |ff| %>
 		<%= render '/callouts/show', :fff => ff %>
-	<% end %>
-
-	
+	<% end %>	
 </ul>
 
 	<% if user_signed_in? %>
@@ -36,6 +34,14 @@
 			<%= render '/posts/new', :fff => f %><%= f.submit %>
 		<% end %>
 		<br/>
+
+Calloutable:
+<ul>
+	<% @profiles.each do |p| %>
+		<li><%=p.description %> ( ==><%= p.profileable.class.name %>)</li>
+	<% end %>
+</ul>
+
 		<%= form_for [@conversation, @callout] do |f| %>
 		
 			<% if @callout.errors.any? %>
@@ -47,6 +53,7 @@
 				</ul>
 			<% end %>
 			
+
 			<%= render '/callouts/new', :fff => f %> <%= f.submit %>
 		<br/>
 		

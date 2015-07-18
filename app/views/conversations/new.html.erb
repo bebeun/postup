@@ -14,6 +14,13 @@
 			<%= render '/posts/new', :fff => f %><%= f.submit %>
 		<% end %>
 		<br/>
+
+Calloutable:
+<ul>
+	<% @profiles.each do |p| %>
+		<li><%=p.description %> ( ==><%= p.profileable.class.name %>)</li>
+	<% end %>
+</ul>
 		
 		<%= form_for @callout do |f| %>
 		

@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
 	has_many :posts, inverse_of: :creator
 	has_many :callouts, inverse_of: :creator
 	has_many :callouts, as: :calloutable
-	has_many :profiles, as: :profileable, :validate => true
+	has_many :profiles, as: :profileable, :validate => true #user qui entre son profil fb lui même
 	
 	validates :name, presence: true
 	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
