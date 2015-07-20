@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
 	has_many :callouts_users
-	has_many :callouts, through: :callouts_users
+	has_many :callouts, through: :callouts_users, source: :callout
 	has_many :callouts, as: :calloutable
 
 	devise 	:database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable

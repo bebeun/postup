@@ -1,6 +1,6 @@
 class Callout < ActiveRecord::Base
 	has_many :callouts_users
-	has_many :users, through: :callouts_users
+	has_many :users, through: :callouts_users, source: :user
 	
 	belongs_to :calloutable, polymorphic: true, class_name: "::Callout", :validate => true 
 	validates_uniqueness_of :calloutable_id, :scope => [:user_id, :conversation_id, :calloutable_type]
