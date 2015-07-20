@@ -1,6 +1,6 @@
 <li>
 	<% user =  fff.calloutable %>
-	Callout : <%= fff.creator.name %> >> <%= user.class.name == "User" ? user.name : user.profile.description %>
+	Callout : <%= fff.users.first.name %> >> <%= user.class.name == "User" ? user.name : user.profile.description %>
 </li>
 
 

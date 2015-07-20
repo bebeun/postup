@@ -13,5 +13,14 @@
 	potentialuser = PotentialUser.new()
 	potentialuser.profile = Profile.create!(description: description)
 	potentialuser.save!
-end
 
+end
+	
+	conversation = Conversation.new()
+	post = Post.new(conversation: conversation, creator_id: "3", title: "coucou", content: "coucoucouocu")
+	conversation.posts << post
+	conversation.save!
+	
+	#callout = Callout.new(conversation: conversation, calloutable_id: "5", calloutable_type:"User")
+	#callout.users << User.find("8")
+	#callout.save!

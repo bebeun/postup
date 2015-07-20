@@ -1,23 +1,21 @@
 class Callout < ActiveRecord::Base
-	belongs_to :conversation, inverse_of: :callouts
-	belongs_to :creator, :class_name => 'User', :foreign_key  => "creator_id", inverse_of: :callouts
+	has_many :callouts_users
+	has_many :users, through: :callouts_users
 	
-	belongs_to :calloutable, polymorphic: true, class_name: "::Callout", :validate => true #putain de , :validate => true  !!!!
-	# + qqch pr dire calloutable_type = User ou PotentialUser ?
+	belongs_to :calloutable, polymorphic: true, class_name: "::Callout", :validate => true 
+	validates_uniqueness_of :calloutable_id, :scope => [:user_id, :conversation_id, :calloutable_type]
+	validates :calloutable, presence: true	
 	
+	belongs_to :conversation	
 	validates :conversation, presence: true
-	validates :creator, presence: true
-	validates :calloutable, presence: true
-	
-	has_many :supports, as: :supportable
-	
-	validate :calloutable_vs_creator
-	def calloutable_vs_creator
-		if calloutable == creator
-			errors.add(:target, "You can\'t call out yourself") 
-		end
-	end
-	
-	#validates :calloutable, uniqueness: {scope: [:creator, :conversation]} ....ne voit que uniqness id et confond les id même avec des types différents
-	validates_uniqueness_of :calloutable_id, :scope => [:creator_id, :conversation_id, :calloutable_type]
 end
+
+	# + qqch pr dire calloutable_type = User ou PotentialUser ?	
+	#validate :calloutable_vs_creator
+	#def calloutable_vs_creator
+	#	if calloutable == creator
+	#		errors.add(:target, "You can\'t call out yourself") 
+	#	end
+	#end
+	# revoir les inverse of
+	#validates :calloutable, uniqueness: {scope: [:creator, :conversation]} ....ne voit que uniqness id et confond les id même avec des types différents

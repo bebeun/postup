@@ -2,27 +2,27 @@ class CalloutsController < ApplicationController
 
 	def create
 		(params[:conversation_id].nil?) ? (@conversation = Conversation.new) : (@conversation = Conversation.find(params[:conversation_id]))
-		@profile = Profile.find_by_description(callout_params[:description]) rescue nil
-		#puts " description =================================> "+@profile.description.to_s
+		@profile = Profile.find_by_description(callout_params[:description])
 		if(@profile.nil?)
-			@profile = Profile.create(callout_params)
-			@user = PotentialUser.new()
-			@user.profile = @profile
+			@profile = Profile.new(callout_params) 
+			@target = PotentialUser.new()
+			@target.profile = @profile
+			@target.save!
 		else
-			@user = @profile.profileable
-			puts " user id =================================> "+@user.id.to_s
+			@target = @profile.profileable
 		end
-		@callout = Callout.new()
-		@callout.creator = current_user
-		@callout.conversation = @conversation
-		@callout.calloutable = @user
 		
+		@callout = Callout.find_or_initialize_by( conversation: @conversation )	
+		@callout.users << current_user
+
+			
 		if @callout.save
 			redirect_to @conversation
 		else
 			@post = Post.new()
-			@profilesUser = @conversation.callouts.where(calloutable_type: "User", creator: current_user).collect{|x| x.calloutable }.collect{|x| x.profiles }.flatten
-			@profilesPotentialUser = @conversation.callouts.where(calloutable_type: "PotentialUser", creator: current_user).collect{|x| x.calloutable.profile }
+			
+			@profilesUser = @conversation.callouts.where(calloutable_type: "User").select { |w| w.users.include?(current_user) }.collect{|x| x.calloutable }.collect{|x| x.profiles }.flatten
+			@profilesPotentialUser = @conversation.callouts.where(calloutable_type: "PotentialUser").select { |w| w.users.include?(current_user) }.collect{|x| x.calloutable.profile }
 			@profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser
 			
 			

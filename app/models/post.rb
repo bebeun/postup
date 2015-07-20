@@ -7,7 +7,5 @@ class Post < ActiveRecord::Base
 	validates :creator, presence: true
 	validates :conversation, presence: true
 	
-	has_many :supports, as: :supportable
-	
 	#validates :creator, uniqueness: {scope: [:conversation]} ... et en plus index à mettre sur la table
 end
