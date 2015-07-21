@@ -12,11 +12,11 @@ Rails.application.routes.draw do
   resources :conversations, only: [:new, :show] 
   resources :conversations do
 		resources :posts, only: [:create]
-		resources :callouts, only: [:create]
+		resources :calls, only: [:create]
   end	
   
   resources :posts, only: [:create]
-  resources :callouts, only: [:create]
+  resources :calls, only: [:create]
 
 
   # Example of regular route:

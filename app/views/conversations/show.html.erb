@@ -1,10 +1,11 @@
 <% provide(:title, "Show conversation") %>
 
+
 <% if @conversation.posts.any? %>
 <h1><%= @conversation.posts.first.title %></h1>
 <% else %>
-<% user =  @conversation.callouts.first.calloutable %>
-<h1><%= @conversation.callouts.first.creator.name %> >> <%= user.class.name == "User" ? user.name : user.profile.description %> </h1>
+<% user =  @conversation.calls.first.callable %>
+<h1><%= @conversation.calls.first.creator.name %> >> <%= user.class.name == "User" ? user.name : user.profile.description %> </h1>
 <% end %>
 <ul>
 	<% @conversation.posts.each do |ff| %>
@@ -13,8 +14,8 @@
 </ul>
 
 <ul>
-	<% @conversation.callouts.each do |ff| %>
-		<%= render '/callouts/show', :fff => ff %>
+	<% @conversation.calls.each do |ff| %>
+		<%= render '/calls/show', :fff => ff %>
 	<% end %>	
 </ul>
 
@@ -42,19 +43,19 @@ Calloutable:
 	<% end %>
 </ul>
 
-		<%= form_for [@conversation, @callout] do |f| %>
+		<%= form_for [@conversation, @call] do |f| %>
 		
-			<% if @callout.errors.any? %>
-				<%= pluralize(@callout.errors.count, "error") %> prohibited this callout from being added to the conversation:
+			<% if @call.errors.any? %>
+				<%= pluralize(@call.errors.count, "error") %> prohibited this call from being added to the conversation:
 				<ul>
-					<% @callout.errors.full_messages.each do |msg| %>
+					<% @call.errors.full_messages.each do |msg| %>
 						<li><%= msg %></li>
 					<% end %>
 				</ul>
 			<% end %>
 			
 
-			<%= render '/callouts/new', :fff => f %> <%= f.submit %>
+			<%= render '/calls/new', :fff => f %> <%= f.submit %>
 		<br/>
 		
 		<% end %>

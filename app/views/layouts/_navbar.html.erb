@@ -1,8 +1,10 @@
 <header>
     <%= link_to "PostUp", root_path%><br/>
 	<% if user_signed_in? %>
-		 Welcome <%=current_user.name %> ! <br/>
-		<ul><li><%= link_to "Edit Profile", edit_user_registration_path %></li>
+		 <ul>Welcome <%=current_user.name %> ! <br/>
+		<li>Vous avez fait <%= current_user.callouts.count %> callouts >> </br></li>
+		<li>Vous avez reçu >> <%= current_user.callins.count %> callins </br></li>
+		<li><%= link_to "Edit Profile", edit_user_registration_path %></li>
 		<li><%= link_to "Log Out", destroy_user_session_path, method: "delete" %></li></ul>
 	<% else %>
 		<ul><li><%= link_to "Sign Up", new_user_session_path %></li>

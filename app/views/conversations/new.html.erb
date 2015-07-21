@@ -22,18 +22,18 @@ Calloutable:
 	<% end %>
 </ul>
 		
-		<%= form_for @callout do |f| %>
+		<%= form_for @call do |f| %>
 		
-			<% if @callout.errors.any? %>
-				<%= pluralize(@callout.errors.count, "error") %> prohibited this conversation from being saved:
+			<% if @call.errors.any? %>
+				<%= pluralize(@call.errors.count, "error") %> prohibited this conversation from being saved:
 				<ul>
-					<% @callout.errors.full_messages.each do |msg| %>
+					<% @call.errors.full_messages.each do |msg| %>
 						<li><%= msg %></li>
 					<% end %>
 				</ul>
 			<% end %>
 			
-			<%= render '/callouts/new', :fff => f %> <%= f.submit %>
+			<%= render '/calls/new', :fff => f %> <%= f.submit %>
 		<br/>
 		
 		<% end %>
