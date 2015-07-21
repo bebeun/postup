@@ -11,21 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150716232647) do
+ActiveRecord::Schema.define(version: 20150721000903) do
+
+  create_table "call_actions", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "call_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "call_actions", ["call_id"], name: "index_call_actions_on_call_id"
+  add_index "call_actions", ["user_id"], name: "index_call_actions_on_user_id"
 
   create_table "calls", force: :cascade do |t|
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.integer  "conversation_id"
-    t.integer  "creator_id"
     t.integer  "callable_id"
     t.string   "callable_type"
   end
 
+  add_index "calls", ["callable_id", "callable_type", "conversation_id"], name: "index_on_calls_for_callable_conversation", unique: true
   add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id"
   add_index "calls", ["conversation_id"], name: "index_calls_on_conversation_id"
-  add_index "calls", ["creator_id", "callable_id", "callable_type", "conversation_id"], name: "index_on_calls_for_creator_callable_conversation", unique: true
-  add_index "calls", ["creator_id"], name: "index_calls_on_creator_id"
 
   create_table "conversations", force: :cascade do |t|
     t.datetime "created_at", null: false

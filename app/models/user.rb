@@ -4,7 +4,9 @@ class User < ActiveRecord::Base
 	devise 	:database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 		
 	
-	has_many :callouts, :class_name => "Call", :foreign_key => "creator_id"
+	#has_many :callouts, :class_name => "Call", :foreign_key => "creator_id"
+	has_many :call_actions
+	has_many :callouts, through: :call_actions, source: "call", class_name: "Call"
 	
 	has_many :callins, as: :callable, class_name: "Call"
 	has_many :profiles, as: :profileable, :validate => true #user qui entre son profil fb lui même

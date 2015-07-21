@@ -1,6 +1,8 @@
 <li>
 	<% user =  fff.callable %>
-	Callout : <%= fff.creator.name %> >> <%= user.class.name == "User" ? user.name : user.profile.description %>
+	Callout : 	<% fff.creators.each do |u| %> <%= u.name %> + 	<% end %>
+	
+	>> <%= user.class.name == "User" ? user.name : user.profile.description %>
 </li>
 
 
