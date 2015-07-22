@@ -6,7 +6,8 @@
 <% else %>
 <% user =  @conversation.calls.first.callable %>
 
-<h1><% @conversation.calls.first.creators.each do |u| %> <%= u.name %> + 	<% end %> >> <%= user.class.name == "User" ? user.name : user.profile.description %> </h1>
+<h1><%= @conversation.calls.first.creators.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.description %> </h1>
+
 <% end %>
 <ul>
 	<% @conversation.posts.each do |ff| %>
@@ -40,7 +41,7 @@
 Calloutable:
 <ul>
 	<% @profiles.each do |p| %>
-		<li><%=p.description %> ( ==><%= p.profileable.class.name %>)</li>
+		<li><%= p.category.origin+" : "+p.description %> ( belongs to a <%= p.profileable.class.name %> <% if p.profileable.class.name == "User" %> who is named: <%= p.profileable.name %> <% end %>)</li>
 	<% end %>
 </ul>
 

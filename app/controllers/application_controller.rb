@@ -9,4 +9,7 @@ class ApplicationController < ActionController::Base
 		devise_parameter_sanitizer.for(:account_update) << :name
 	end
 	
+	#including helper
+	include CallsHelper
+
 end
