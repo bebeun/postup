@@ -5,9 +5,9 @@ class CallsController < ApplicationController
 		
 		search_key = description_by_display(call_params[:display])
 		
-		@profilesUser = @conversation.calls.where(callable_type: "User").select { |w| w.creators.include?(current_user) }.collect{|x| x.callable }.collect{|x| x.profiles }.flatten
-		@profilesPotentialUser = @conversation.calls.where(callable_type: "PotentialUser").select { |w| w.creators.include?(current_user) }.collect{|x| x.callable.profile }
-		@profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser
+		#@profilesUser = @conversation.calls.where(callable_type: "User").select { |w| w.creators.include?(current_user) }.collect{|x| x.callable }.collect{|x| x.profiles }.flatten
+		#@profilesPotentialUser = @conversation.calls.where(callable_type: "PotentialUser").select { |w| w.creators.include?(current_user) }.collect{|x| x.callable.profile }
+		#@profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser
 		
 		if(search_key.nil?)
 			@post = Post.new()

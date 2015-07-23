@@ -5,6 +5,9 @@ class User < ActiveRecord::Base
 
 	has_many :call_actions
 	has_many :callouts, through: :call_actions, source: "call", class_name: "Call"
+	
+	has_many :post_actions
+	has_many :postsupports, through: :post_actions, source: "post", class_name: "Post"
 
 	has_many :callins, as: :callable, class_name: "Call"
 	
