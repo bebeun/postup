@@ -16,9 +16,14 @@ Rails.application.routes.draw do
   end	
   
   resources :posts, only: [:create]
-  post 'posts/:id/support' => 'posts#support', as: :support
-  post 'posts/:id/unsupport' => 'posts#unsupport', as: :unsupport
-  delete 'posts/:id/remove' => 'posts#remove', as: :remove
+  post 'posts/:id/support' => 'posts#support'
+  delete 'posts/:id/remove' => 'posts#remove'
+  post 'posts/:id/unsupport' => 'posts#unsupport' 
+  
+  post 'calls/:id/support' => 'calls#support'
+  delete 'calls/:id/remove' => 'calls#remove'
+  post 'calls/:id/unsupport' => 'calls#unsupport'
+  
   resources :calls, only: [:create]
 
 

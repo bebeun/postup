@@ -15,10 +15,6 @@ class ConversationsController < ApplicationController
 		if user_signed_in? 
 			@post = Post.new() 
 			@call = Call.new()
-			@profilesUser = @conversation.calls.where(callable_type: "User").select { |w| w.creators.include?(current_user) }.collect{|x| x.callable }.collect{|x| x.profiles }.flatten
-			@profilesPotentialUser = @conversation.calls.where(callable_type: "PotentialUser").select { |w| w.creators.include?(current_user) }.collect{|x| x.callable.profile }
-
-			@profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser
 		end
 	end
 

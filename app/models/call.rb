@@ -2,8 +2,9 @@ class Call < ActiveRecord::Base
 	belongs_to :conversation
 	
 	has_many :call_actions
-	has_many :creators, through: :call_actions, source: "user", class_name: "User"
-	validates :creators, :length => {:minimum => 1, :message=>"At least one creator is required" }	
+	has_many :supporters, -> { where(call_actions: {support: "up"})}, through: :call_actions, source: "user", class_name: "User"
+	has_many :unsupporters, -> { where(call_actions: {support: "down"})}, through: :call_actions, source: "user", class_name: "User"
+	validates :supporters, :length => {:minimum => 1, :message=>"At least one supporter is required" }	
 	
 	belongs_to :callable, polymorphic: true, class_name: "::Callout", :validate => true 
 	#validates_inclusion_of :callable_type, in: ["User","PotentialUser"]
@@ -11,10 +12,10 @@ class Call < ActiveRecord::Base
 	
 	validates :conversation, presence: true
 
-	validate :callable_vs_creator
-	def callable_vs_creator
-		if creators.include?(callable)
-			errors.add("You can\'t call out yourself") 
+	validate :callable_vs_supporters
+	def callable_vs_supporters
+	if supporters.include?(callable) || unsupporters.include?(callable) 
+			errors.add(:callable, "You can t support or unsupport your own callout") 
 		end
 	end
 	

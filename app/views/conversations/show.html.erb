@@ -1,15 +1,16 @@
 <% provide(:title, "Show conversation") %>
-
-<% @profilesUser = @conversation.calls.where(callable_type: "User").select { |w| w.creators.include?(current_user) }.collect{|x| x.callable }.collect{|x| x.profiles }.flatten %>
-<% @profilesPotentialUser = @conversation.calls.where(callable_type: "PotentialUser").select { |w| w.creators.include?(current_user) }.collect{|x| x.callable.profile } %>
-<% @profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser %>
+<% if user_signed_in? %>
+	<% @profilesUser = @conversation.calls.where(callable_type: "User").select { |w| w.supporters.include?(current_user) }.collect{|x| x.callable }.collect{|x| x.profiles }.flatten %>
+	<% @profilesPotentialUser = @conversation.calls.where(callable_type: "PotentialUser").select { |w| w.supporters.include?(current_user) }.collect{|x| x.callable.profile } %>
+	<% @profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser %>
+<% end %>
 
 <% if @conversation.posts.any? %>
 <h1><%= @conversation.posts.first.title %></h1>
 <% else %>
 <% user =  @conversation.calls.first.callable %>
 
-<h1><%= @conversation.calls.first.creators.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.description %> </h1>
+<h1><%= @conversation.calls.first.supporters.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.description %> </h1>
 
 <% end %>
 <ul>

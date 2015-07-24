@@ -1,6 +1,15 @@
 <li>
 	<% user =  fff.callable %>
-	Callout : 	<%= fff.creators.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.description %>
+	Callout : 	===> >> <%= user.class.name == "User" ? user.name : user.profile.description %>
+	<%= link_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: fff, support: 'up' ), method: :post if(!fff.supporters.include?(current_user))%>
+	<%= link_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: fff), method: :delete if((fff.supporters.include?(current_user)) || fff.unsupporters.include?(current_user))%>
+	<%= link_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: fff ), method: :post if(!fff.unsupporters.include?(current_user))%>
+	
+	<br/>Supported by: <%= fff.supporters.collect{|x| x.name }.join(", ") %>
+	<br/>Unsupported by: <%= fff.unsupporters.collect{|x| x.name }.join(", ") %>
+	
+	
+
 </li>
 
 

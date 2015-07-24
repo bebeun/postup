@@ -14,7 +14,7 @@ class Post < ActiveRecord::Base
 	validate :support_vs_creator
 	def support_vs_creator
 		if supporters.include?(creator) ||  unsupporters.include?(creator) 
-			errors.add("You can\'t support or unsupport a post you have written") 
+			errors.add("You can t support or unsupport a post you have written") 
 		end
 	end
 	#validates :creator, uniqueness: {scope: [:conversation]} ... et en plus index à mettre sur la table
