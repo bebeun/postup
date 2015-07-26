@@ -20,7 +20,7 @@
 Calloutable:
 <ul>
 	<% @profiles.each do |p| %>
-		<li><%=p.description %> ( ==><%= p.profileable.class.name %>)</li>
+		<li><%=p.identable.description %> ( ==><%= p.profileable.class.name %>)</li>
 	<% end %>
 </ul>
 		

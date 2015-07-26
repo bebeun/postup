@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150723122459) do
+ActiveRecord::Schema.define(version: 20150725215615) do
 
   create_table "call_actions", force: :cascade do |t|
     t.integer  "user_id"
@@ -36,15 +36,15 @@ ActiveRecord::Schema.define(version: 20150723122459) do
   add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id"
   add_index "calls", ["conversation_id"], name: "index_calls_on_conversation_id"
 
-  create_table "categories", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "origin"
-  end
-
   create_table "conversations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "facebooks", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   create_table "post_actions", force: :cascade do |t|
@@ -80,13 +80,18 @@ ActiveRecord::Schema.define(version: 20150723122459) do
     t.datetime "updated_at",       null: false
     t.integer  "profileable_id"
     t.string   "profileable_type"
-    t.string   "description"
-    t.integer  "category_id"
+    t.integer  "identable_id"
+    t.string   "identable_type"
   end
 
-  add_index "profiles", ["category_id"], name: "index_profiles_on_category_id"
-  add_index "profiles", ["description"], name: "index_profiles_on_description", unique: true
+  add_index "profiles", ["identable_type", "identable_id"], name: "index_profiles_on_identable_type_and_identable_id"
   add_index "profiles", ["profileable_type", "profileable_id"], name: "index_profiles_on_profileable_type_and_profileable_id"
+
+  create_table "twitters", force: :cascade do |t|
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at",                          null: false

@@ -7,18 +7,20 @@ class CallsController < ApplicationController
 		search_key = description_by_display(call_params[:display])
 
 		if(!search_key.nil?)
-			@profile = Profile.find_by(search_key)
-			if(@profile.nil?)
-				@profile = Profile.new(search_key)
+			@identable = search_key["category"].constantize.find_by_description(search_key["description"])
+			if(@identable.nil?)
+				@profile = Profile.new()
+				@profile.identable = search_key["category"].constantize.new(description: search_key["description"]) 
 				@user = PotentialUser.new()
 				@user.profile = @profile
 			else
+				@profile = @identable.profile
 				@user = @profile.profileable
 			end
 			@call = Call.find_or_initialize_by( conversation: @conversation, callable: @user ) 
 			@call.supporters << current_user
 		else
-			#error => aucun profil reconnu
+			#@call.errors[:base] << "No Profil matches your input"
 		end
 		
 		if @call.save && !search_key.nil?

@@ -1,4 +1,7 @@
 class CallAction < ActiveRecord::Base
+	before_validation do
+		puts "=============================> before validation CallAction"
+	end
 	belongs_to :user
 	belongs_to :call
 	validates_uniqueness_of :user_id, :scope => [:call_id],	:message => "Error on the join model. This callout already exists"

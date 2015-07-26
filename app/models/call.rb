@@ -1,5 +1,10 @@
 class Call < ActiveRecord::Base
+	before_validation do
+		puts "=============================> before validation Call"
+	end
+
 	belongs_to :conversation
+
 	
 	has_many :call_actions
 	has_many :supporters, -> { where(call_actions: {support: "up"})}, through: :call_actions, source: "user", class_name: "User"
