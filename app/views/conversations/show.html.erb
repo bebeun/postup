@@ -1,9 +1,9 @@
 <% provide(:title, "Show conversation") %>
 <% if user_signed_in? %>
-	<% @profilesUser = @conversation.calls.where(callable_type: "User").select { |w| w.supporters.include?(current_user) }.collect{|x| x.callable }.collect{|x| x.profiles }.flatten %>
-	<% @profilesPotentialUser = @conversation.calls.where(callable_type: "PotentialUser").select { |w| w.supporters.include?(current_user) }.collect{|x| x.callable.profile } %>
-	<% @profiles = Profile.all - current_user.profiles - @profilesUser - @profilesPotentialUser %>
+	<% @User = User.all - [current_user] - @conversation.calls.where(callable_type: "User").select { |w| (w.supporters.include?(current_user) || w.unsupporters.include?(current_user))}.collect{|x| x.callable } %>
+	<% @PotentialUser = PotentialUser.all - @conversation.calls.where(callable_type: "PotentialUser").select { |w| (w.supporters.include?(current_user) || w.unsupporters.include?(current_user)) }.collect{|x| x.callable } %>
 <% end %>
+
 
 <% if @conversation.posts.any? %>
 <h1><%= @conversation.posts.first.title %></h1>
@@ -42,28 +42,11 @@
 		<% end %>
 		<br/>
 
-Calloutable:
-<ul>
-	<% @profiles.each do |p| %>
-		<li><%= p.identable_type+" : "+p.identable.description %> ( belongs to a <%= p.profileable.class.name %> <% if p.profileable.class.name == "User" %> who is named: <%= p.profileable.name %> <% end %>)</li>
-	<% end %>
-</ul>
-
-		<%= form_for [@conversation, @call] do |f| %>
-		
-			<% if @call.errors.any? %>
-				<%= pluralize(@call.errors.count, "error") %> prohibited this call from being added to the conversation:
-				<ul>
-					<% @call.errors.full_messages.each do |msg| %>
-						<li><%= msg %></li>
-					<% end %>
-				</ul>
-			<% end %>
+	
 			
 
-			<%= render '/calls/new', :fff => f %> <%= f.submit %>
+			<%= render '/calls/new', :fff => [@conversation, @call] %> 
 		<br/>
 		
-		<% end %>
 		<br/>
 	<% end %>

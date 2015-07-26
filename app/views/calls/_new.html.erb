@@ -1,2 +1,31 @@
+	<% if @call.errors.any? %>
+		<%= pluralize(@call.errors.count, "error") %> prohibited this conversation from being saved:
+		<ul>
+			<% @call.errors.full_messages.each do |msg| %>
+				<li><%= msg %></li>
+			<% end %>
+		</ul>
+	<% end %>
 
-<%= text_field_tag 'call[display]', 'Entire a new profile URL...' %>
+
+<%= form_for fff do |f| %>
+	Select the Name of the user you want to call out: <br/>
+	<%= hidden_field_tag("call[callable_type]", "User") %>
+	<%= select("call", "callable_id", @User.collect{|p| [ p.name+" : "+p.profiles.collect{|x| x.identable_type+" "+x.identable.description }.join(", "), p.id ]}, {prompt: 'Select User'}, :onchange => "this.form.submit()") %><br/><br/>
+<% end %>
+
+<%= form_for fff do |f| %>
+	Or select the PotentialUser with its identable description: <br/> 
+	<%= hidden_field_tag("call[callable_type]", "PotentialUser") %>
+	<%= select("call", "callable_id", @PotentialUser.collect{|p| [ p.profile.identable_type+" : "+p.profile.identable.description, p.id ]}, {prompt: 'Select PotentialUser'}, :onchange => "this.form.submit()") %><br/><br/>
+<% end %>
+
+
+<%= form_for fff do |f| %>
+	Or enter a new profil URL <br/>
+	(exemple: www.facebook.com/bebeun92 or www.twitter.com/benoit81) <br/>
+	<%= text_field_tag 'call[display]', 'Entire a new profile URL...' %>
+	
+	 <%= f.submit %>
+	<br/>
+<% end %>

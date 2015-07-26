@@ -1,6 +1,8 @@
 <% provide(:title, "New conversation") %>
 
-<% @profiles = Profile.all %>
+<% @User = User.all - [current_user] %>
+<% @PotentialUser = PotentialUser.all %>
+
 
 <%= form_for @post do |f| %>
 		
@@ -16,27 +18,7 @@
 			<%= render '/posts/new', :fff => f %><%= f.submit %>
 		<% end %>
 		<br/>
-
-Calloutable:
-<ul>
-	<% @profiles.each do |p| %>
-		<li><%=p.identable.description %> ( ==><%= p.profileable.class.name %>)</li>
-	<% end %>
-</ul>
 		
-		<%= form_for @call do |f| %>
-		
-			<% if @call.errors.any? %>
-				<%= pluralize(@call.errors.count, "error") %> prohibited this conversation from being saved:
-				<ul>
-					<% @call.errors.full_messages.each do |msg| %>
-						<li><%= msg %></li>
-					<% end %>
-				</ul>
-			<% end %>
-			
-			<%= render '/calls/new', :fff => f %> <%= f.submit %>
-		<br/>
-		
-		<% end %>
+		<%= render '/calls/new', :fff => @call%>
+	
 		<br/>

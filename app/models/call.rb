@@ -1,7 +1,7 @@
 class Call < ActiveRecord::Base
-	before_validation do
-		puts "=============================> before validation Call"
-	end
+	# before_validation do
+		# puts "=============================> before validation Call"
+	# end
 
 	belongs_to :conversation
 
