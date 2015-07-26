@@ -36,6 +36,17 @@ class PostsController < ApplicationController
 		redirect_to @post.conversation
 	end
 	
+	def destroy
+		@post = Post.find(params[:id])
+		@conversation = @post.conversation
+		@post.delete if @post.creator == current_user
+		if @conversation.calls.any? || @conversation.posts.any? 
+			redirect_to @conversation
+		else
+			redirect_to new_conversation_path
+		end
+	end
+	
 	private
 		def post_params
     		params.require(:post).permit(:title, :content)

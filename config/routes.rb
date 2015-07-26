@@ -15,7 +15,7 @@ Rails.application.routes.draw do
 		resources :calls, only: [:create]
   end	
   
-  resources :posts, only: [:create]
+  resources :posts, only: [:create, :destroy]
   post 'posts/:id/support' => 'posts#support'
   delete 'posts/:id/remove' => 'posts#remove'
   post 'posts/:id/unsupport' => 'posts#unsupport' 
