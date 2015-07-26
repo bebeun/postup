@@ -1,8 +1,8 @@
 <li>
 	Post : <%= fff.title %>, <%= fff.content %>, <%= fff.creator.name %>
-	<%= link_to "Up This Post",  url_for(controller: 'posts', action: 'support', id: fff ), method: :post if (fff.creator != current_user) && (!fff.supporters.include?(current_user))%>
-	<%= link_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: fff), method: :delete if(fff.creator != current_user) && ((fff.supporters.include?(current_user)) || fff.unsupporters.include?(current_user))%>
-	<%= link_to "Down This Post",  url_for(controller: 'posts', action: 'unsupport', id: fff  ), method: :post if(fff.creator != current_user) && (!fff.unsupporters.include?(current_user))%>
+	<%= link_to "Up This Post",  url_for(controller: 'posts', action: 'support', id: fff ), method: :post if (user_signed_in? && fff.creator != current_user) && (!fff.supporters.include?(current_user))%>
+	<%= link_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: fff), method: :delete if(user_signed_in? && fff.creator != current_user) && ((fff.supporters.include?(current_user)) || fff.unsupporters.include?(current_user))%>
+	<%= link_to "Down This Post",  url_for(controller: 'posts', action: 'unsupport', id: fff  ), method: :post if user_signed_in? && (fff.creator != current_user) && (!fff.unsupporters.include?(current_user))%>
 	<br/>Supported by: <%= fff.supporters.collect{|x| x.name }.join(", ") %>
 	<br/>Unsupported by: <%= fff.unsupporters.collect{|x| x.name }.join(", ") %>
 </li>
