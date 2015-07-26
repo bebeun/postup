@@ -3,22 +3,8 @@
 <% @User = User.all - [current_user] %>
 <% @PotentialUser = PotentialUser.all %>
 
-
-<%= form_for @post do |f| %>
-		
-			<% if @post.errors.any? %>
-				<%= pluralize(@post.errors.count, "error") %> prohibited this conversation from being saved:
-				<ul>
-					<% @post.errors.full_messages.each do |msg| %>
-						<li><%= msg %></li>
-					<% end %>
-				</ul>
-			<% end %>
-			
-			<%= render '/posts/new', :fff => f %><%= f.submit %>
-		<% end %>
-		<br/>
-		
-		<%= render '/calls/new', :fff => @call%>
-	
-		<br/>
+<br/>
+<%= render '/posts/new', :fff => [@conversation, @post] %>
+<br/>
+<%= render '/calls/new', :fff => [@conversation, @call] %> 
+<br/>

@@ -17,7 +17,7 @@ class ConversationsController < ApplicationController
 			@call = Call.new()
 		end
 	end
-
+	
 	private
 		def conversation_params
     		params.require(:conversation).permit(:posts_attributes => [:title, :content], :calls_attributes => [:target])

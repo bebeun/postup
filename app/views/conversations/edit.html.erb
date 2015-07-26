@@ -15,7 +15,8 @@
 <% end %>
 <ul>
 	<% @conversation.posts.each do |ff| %>
-		<%= render '/posts/show', :fff => ff %>
+		<% if ff != @post %><%= render '/posts/show', :fff => ff %><% end %>
+		<% if ff == @post %><%= render '/posts/edit', :fff => ff %><% end %>
 	<% end %>
 </ul>
 
@@ -27,8 +28,8 @@
 
 <% if user_signed_in? %>
 	<br/>
-	<%= render '/posts/new', :fff => [@conversation, @post] %>
+	<%= render '/posts/new', :fff => [@conversation, Post.new()] %>
 	<br/>
-	<%= render '/calls/new', :fff => [@conversation, @call] %> 
+	<%= render '/calls/new', :fff => [@conversation, Call.new()] %> 
 	<br/>
 <% end %>

@@ -15,6 +15,29 @@ class PostsController < ApplicationController
 		end
 	end
 	
+	def edit
+		@post = Post.find(params[:id])
+		@conversation = @post.conversation
+		redirect_to @conversation if current_user != @post.creator   
+		@call = Call.new()		
+		render '/conversations/edit' 
+	end
+
+	def update
+		@post = Post.find(params[:id])
+		@post.assign_attributes(post_params)
+		changed = @post.changed?
+		if @post.save!
+			@post.supporters.destroy_all and @post.unsupporters.destroy_all if changed
+			redirect_to @post.conversation
+		else
+			@conversation = @post.conversation
+			@call = Call.new()
+			render '/conversations/edit'
+		end
+	end
+
+	
 	def support
 		@post = Post.find(params[:id])
 		@post.unsupporters.delete(current_user) if @post.unsupporters.include?(current_user)

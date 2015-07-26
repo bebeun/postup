@@ -10,12 +10,13 @@ Rails.application.routes.draw do
   
   root 'static_pages#home'
   resources :conversations, only: [:new, :show] 
-  resources :conversations do
-		resources :posts, only: [:create]
+  
+  resources :conversations do #ici ça génère trop de lignes
+		resources :posts, only: [:create, :edit]
 		resources :calls, only: [:create]
   end	
   
-  resources :posts, only: [:create, :destroy]
+  resources :posts, only: [:create, :destroy, :update]
   post 'posts/:id/support' => 'posts#support'
   delete 'posts/:id/remove' => 'posts#remove'
   post 'posts/:id/unsupport' => 'posts#unsupport' 
