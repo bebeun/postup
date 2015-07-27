@@ -1,13 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { sessions: "users/sessions", registrations: "users/registrations", passwords: "users/passwords"}
   
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
-
-  # You can have the root of your site routed with "root"
-  
-  #scope, namespace, ressources
-  
   root 'static_pages#home'
   resources :conversations, only: [:new, :show] 
   
@@ -26,7 +19,9 @@ Rails.application.routes.draw do
   post 'calls/:id/unsupport' => 'calls#unsupport'
   
   resources :calls, only: [:create]
-
+  
+  post 'profiles/attach_to_user' => 'profiles#attach_to_user' 
+  post 'profiles/detach_from_user' => 'profiles#detach_from_user'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

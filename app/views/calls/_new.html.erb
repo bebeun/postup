@@ -1,11 +1,11 @@
-	<% if @call.errors.any? %>
-		<%= pluralize(@call.errors.count, "error") %> prohibited this conversation from being saved:
-		<ul>
-			<% @call.errors.full_messages.each do |msg| %>
-				<li><%= msg %></li>
-			<% end %>
-		</ul>
-	<% end %>
+<% if @call.errors.any? %>
+	<%= pluralize(@call.errors.count, "error") %> prohibited this conversation from being saved:
+	<ul>
+		<% @call.errors.full_messages.each do |msg| %>
+			<li><%= msg %></li>
+		<% end %>
+	</ul>
+<% end %>
 
 
 <%= form_for fff do |f| %>
