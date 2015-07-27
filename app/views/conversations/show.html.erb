@@ -1,4 +1,5 @@
 <% provide(:title, "Show conversation") %>
+
 <% if user_signed_in? %>
 	<% @User = User.all - [current_user] - @conversation.calls.where(callable_type: "User").select { |w| (w.supporters.include?(current_user) || w.unsupporters.include?(current_user))}.collect{|x| x.callable } %>
 	<% @PotentialUser = PotentialUser.all - @conversation.calls.where(callable_type: "PotentialUser").select { |w| (w.supporters.include?(current_user) || w.unsupporters.include?(current_user)) }.collect{|x| x.callable } %>
@@ -6,22 +7,23 @@
 
 
 <% if @conversation.posts.any? %>
-<h1><%= @conversation.posts.first.title %></h1>
+	<h1><%= @conversation.posts.first.title %></h1>
 <% else %>
-<% user =  @conversation.calls.first.callable %>
-
-<h1><%= @conversation.calls.first.supporters.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.identable.description %> </h1>
-
+	<% user =  @conversation.calls.first.callable %>
+	<h1>
+	<%= @conversation.calls.first.supporters.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.identable.description %> 
+	</h1>
 <% end %>
+
 <ul>
-	<% @conversation.posts.each do |ff| %>
-		<%= render '/posts/show', :fff => ff %>
+	<% @conversation.posts.each do |f| %>
+		<li><%= render '/posts/show', :fff => f %></li>
 	<% end %>
 </ul>
 
 <ul>
-	<% @conversation.calls.each do |ff| %>
-		<%= render '/calls/show', :fff => ff %>
+	<% @conversation.calls.each do |f| %>
+		<li><%= render '/calls/show', :fff => f %></li>
 	<% end %>	
 </ul>
 

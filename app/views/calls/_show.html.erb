@@ -1,12 +1,11 @@
-<li>
-	<% user =  fff.callable %>
-	Callout : 	===> >> <%= user.class.name == "User" ? user.name : user.profile.identable.description %>
-	<%= link_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: fff, support: 'up' ), method: :post if(user_signed_in? && !fff.supporters.include?(current_user))%>
-	<%= link_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: fff), method: :delete if(user_signed_in? && (fff.supporters.include?(current_user)) || fff.unsupporters.include?(current_user))%>
-	<%= link_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: fff ), method: :post if(user_signed_in? && !fff.unsupporters.include?(current_user))%>
+<% user =  fff.callable %>
+Callout : 	===> >> <%= user.class.name == "User" ? link_to(user.name, user) : user.profile.identable.description %>
+<%= link_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: fff, support: 'up' ), method: :post if(user_signed_in? && !fff.supporters.include?(current_user))%>
+<%= link_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: fff), method: :delete if(user_signed_in? && (fff.supporters.include?(current_user)) || fff.unsupporters.include?(current_user))%>
+<%= link_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: fff ), method: :post if(user_signed_in? && !fff.unsupporters.include?(current_user))%>
 	
-	<br/>Supported by: <%= fff.supporters.collect{|x| x.name }.join(", ") %>
-	<br/>Unsupported by: <%= fff.unsupporters.collect{|x| x.name }.join(", ") %>
-</li>
+<br/>Supported by: <% fff.supporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
+<br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
+
 
 
