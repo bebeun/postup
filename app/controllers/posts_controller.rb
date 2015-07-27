@@ -18,6 +18,7 @@ class PostsController < ApplicationController
 	def edit
 		@post = Post.find(params[:id])
 		@conversation = @post.conversation
+		redirect_to @conversation if !user_signed_in?
 		redirect_to @conversation if current_user != @post.creator   
 		@call = Call.new()		
 		render '/conversations/edit' 
@@ -27,7 +28,7 @@ class PostsController < ApplicationController
 		@post = Post.find(params[:id])
 		@post.assign_attributes(post_params)
 		changed = @post.changed?
-		if @post.save!
+		if @post.save
 			@post.supporters.destroy_all and @post.unsupporters.destroy_all if changed
 			redirect_to @post.conversation
 		else
@@ -66,6 +67,7 @@ class PostsController < ApplicationController
 		if @conversation.calls.any? || @conversation.posts.any? 
 			redirect_to @conversation
 		else
+			@conversation.delete
 			redirect_to new_conversation_path
 		end
 	end

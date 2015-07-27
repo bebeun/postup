@@ -73,6 +73,7 @@ class CallsController < ApplicationController
 		if @conversation.calls.any? || @conversation.posts.any? 
 			redirect_to @call.conversation
 		else
+			@conversation.delete
 			redirect_to new_conversation_path
 		end
 	end
