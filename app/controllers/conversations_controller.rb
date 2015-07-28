@@ -15,6 +15,7 @@ class ConversationsController < ApplicationController
 		if user_signed_in? 
 			@post = Post.new() 
 			@call = Call.new()
+
 		end
 	end
 	

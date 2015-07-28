@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20150725215615) do
+=======
+ActiveRecord::Schema.define(version: 20150720002524) do
+>>>>>>> origin/master
 
   create_table "call_actions", force: :cascade do |t|
     t.integer  "user_id"
@@ -28,6 +32,7 @@ ActiveRecord::Schema.define(version: 20150725215615) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.integer  "conversation_id"
+<<<<<<< HEAD
     t.integer  "callable_id"
     t.string   "callable_type"
   end
@@ -35,6 +40,24 @@ ActiveRecord::Schema.define(version: 20150725215615) do
   add_index "calls", ["callable_id", "callable_type", "conversation_id"], name: "index_on_calls_for_callable_conversation", unique: true
   add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id"
   add_index "calls", ["conversation_id"], name: "index_calls_on_conversation_id"
+=======
+    t.integer  "calloutable_id"
+    t.string   "calloutable_type"
+  end
+
+  add_index "callouts", ["calloutable_type", "calloutable_id"], name: "index_callouts_on_calloutable_type_and_calloutable_id"
+  add_index "callouts", ["conversation_id"], name: "index_callouts_on_conversation_id"
+
+  create_table "callouts_users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "user_id"
+    t.integer  "callout_id"
+  end
+
+  add_index "callouts_users", ["callout_id"], name: "index_callouts_users_on_callout_id"
+  add_index "callouts_users", ["user_id"], name: "index_callouts_users_on_user_id"
+>>>>>>> origin/master
 
   create_table "conversations", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -87,12 +110,15 @@ ActiveRecord::Schema.define(version: 20150725215615) do
   add_index "profiles", ["identable_type", "identable_id"], name: "index_profiles_on_identable_type_and_identable_id"
   add_index "profiles", ["profileable_type", "profileable_id"], name: "index_profiles_on_profileable_type_and_profileable_id"
 
+<<<<<<< HEAD
   create_table "twitters", force: :cascade do |t|
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
 
+=======
+>>>>>>> origin/master
   create_table "users", force: :cascade do |t|
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false

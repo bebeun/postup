@@ -17,5 +17,5 @@ class Post < ActiveRecord::Base
 			errors.add("You can t support or unsupport a post you have written") 
 		end
 	end
-	#validates :creator, uniqueness: {scope: [:conversation]} ... et en plus index à mettre sur la table
+
 end

@@ -31,6 +31,7 @@ end
 	potentialuser.profile = Profile.create!()
 	potentialuser.profile.identable = Facebook.create!(description: description)
 	potentialuser.save!
+<<<<<<< HEAD
 
 end
 
@@ -49,6 +50,16 @@ end
 	conversation.posts << post
 	conversation.save!
 
+=======
+
+end
+	
+	conversation = Conversation.new()
+	post = Post.new(conversation: conversation, creator_id: "3", title: "coucou", content: "coucoucouocu")
+	conversation.posts << post
+	conversation.save!
+	
+>>>>>>> origin/master
 	#callout = Callout.new(conversation: conversation, calloutable_id: "5", calloutable_type:"User")
 	#callout.users << User.find("8")
 	#callout.save!

@@ -8,6 +8,7 @@ class PostsController < ApplicationController
 		else
 			@call = Call.new()
 			if @conversation.posts.any? || @conversation.calls.any? 
+
 				render '/conversations/show'
 			else
 				render '/conversations/new'
