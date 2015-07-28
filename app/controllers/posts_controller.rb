@@ -8,7 +8,6 @@ class PostsController < ApplicationController
 		else
 			@call = Call.new()
 			if @conversation.posts.any? || @conversation.calls.any? 
-
 				render '/conversations/show'
 			else
 				render '/conversations/new'
@@ -39,7 +38,6 @@ class PostsController < ApplicationController
 		end
 	end
 
-	
 	def support
 		@post = Post.find(params[:id])
 		@post.unsupporters.delete(current_user) if @post.unsupporters.include?(current_user)

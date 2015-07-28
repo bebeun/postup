@@ -18,7 +18,7 @@
 	<%= f.submit %>
 <% end %>
 
-<%= link_to "Delete this post",  url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete if (user_signed_in? && fff.creator == current_user)%>
+<%= button_to "Delete this post",  url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete, form_class: "button_link" if (user_signed_in? && fff.creator == current_user)%>
 <br/>Supported by: <% fff.supporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
 <br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
 <br/> <%= link_to "Cancel", fff.conversation %> 
