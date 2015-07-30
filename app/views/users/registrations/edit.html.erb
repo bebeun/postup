@@ -24,7 +24,14 @@
 	 <%= f.submit %>
 	<br/>
 <% end %>
+<br/><br/>
+Or go through the take over procedure:<br/>
+<% PotentialUser.all.collect{|p| p.profile}.select{|p| p.identable_type == "Facebook"}.each do |p|%>
+	<%= link_to p.identable.description, new_facebook_facebook_activation_path( p.identable) %><br/>
+<% end %>
+<br/><br/>
 
+			
 
 <h2>Edit your details</h2>
 

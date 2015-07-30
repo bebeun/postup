@@ -13,4 +13,11 @@ class Facebook < ActiveRecord::Base
 	
 	validates :description, presence: true, allow_blank: false
 	validates_uniqueness_of :description, :case_sensitive => false, :message => "This Facebook description has already been taken"
+	
+	has_many :facebook_activations
+	
+	# Sends activation email.
+	def send_activation_email
+		PostMailer.post_validation(self).deliver_now
+	end
 end

@@ -18,6 +18,8 @@ class User < ActiveRecord::Base
 	
 	validates :name, presence: true
 	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
+	
+	has_many :facebook_activations
 end	
 
 

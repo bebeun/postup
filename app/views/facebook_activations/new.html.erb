@@ -1,0 +1,12 @@
+<% provide(:title, "New Facebook Activation") %>
+
+Confirm this profile is yours:<br/><br/>
+www.facebook.com/<%= @facebook.description %><br/><br/>
+We will send an email to <%= @facebook.description%>@facebook.com<br/><br/>
+Once you have received it, please click on the activation link to attach this facebook identity to your PostUp profile.<br/><br/>
+Note this will erased any Facebook validations profile you have made before and which are pending...<br/><br/>
+And activate your Facebook profile in such a way <b>THAT YOUR <%= @facebook.description%>@facebook.com MAILS ARE FORWARDED TO YOUR CONTACT ADRESS !! </b>
+
+
+<%= button_to "Please send me the activation link !", url_for(controller: 'facebook_activations', action: 'create' ), method: :post %>
+

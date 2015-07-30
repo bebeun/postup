@@ -23,7 +23,13 @@ Rails.application.routes.draw do
   
   post 'profiles/attach_to_user' => 'profiles#attach_to_user' 
   post 'profiles/detach_from_user' => 'profiles#detach_from_user'
-
+  
+  resources :facebooks do #ici ça génère trop de lignes
+	resources :facebook_activations, only: [:new, :create]
+  end
+  
+  get "/facebooks/:facebook_id/facebook_activations/validate" => 'facebook_activations#validate' 
+  
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
