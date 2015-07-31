@@ -4,28 +4,15 @@ class ProfilesController < ApplicationController
 			when !profile_params[:id].nil? 
 				profile = Profile.find(profile_params[:id])
 			when !profile_params[:display].nil?
-				search_key = description_by_display(profile_params[:display])
-				if !search_key.nil? 
-					identable = search_key["category"].constantize.find_by_description(search_key["description"])
-					if(identable.nil?)
-						profile = Profile.new()
-						profile.identable = search_key["category"].constantize.new(description: search_key["description"]) 
-					else
-						profile = identable.profile
-					end
-				else
-					#"==================> erreur car aucun profil reconnu dans ce display"
-					# ??? .errors[:base] << "No Profil matches your input"
-				end
+				profile = description_by_display(profile_params[:display])
 		end
-		if !profile.nil?
-			user =  profile.profileable
-			current_user.profiles << profile
-			user.destroy! if user.class.name == "PotentialUser"
+		if !profile.nil?  &&  profile.identable_type == "Facebook"
+			redirect_to new_facebook_facebook_activation_path(profile.identable) and return
 		end
-		
+		profile.add_profile_to(current_user) if !profile.nil? 
 		@profile = Profile.new()
 		redirect_to edit_user_registration_path
+		
 	end
 	
 	

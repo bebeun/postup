@@ -5,29 +5,18 @@ class CallsController < ApplicationController
 		@call = Call.new()	
 		case	
 			when !call_params[:display].nil?
-				search_key = description_by_display(call_params[:display])
-				if(!search_key.nil?)
-					identable = search_key["category"].constantize.find_by_description(search_key["description"])
-					if(identable.nil?)
-						profile = Profile.new()
-						profile.identable = search_key["category"].constantize.new(description: search_key["description"]) 
-						user = PotentialUser.new()
-						user.profile = profile
-					else
-						profile = identable.profile
-						user = profile.profileable
-					end
-					@call = Call.find_or_initialize_by( conversation: @conversation, callable: user ) 
+				profile = description_by_display(call_params[:display])
+				if !profile.nil?
+					@call = Call.find_or_initialize_by( conversation: @conversation, callable: profile.profileable) 
 					@call.supporters << current_user
-				else
-					#@call.errors[:base] << "No Profil matches your input"
 				end
+				
 			when !call_params[:callable_id].nil? && !call_params[:callable_type].nil?
 				@call = Call.find_or_initialize_by( conversation: @conversation, callable_id: call_params[:callable_id], callable_type: call_params[:callable_type] ) 
 				@call.supporters << current_user
 		end
 		
-		if @call.save && (!search_key.nil? || (!call_params[:callable_id].nil? && !call_params[:callable_type].nil?))
+		if @call.save && (!profile.nil? || (!call_params[:callable_id].nil? && !call_params[:callable_type].nil?))
 			redirect_to @conversation
 		else
 			@post = Post.new()	
