@@ -25,7 +25,8 @@ Rails.application.routes.draw do
   post 'profiles/detach_from_user' => 'profiles#detach_from_user'
   
   resources :facebooks do #ici ça génère trop de lignes
-	resources :facebook_activations, only: [:new, :create]
+		resources :facebook_activations, only: [:new, :create]
+		get "/facebook_activations/:id/report_as_abusive" => 'facebook_activations#report_as_abusive' 
   end
   
   get "/facebooks/:facebook_id/facebook_activations/validate" => 'facebook_activations#validate' 

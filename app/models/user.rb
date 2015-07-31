@@ -33,6 +33,9 @@ class User < ActiveRecord::Base
 	def has_pending_facebook_activations?(facebook)
 		facebook.facebook_activations.collect{|fba| fba.user}.include?(self)
 	end
+	def has_been_reported_for_facebook?(facebook)
+		facebook.facebook_activations.select{|fba| fba.user == current_user}.select{|fba| fba.reported}.any?
+	end
 	def has_recent_facebook_activations?(facebook)
 		facebook.facebook_activations.where("upadated_at > ?", 2.minutes.ago).collect{|fba| fba.user}.include?(self)
 	end

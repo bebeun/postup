@@ -20,7 +20,6 @@ class ProfilesController < ApplicationController
 		profile = Profile.find(params[:id])
 		if !profile.nil?  &&  profile.identable_type == "Facebook"
 			facebook_activation = FacebookActivation.find_by(facebook: profile.identable, user: current_user )
-			puts "============================>"+facebook_activation.inspect.to_s
 			facebook_activation.destroy if !facebook_activation.nil?
 		end
 		user = PotentialUser.new()

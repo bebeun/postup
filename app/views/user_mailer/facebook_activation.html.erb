@@ -2,7 +2,8 @@
 
 <p>
 Your are receiving this email because <%= @name %> member of PostUp asked to take control over your Facebook profil.<br/>
-If you are <%= @name %> , click on the link below to confirm this request. Otherwise, do nothing !!<br/>
-Please click on this link: <%= link_to "I confirm this is my Facebook profile", @url_defined %>
+If you are <%= @name %> , click on the link below to confirm this request.<br/>
+Please click on this link: <%= link_to "I confirm this is my Facebook profile", @url_defined %><br/>
+To report this action as abusive, please click this link: <%= link_to "This is an abusive request", @url_report %>
 </p>
 

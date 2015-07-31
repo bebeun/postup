@@ -24,7 +24,7 @@ class FacebookActivationsController < ApplicationController
 		if cond1 || cond2 || cond3 || cond4
 			flash[:info] = "You can t do this"	
 		else
-			facebook_activation = FacebookActivation.create(facebook: facebook, user: current_user, token: SecureRandom.urlsafe_base64(64, false))	
+			facebook_activation = FacebookActivation.create(facebook: facebook, user: current_user, mailnumber: 1)	
 			UserMailer.facebook_activation(facebook_activation, current_user).deliver_now
 			flash[:info] = "Please check the Email attached to this Facebook profile"	
 		end
@@ -33,16 +33,19 @@ class FacebookActivationsController < ApplicationController
 	
 	def resend
 		redirect_to root_path and return if(!user_signed_in?)
-		facebook_activation = FacebookActivation.find_by(params[:id])
+		facebook_activation = FacebookActivation.find(params[:id])
 		
 		cond1 = facebook_activation.nil?   												#if the activation was never created
 		cond2 = !current_user.has_this_facebook_activation?(facebook_activation)		#or was created by another user (not current_user)
 		cond3 = facebook_activation.activated											#or is already activated
-		
-		if cond1 || cond2 || cond3 
+		cond4 = facebook_activation.mailnumber > 4										#or too many activation mails sent
+		cond5 = facebook_activation.reported											#the activation has been reported as fraudulent
+				
+		if cond1 || cond2 || cond3 || cond4 || cond5
 			flash[:info] = "There is a problem" 
 		else
 			facebook_activation.touch	
+			facebook_activation.increment!(:mailnumber)
 			UserMailer.facebook_activation(facebook_activation, current_user).deliver_now
 			flash[:info] = "Please check the Email attached to this Facebook profile"
 		end
@@ -52,13 +55,15 @@ class FacebookActivationsController < ApplicationController
 	
 	def validate
 		redirect_to root_path and return if(!user_signed_in?)	 #friendly redirect	
-		facebook_activation = FacebookActivation.find_by(token: params["token"], facebook_id: params["facebook_id"], user_id: params["uid"] )
-	
-		cond1 = facebook_activation.nil?   												#if the activation was never created
+		facebook_activation = FacebookActivation.find_by(token: params[:token], facebook_id: params[:facebook_id], user_id: params[:uid] )
+		facebook = Facebook.find(params[:facebook_id])
+		
+		cond1 = facebook_activation.nil? || facebook.nil?								#if the activation was never created or the facebook doesn t exist
 		cond2 = !current_user.has_this_facebook_activation?(facebook_activation)		#or was created by another user (not current_user)
 		cond3 = facebook_activation.activated											#or is already activated
+		cond4 = facebook_activation.reported											#the activation has been reported as fraudulent
 		
-		if cond1 || cond2 || cond3 
+		if cond1 || cond2 || cond3  || cond4
 			flash[:info] = "There is a problem" 
 		else
 			flash[:info] = "The Facebook profil: www.facebook.com/"+facebook_activation.facebook.description+" is now yours!!!"	
@@ -68,19 +73,37 @@ class FacebookActivationsController < ApplicationController
 		redirect_to edit_user_registration_path(current_user) 
 	end
 	
+	def report_as_abusive
+		facebook_activation = FacebookActivation.find(params[:id] )
+		facebook = Facebook.find(params[:facebook_id])
+	
+		cond1 = facebook_activation.nil? || facebook.nil?								#if the activation was never created or the facebook doesn t exist
+		cond2 = facebook_activation.activated											#or is already activated
+		cond3 = facebook_activation.reported											#the activation has been reported as fraudulent
+		
+		if cond1 || cond2
+			flash[:info] = "There is a problem" 
+		else
+			if !cond3
+				facebook_activation.update_attribute(:reported, true) 
+				flash[:info] = "This Facebook Activation is cancelled and reported. www.facebook.com/"+facebook_activation.facebook.description+" isn't owned by "+facebook_activation.user.name
+			else
+				flash[:info] = "This Facebook Activation is has already been reported. www.facebook.com/"+facebook_activation.facebook.description+" isn't owned by "+facebook_activation.user.name
+			end
+		end
+		redirect_to root_path	
+	end
+	
 	def cancel
 		redirect_to root_path and return if(!user_signed_in?)
-		facebook_activation = FacebookActivation.find_by(params[:id])
+		facebook_activation = FacebookActivation.find(params[:id])
 		
 		cond1 = facebook_activation.nil?   												#if the activation was never created
 		cond2 = !current_user.has_this_facebook_activation?(facebook_activation)		#or was created by another user (not current_user)
 		cond3 = facebook_activation.activated											#or is already activated
+		cond4 = facebook_activation.reported											#the activation has been reported as fraudulent
 		
-		puts "cond1 =>>>>>>>>>>"+cond1.to_s
-		puts "cond2 =>>>>>>>>>>"+cond2.to_s
-		puts "cond3 =>>>>>>>>>>"+cond3.to_s
-		
-		if cond1 || cond2 || cond3 
+		if cond1 || cond2 || cond3 || cond4
 			flash[:info] = "There is a problem" 
 		else
 			facebook_activation.destroy
@@ -88,6 +111,4 @@ class FacebookActivationsController < ApplicationController
 		end
 		redirect_to edit_user_registration_path(current_user)	
 	end
-	
-#detach from user ==============> destroy fba associé
 end

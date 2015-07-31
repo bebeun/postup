@@ -23,7 +23,7 @@ FOR FACEBOOK
 			PotentialUser.all.collect{|p| p.profile}.  \
 			select{|p| p.identable_type == "Facebook"}.  \
 			collect{|p| p.identable}.  \
-			select{|p| !current_user.has_this_identable?(p) && !current_user.has_pending_facebook_activations?(p)}.  \
+			select{|p| !current_user.has_this_identable?(p) && !current_user.has_pending_facebook_activations?(p) && !current_user.has_been_reported_for_facebook?(p)}.  \
 			collect{|p| [p.description,new_facebook_facebook_activation_path(p) ]}  \
 		, {prompt: 'Select FB Profile'},   \
 		:onchange => "window.location.href=this.value")   \
@@ -37,20 +37,31 @@ FOR FACEBOOK
 	
 	<%= text_field_tag 'profile[display]', 'Entire a new profile URL...' %>
 	
-	 <%= f.submit %>
+	 <%= f.submit "Add this profile"%>
 	<br/>
 <% end %>
 
 
 <br/>
-<%= "You already asked for these profils: " if current_user.facebook_activations.any? %>
+<%= "You already asked for these profils: " if current_user.facebook_activations.where(user: current_user, activated: false, reported: false).any? %>
 <ul>
-<% FacebookActivation.all.where(user: current_user, activated: false).each do |p|%>
+<% FacebookActivation.all.where(user: current_user, activated: false, reported: false).each do |p|%>
 	<li><%= p.facebook.description %><i><%= " (Already asked for this profil "+time_ago_in_words(p.updated_at)+" ago)" %></i>
-	<%= button_to "Resend email",  url_for(controller: '/facebook_activations', action: 'resend', id: p), method: :post, form_class: "button_link" if p.updated_at < 2.minutes.ago %>
-	<%= button_to "Cancel Facebook request",  url_for(controller: '/facebook_activations', action: 'cancel', id: p), method: :delete, form_class: "button_link" %>
+	<%= button_to "Resend email",  url_for(controller: '/facebook_activations', action: 'resend', id: p), method: :post, form_class: "button_link" if p.updated_at < 2.minutes.ago && p.mailnumber <= 4 %>
+	<% if p.mailnumber >= 2 &&  p.mailnumber <= 4 %>
+		<br/><%= ( "You have already requested #{p.mailnumber} mails. Caution because you might hit a block. Still have a problem? Consult: ") %>
+		<i><a href="https://www.facebook.com/help/224049364288051" target="blank" >FB instructions about mails @facebook.com</a></i>
+	<% end %>
+	<% if p.mailnumber == 5 %>
+		<br/><%= ( "You have already requested #{p.mailnumber} mails. You can't send more. Still have a problem? Consult: ") %>
+		<i><a href="https://www.facebook.com/help/224049364288051" target="blank" >FB instructions about mails @facebook.com</a></i>
+	<% end %>
+	<%= (button_to "Cancel Facebook request",  url_for(controller: '/facebook_activations', action: 'cancel', id: p), method: :delete, form_class: "button_link")  %>
 	</li>
 <% end %>
+
+
+
 </ul>
 <br/><br/>
 
