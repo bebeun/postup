@@ -20,6 +20,28 @@ class User < ActiveRecord::Base
 	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
 	
 	has_many :facebook_activations
+	
+	def has_this_identable?(identable)
+		self.profiles.collect{|x| x.identable}.include?(identable)
+	end
+	def has_this_profile?(profile)
+		self.profiles.include?(profile)
+	end
+	def has_this_facebook_activation?(facebook_activation)
+		self.id == facebook_activation.user.id
+	end
+	def has_pending_facebook_activations?(facebook)
+		facebook.facebook_activations.collect{|fba| fba.user}.include?(self)
+	end
+	def has_recent_facebook_activations?(facebook)
+		facebook.facebook_activations.where("upadated_at > ?", 2.minutes.ago).collect{|fba| fba.user}.include?(self)
+	end
+	def is_user?
+		true
+	end
+	def is_potential_user?
+		false
+	end
 end	
 
 

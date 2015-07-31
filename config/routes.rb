@@ -30,6 +30,9 @@ Rails.application.routes.draw do
   
   get "/facebooks/:facebook_id/facebook_activations/validate" => 'facebook_activations#validate' 
   
+  post "/facebook_activations/:id/resend" => 'facebook_activations#resend' 
+  delete "/facebook_activations/:id/cancel" => 'facebook_activations#cancel' 
+  
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

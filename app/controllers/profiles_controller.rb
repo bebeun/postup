@@ -17,11 +17,16 @@ class ProfilesController < ApplicationController
 	
 	
 	def detach_from_user
-		@profile = Profile.find(params[:id])
-		@user = PotentialUser.new()
-		current_user.profiles.delete(@profile)
-		@user.profile = @profile
-		@user.save
+		profile = Profile.find(params[:id])
+		if !profile.nil?  &&  profile.identable_type == "Facebook"
+			facebook_activation = FacebookActivation.find_by(facebook: profile.identable, user: current_user )
+			puts "============================>"+facebook_activation.inspect.to_s
+			facebook_activation.destroy if !facebook_activation.nil?
+		end
+		user = PotentialUser.new()
+		current_user.profiles.delete(profile)
+		user.profile = profile
+		user.save
 		redirect_to edit_user_registration_path
 	end
 	

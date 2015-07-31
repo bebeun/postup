@@ -10,14 +10,25 @@
 
 <h3>Add other profiles</h3>
 
+FOR TWITTER:
 <%= form_for(@profile, url: profiles_attach_to_user_path, html: { method: :post }) do |f| %>
 	Select the Profile you want to make yours: <br/> 
 	<%= select("profile", "id", PotentialUser.all.collect{|p| p.profile}.select{|p| p.identable_type == "Twitter"}.collect{|p| [p.identable_type+" : "+p.identable.description, p.id ]}, {prompt: 'Select Profile'}, :onchange => "this.form.submit()") %><br/><br/>
 <% end %>
 
+FOR FACEBOOK
 <%= form_for(@profile, url: profiles_attach_to_user_path, html: { method: :post }) do |f| %>
 	Select the Profile you want to make yours: <br/> 
-	<%= select("profile", "id", PotentialUser.all.collect{|p| p.profile}.select{|p| p.identable_type == "Facebook"}.collect{|p| [p.identable.description,new_facebook_facebook_activation_path(p.identable) ]}, {prompt: 'Select FB Profile'}, :onchange => "window.location.href=this.value") %><br/><br/>
+	<%= select("profile", "id", \
+			PotentialUser.all.collect{|p| p.profile}.  \
+			select{|p| p.identable_type == "Facebook"}.  \
+			collect{|p| p.identable}.  \
+			select{|p| !current_user.has_this_identable?(p) && !current_user.has_pending_facebook_activations?(p)}.  \
+			collect{|p| [p.description,new_facebook_facebook_activation_path(p) ]}  \
+		, {prompt: 'Select FB Profile'},   \
+		:onchange => "window.location.href=this.value")   \
+	%>
+	<br/><br/>
 <% end %>
 
 <%= form_for(@profile, url: profiles_attach_to_user_path, html: { method: :post }) do |f| %>
@@ -31,11 +42,14 @@
 <% end %>
 
 
-<br/><br/>
-You already asked for these profils:<br/>
+<br/>
+<%= "You already asked for these profils: " if current_user.facebook_activations.any? %>
 <ul>
-<% FacebookActivation.all.where(user: current_user).each do |p|%>
-	<li><%= p.facebook.description %><i><%= " (Already asked for this profil "+time_ago_in_words(p.created_at)+" ago)" %></i></li>
+<% FacebookActivation.all.where(user: current_user, activated: false).each do |p|%>
+	<li><%= p.facebook.description %><i><%= " (Already asked for this profil "+time_ago_in_words(p.updated_at)+" ago)" %></i>
+	<%= button_to "Resend email",  url_for(controller: '/facebook_activations', action: 'resend', id: p), method: :post, form_class: "button_link" if p.updated_at < 2.minutes.ago %>
+	<%= button_to "Cancel Facebook request",  url_for(controller: '/facebook_activations', action: 'cancel', id: p), method: :delete, form_class: "button_link" %>
+	</li>
 <% end %>
 </ul>
 <br/><br/>
