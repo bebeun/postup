@@ -26,7 +26,8 @@ Rails.application.routes.draw do
   
   resources :facebooks do #ici ça génère trop de lignes
 		resources :facebook_activations, only: [:new, :create]
-		get "/facebook_activations/:id/report_as_abusive" => 'facebook_activations#report_as_abusive' 
+		get "/facebook_activations/:id/report_page" => 'facebook_activations#report_page' 
+		post "/facebook_activations/:id/report_as_abusive" => 'facebook_activations#report_as_abusive'
   end
   
   get "/facebooks/:facebook_id/facebook_activations/validate" => 'facebook_activations#validate' 
