@@ -67,6 +67,10 @@ class FacebookActivationsController < ApplicationController
 			flash[:info] = "There is a problem" 
 		else
 			flash[:info] = "The Facebook profil: www.facebook.com/"+facebook_activation.facebook.description+" is now yours!!!"	
+			puts "===================>tous : "+FacebookActivation.all.where(facebook_id: params[:facebook_id]).where.not(id: facebook_activation.id).inspect.to_s
+			fbas_to_destroy = FacebookActivation.all.where(facebook_id: params[:facebook_id]).where.not(id: facebook_activation.id)
+			puts "===================>fbas_to_destroy : "+fbas_to_destroy.inspect.to_s	
+			fbas_to_destroy.destroy_all
 			facebook_activation.update_attribute(:activated, true)
 			facebook_activation.facebook.profile.add_profile_to(current_user)
 		end
