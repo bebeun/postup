@@ -4,7 +4,7 @@
 <h3>Your current profiles</h3>
 <ul>
 	<% @current_user.profiles.each do |ff| %>
-		<li> <%= ff.identable_type+" : "+ff.identable.description %> <%= button_to "Remove", url_for(controller: '/profiles', action: 'detach_from_user' ), method: :post, params: { id: ff}, form_class: "button_link" %></li>
+		<li> <%= ff.identable_type+" : "+ff.identable.description %> <%= button_to "Remove", url_for(controller: '/profiles', action: 'detach_from_user' ), method: :post, data: { confirm: "Are you sure? This can not be undone" }, params: { id: ff}, form_class: "button_link" %></li>
 	<% end %>	
 </ul>
 

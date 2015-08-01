@@ -3,25 +3,29 @@ class FacebookActivationsController < ApplicationController
 		redirect_to root_path and return if(!user_signed_in?)#return root for not logged users
 		@facebook = Facebook.find(params[:facebook_id])	
 		
-		cond1 = @facebook.nil?												#refuse access to new fba page if facebook doesn't exist
-		cond2 = current_user.has_pending_facebook_activations?(@facebook)	#refuse access to new fba page if user already asked for this facebook
-		cond3 = current_user.has_this_identable?(@facebook)					#refuse access to new fba page if user already owns this facebook
-		cond4 = @facebook.profile.profileable.is_user?						#refuse access to new fba page if this facebook is already owned by a User
+		cond1 = @facebook.nil?																	#refuse access to new fba page if facebook doesn't exist
+		cond2 = current_user.has_pending_facebook_activations?(@facebook)						#refuse access to new fba page if user already asked for this facebook
+		cond3 = current_user.has_this_identable?(@facebook)										#refuse access to new fba page if user already owns this facebook
+		cond4 = @facebook.profile.profileable.is_user?											#refuse access to new fba page if this facebook is already owned by a User
+		cond5 = @facebook.facebook_activations.where(user: current_user, reported: true).any?	#this user already ask for this facebook and this was reported
 
-		redirect_to edit_user_registration_path(current_user) and return if cond1 || cond2 || cond3 || cond4
+		puts "===========================> là : "+cond5.to_s
+		
+		redirect_to edit_user_registration_path(current_user) and return if cond1 || cond2 || cond3 || cond4 || cond5
 		@facebook_activation = FacebookActivation.new()
 	end
 
 	def create		
 		redirect_to root_path and return if(!user_signed_in?)
 		facebook = Facebook.find(params[:facebook_id])
-		
-		cond1 = facebook.nil?												#refuse to create fba if facebook doesn't exist
-		cond2 = current_user.has_pending_facebook_activations?(facebook)	#refuse to create fba if user already asked for this facebook
-		cond3 = current_user.has_this_identable?(facebook)					#refuse to create fba if user already owns this facebook
-		cond4 = facebook.profile.profileable.is_user?						#refuse to create fba if this facebook is already owned by a User
+				
+		cond1 = facebook.nil?																	#refuse to create fba if facebook doesn't exist
+		cond2 = current_user.has_pending_facebook_activations?(facebook)						#refuse to create fba if user already asked for this facebook
+		cond3 = current_user.has_this_identable?(facebook)										#refuse to create fba if user already owns this facebook
+		cond4 = facebook.profile.profileable.is_user?											#refuse to create fba if this facebook is already owned by a User
+		cond5 = facebook.facebook_activations.where(user: current_user, reported: true).any?	#this user already ask for this facebook and this was reported
 
-		if cond1 || cond2 || cond3 || cond4
+		if cond1 || cond2 || cond3 || cond4 || cond5
 			flash[:info] = "You can t do this"	
 		else
 			facebook_activation = FacebookActivation.create(facebook: facebook, user: current_user, mailnumber: 1)	
@@ -67,10 +71,7 @@ class FacebookActivationsController < ApplicationController
 			flash[:info] = "There is a problem" 
 		else
 			flash[:info] = "The Facebook profil: www.facebook.com/"+facebook_activation.facebook.description+" is now yours!!!"	
-			puts "===================>tous : "+FacebookActivation.all.where(facebook_id: params[:facebook_id]).where.not(id: facebook_activation.id).inspect.to_s
-			fbas_to_destroy = FacebookActivation.all.where(facebook_id: params[:facebook_id]).where.not(id: facebook_activation.id)
-			puts "===================>fbas_to_destroy : "+fbas_to_destroy.inspect.to_s	
-			fbas_to_destroy.destroy_all
+			FacebookActivation.all.where(facebook_id: params[:facebook_id]).where.not(id: facebook_activation.id).destroy_all
 			facebook_activation.update_attribute(:activated, true)
 			facebook_activation.facebook.profile.add_profile_to(current_user)
 		end

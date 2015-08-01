@@ -4,6 +4,6 @@ Confirm you want to report this Facebook Profile Activation:<br/><br/>
 <%= @facebook_activation.user.name %> has requested to take hand over this Facebook profile:<br/><br/><b>www.facebook.com/<%=@facebook_activation.facebook.description%></b><br/><br/>
 If you confirm that you are not <%=@facebook_activation.user.name %> and that <%=@facebook_activation.user.name %> request is fraudulent, please click on the link below:<br/><br/>
 
-<%= button_to "I confirm this is a fraudulent request.",  url_for(controller: 'facebook_activations', action: 'report_as_abusive', id: @facebook_activation, facebook: @facebook_activation.facebook, token: @facebook_activation.token), method: :post %>
+<%= button_to "I confirm this is a fraudulent request. I understand this report can not be undone.",  url_for(controller: 'facebook_activations', action: 'report_as_abusive', id: @facebook_activation, facebook: @facebook_activation.facebook, token: @facebook_activation.token), method: :post %>
 <br/>Otherwise, click below to cancel this report.<br/><br/>
 <%= button_to "Cancel",  root_path %>
