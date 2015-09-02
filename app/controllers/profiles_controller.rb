@@ -11,7 +11,7 @@ class ProfilesController < ApplicationController
 		end
 		profile.add_profile_to(current_user) if !profile.nil? 
 		@profile = Profile.new()
-		redirect_to edit_user_registration_path
+		redirect_to :back
 		
 	end
 	
@@ -26,7 +26,7 @@ class ProfilesController < ApplicationController
 		current_user.profiles.delete(profile)
 		user.profile = profile
 		user.save
-		redirect_to edit_user_registration_path
+		redirect_to :back
 	end
 	
 	private

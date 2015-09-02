@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { sessions: "users/sessions", registrations: "users/registrations", passwords: "users/passwords"}
   resources :users, only: [ :show] 
+  resources :potential_users, only: [ :show]
   
   root 'static_pages#home'
   resources :conversations, only: [:new, :show] 
@@ -34,6 +35,13 @@ Rails.application.routes.draw do
   
   post "/facebook_activations/:id/resend" => 'facebook_activations#resend' 
   delete "/facebook_activations/:id/cancel" => 'facebook_activations#cancel' 
+  
+  post "/users/:id/support" => 'users#support'
+  post "/potential_users/:id/support" => 'potential_users#support'
+  post "/users/:id/unsupport" => 'users#unsupport'
+  post "/potential_users/:id/unsupport" => 'potential_users#unsupport'
+  delete "/users/:id/remove_support" => 'users#remove_support'
+  delete "/potential_users/:id/remove_support" => 'potential_users#remove_support'
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

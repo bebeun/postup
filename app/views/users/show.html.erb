@@ -1,3 +1,8 @@
 <% provide(:title, "Show User") %>
 
+
+<%= render '/users/show_supports', :user => @user %>
+<%= render '/users/show_profiles', :user => @user %>
+
+<h1>Conversations: </h1>
 <%= @conversations.inspect.to_s %>

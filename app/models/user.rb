@@ -8,6 +8,32 @@ class User < ActiveRecord::Base
 	
 	has_many :post_actions
 	has_many :postsupports, through: :post_actions, source: "post", class_name: "Post"
+	
+    has_many :user_actions
+    
+	has_many :user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'User'
+    has_many :potential_user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser'
+
+	has_many :user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'User'
+    has_many :potential_user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser'
+		
+	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
+	
+	def supporters
+		self.user_actions_supporters.select{|x| x.support == "up" }.collect{|x| x.user}
+	end
+	
+	def unsupporters
+		self.user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.user}
+	end
+	
+	def supporting
+		self.user_supports + self.potential_user_supports
+	end
+
+	def unsupporting
+		self.user_unsupports + self.potential_user_unsupports
+	end
 
 	has_many :callins, as: :callable, class_name: "Call"
 	

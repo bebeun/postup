@@ -1,6 +1,6 @@
 <%= form_for fff do |f| %>
 
-	<% if @post.errors.any? %>
+	<% if fff.errors.any? %>
 		<%= pluralize(@post.errors.count, "error") %> prohibited this post from being updated:
 		<ul>
 			<% @post.errors.full_messages.each do |msg| %>

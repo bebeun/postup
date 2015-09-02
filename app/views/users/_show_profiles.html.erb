@@ -1,0 +1,10 @@
+<h2>Show User Profiles Partial ------------------------------------ ></h2>
+<ul>
+	<% user.profiles.each do |ff| %>
+		<li> 
+			<%= ff.identable_type+" : "+ff.identable.description %> 
+			<%= button_to "Remove", url_for(controller: '/profiles', action: 'detach_from_user' ), method: :post, data: { confirm: "Are you sure? This can not be undone" }, params: { id: ff}, form_class: "button_link" if user_signed_in? && user == current_user%>
+		</li>
+	<% end %>	
+</ul>
+<h2>------------------------------------------------------------------------  </h2>

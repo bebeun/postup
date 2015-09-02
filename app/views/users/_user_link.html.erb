@@ -1,0 +1,5 @@
+<% if(xx.class.name == "User") %>
+	<%= link_to(xx.name, xx) %>
+<% else %>
+	<%= link_to(xx.profile.identable_type+" : "+xx.profile.identable.description, xx) %>
+<% end %>
