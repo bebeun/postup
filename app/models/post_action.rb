@@ -1,5 +1,5 @@
 class PostAction < ActiveRecord::Base
-	belongs_to :user #author ??
+	belongs_to :user  #creator, :class_name => "User", :foreign_key  => "creator_id"
 	belongs_to :post, :validate => true 
 	validates_uniqueness_of :user_id, :scope => [:post_id],	:message => "Error on the join model. This post already exists"
 	validates :support, presence: true

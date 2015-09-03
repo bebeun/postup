@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150903001718) do
+ActiveRecord::Schema.define(version: 20150903125235) do
 
   create_table "call_actions", force: :cascade do |t|
     t.integer  "user_id"
@@ -62,7 +62,11 @@ ActiveRecord::Schema.define(version: 20150903001718) do
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "owner_id"
+    t.string   "owner_type"
   end
+
+  add_index "facebooks", ["owner_type", "owner_id"], name: "index_facebooks_on_owner_type_and_owner_id"
 
   create_table "post_actions", force: :cascade do |t|
     t.integer  "user_id"
@@ -108,7 +112,11 @@ ActiveRecord::Schema.define(version: 20150903001718) do
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "owner_id"
+    t.string   "owner_type"
   end
+
+  add_index "twitters", ["owner_type", "owner_id"], name: "index_twitters_on_owner_type_and_owner_id"
 
   create_table "user_actions", force: :cascade do |t|
     t.datetime "created_at",       null: false

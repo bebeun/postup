@@ -2,15 +2,35 @@ class User < ActiveRecord::Base
 	devise 	:database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 
 	has_many :profiles, as: :profileable, :validate => true 
+	
+	#extra but without << ------------------
+	has_many :twitters, through: :profiles, source: :identable,  source_type: 'Twitter'
+	has_many :facebooks, through: :profiles, source: :identable,  source_type: 'Facebook'
+	
+	def youpi_profiles
+		self.twitters + self.facebooks
+	end
+	#---------------------------------------
+	
+	#####
+	has_many :youpi_twitters, as: :owner, class_name: "Twitter"
+	has_many :youpi_facebooks, as: :owner, class_name: "Facebook"
+	def youpi_profiles2
+		self.youpi_twitters + self.youpi_facebooks
+	end
+	#####
 
 	has_many :call_actions
 	has_many :callouts, through: :call_actions, source: "call", class_name: "Call"
+	has_many :callins, as: :callable, class_name: "Call"
 	
 	has_many :post_actions
-	has_many :postsupports, through: :post_actions, source: "post", class_name: "Post"
+	has_many :postsupports, through: :post_actions, source: "post", class_name: "Post"	
 	
+	#User support/unsupport User or PotentialUser 
+	#---------------------------------------------------------------------------------------------
     has_many :user_actions
-    
+
 	has_many :user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'User'
     has_many :potential_user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser'
 
@@ -34,11 +54,8 @@ class User < ActiveRecord::Base
 	def unsupporting
 		self.user_unsupports + self.potential_user_unsupports
 	end
-
-	has_many :callins, as: :callable, class_name: "Call"
-	
-	has_many :profiles, as: :profileable, :validate => true #user qui entre son profil fb lui même
-	
+	#--------------------------------------------------------------------------------------------
+		
 	has_many :posts
 	has_many :posts, inverse_of: :creator
 	

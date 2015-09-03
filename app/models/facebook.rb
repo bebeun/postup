@@ -7,6 +7,10 @@ class Facebook < ActiveRecord::Base
 	
 	has_many :facebook_activations
 	
+	#####
+	belongs_to :owner, polymorphic: true
+	#####
+	
 	# Sends activation email.
 	def send_activation_email
 		PostMailer.post_validation(self).deliver_now

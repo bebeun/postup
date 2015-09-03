@@ -1,5 +1,6 @@
 class PotentialUser < ActiveRecord::Base
 	has_many :callins, as: :callable, class_name: "Call"
+	
 	has_one :profile, as: :profileable #, :validate => true
 	validates :profile, presence: true
 	
@@ -19,5 +20,15 @@ class PotentialUser < ActiveRecord::Base
 	def is_user?
 		false
 	end
+	
+	#####
+	has_one :twitter, as: :owner
+	has_one :facebook, as: :owner
+	
+	def youpi_profile2
+		return self.twitter if self.twitter 
+		return self.facebook if self.facebook 
+	end
+	#####
 end
 

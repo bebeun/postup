@@ -1,5 +1,5 @@
 class UserAction < ActiveRecord::Base
-	belongs_to :user #creator, :class_name => "User", :foreign_key => "user_id"
+	belongs_to :user #creator, :class_name => "User", :foreign_key  => "creator_id"
 	
 	belongs_to :supportable, polymorphic: true
 	#belongs_to :user, :class_name => "User", :foreign_key => "supportable_id"
@@ -12,9 +12,7 @@ class UserAction < ActiveRecord::Base
 
 	validates :support, presence: true
 	validates_inclusion_of :support, in: ["up","down"]
-	
-	#validates :refused, :inclusion => {:in => [true, false]}
-	
+		
 	validate :supporter_vs_supported
 	def supporter_vs_supported
 		if user ==  supportable
