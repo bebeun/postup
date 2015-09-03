@@ -11,14 +11,6 @@ class User < ActiveRecord::Base
 		self.twitters + self.facebooks
 	end
 	#---------------------------------------
-	
-	#####
-	has_many :youpi_twitters, as: :owner, class_name: "Twitter"
-	has_many :youpi_facebooks, as: :owner, class_name: "Facebook"
-	def youpi_profiles2
-		self.youpi_twitters + self.youpi_facebooks
-	end
-	#####
 
 	has_many :call_actions
 	has_many :callouts, through: :call_actions, source: "call", class_name: "Call"

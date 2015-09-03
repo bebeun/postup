@@ -10,12 +10,5 @@ class Post < ActiveRecord::Base
 	validates :content, presence: true
 	validates :creator, presence: true
 	validates :conversation, presence: true
-	
-	validate :support_vs_creator
-	def support_vs_creator
-		if supporters.include?(creator) ||  unsupporters.include?(creator) 
-			errors.add("You can t support or unsupport a post you have written") 
-		end
-	end
 
 end

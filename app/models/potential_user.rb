@@ -21,14 +21,5 @@ class PotentialUser < ActiveRecord::Base
 		false
 	end
 	
-	#####
-	has_one :twitter, as: :owner
-	has_one :facebook, as: :owner
-	
-	def youpi_profile2
-		return self.twitter if self.twitter 
-		return self.facebook if self.facebook 
-	end
-	#####
 end
 

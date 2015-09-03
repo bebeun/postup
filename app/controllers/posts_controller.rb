@@ -30,7 +30,7 @@ class PostsController < ApplicationController
 		@post.assign_attributes(post_params)
 		changed = @post.changed?
 		if @post.save
-			@post.supporters.destroy_all and @post.unsupporters.destroy_all if changed
+			@post.supporters.destroy_all and @post.unsupporters.destroy_all and @post.supporters << current_user if changed
 			redirect_to @post.conversation
 		else
 			@conversation = @post.conversation
