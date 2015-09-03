@@ -4,7 +4,7 @@ class Call < ActiveRecord::Base
 	# end
 
 	belongs_to :conversation
-
+	validates :conversation, presence: true
 	
 	has_many :call_actions
 	has_many :supporters, -> { where(call_actions: {support: "up"})}, through: :call_actions, source: "user", class_name: "User"
@@ -14,8 +14,6 @@ class Call < ActiveRecord::Base
 	belongs_to :callable, polymorphic: true, class_name: "::Callout", :validate => true 
 	#validates_inclusion_of :callable_type, in: ["User","PotentialUser"]
 	validates :callable, presence: true	
-	
-	validates :conversation, presence: true
 
 	validate :callable_vs_supporters
 	def callable_vs_supporters

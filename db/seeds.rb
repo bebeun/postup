@@ -25,27 +25,19 @@
 end
 
 5.times do |n|
-	
 	description  = "unknownFB#{n+1}"
 	potentialuser = PotentialUser.new()
 	potentialuser.profile = Profile.create!()
 	potentialuser.profile.identable = Facebook.create!(description: description)
 	potentialuser.save!
-
 end
 
 5.times do |n|
-	
 	description  = "unknownTW#{n+1}"
 	potentialuser = PotentialUser.new()
 	potentialuser.profile = Profile.create!()
 	potentialuser.profile.identable = Twitter.create!(description: description)
 	potentialuser.save!
-
 end
 
-	conversation = Conversation.new()
-	post = Post.new(conversation: conversation, creator_id: "3", title: "Test conversation title", content: "Test content")
-	conversation.posts << post
-	conversation.save!
 

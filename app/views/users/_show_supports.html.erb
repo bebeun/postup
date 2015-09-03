@@ -11,19 +11,19 @@
 	
 <% end %> 
 
-<% if user_signed_in? && user != current_user %> 
+<% if !user_signed_in? || user != current_user %> 
 	<ul>
 		<li><%= user.name %> is supported by:
-			<% user.supporters.each do |x| %><%= render '/users/user_link', :xx => x %><% end %>		
+			<% user.supporters.each do |x| %><%= render '/user_link', :xx => x %><% end %>		
 		</li>
 		<li><%= user.name %> is unsupported by:
-			<% user.unsupporters.each do |x| %><%= render '/users/user_link', :xx => x %><% end %>
+			<% user.unsupporters.each do |x| %><%= render '/user_link', :xx => x %><% end %>
 		</li>
 		<li><%= user.name %> supports:
-			<% user.supporting.each do |x| %><%= render '/users/user_link', :xx => x %><% end %>
+			<% user.supporting.each do |x| %><%= render '/user_link', :xx => x %><% end %>
 		</li>
 		<li><%= user.name %> unsupports:
-			<% user.unsupporting.each do |x| %><%= render '/users/user_link', :xx => x %><% end %>
+			<% user.unsupporting.each do |x| %><%= render '/user_link', :xx => x %><% end %>
 		</li>
 	</ul>
 <% end %> 
@@ -31,16 +31,16 @@
 <% if user_signed_in? && user == current_user %> 
 	<ul>
 		<li>You support: 
-			<% current_user.supporting.each do |x| %><%= render '/users/user_link', :xx => x %><% end %>
+			<% current_user.supporting.each do |x| %><%= render '/user_link', :xx => x %><% end %>
 		</li>
 		<li>You unsupport:
-			<% current_user.unsupporting.each do |x| %><%= render '/users/user_link', :xx => x %><% end %>
+			<% current_user.unsupporting.each do |x| %><%= render '/user_link', :xx => x %><% end %>
 		</li>
 		<li>You are supported by : 
-			<% current_user.supporters.each do |x| %><%= render '/users/user_link', :xx => x %><% end %>
+			<% current_user.supporters.each do |x| %><%= render '/user_link', :xx => x %><% end %>
 		</li>
 		<li>You are unsupported by :
-			<% current_user.unsupporters.each do |x| %><%= render '/users/user_link', :xx => x %><% end %>			
+			<% current_user.unsupporters.each do |x| %><%= render '/user_link', :xx => x %><% end %>			
 		</li>
 	</ul>
 <% end %> 

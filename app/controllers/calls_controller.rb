@@ -1,7 +1,7 @@
 class CallsController < ApplicationController
 
 	def create
-		@conversation = Conversation.find_or_initialize_by(id: params[:conversation_id]) 
+		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))	
 		@call = Call.new()	
 		case	
 			when !call_params[:display].nil?

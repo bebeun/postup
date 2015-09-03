@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150901171604) do
+ActiveRecord::Schema.define(version: 20150903001718) do
 
   create_table "call_actions", force: :cascade do |t|
     t.integer  "user_id"
@@ -39,7 +39,10 @@ ActiveRecord::Schema.define(version: 20150901171604) do
   create_table "conversations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "creator_id"
   end
+
+  add_index "conversations", ["creator_id"], name: "index_conversations_on_creator_id"
 
   create_table "facebook_activations", force: :cascade do |t|
     t.integer  "user_id"

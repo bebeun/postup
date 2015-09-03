@@ -1,9 +1,10 @@
 class PostsController < ApplicationController
 
 	def create
-		(params[:conversation_id].nil?) ? (@conversation = Conversation.new) : (@conversation = Conversation.find(params[:conversation_id]))
+		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))
 		@post = Post.new(post_params.merge(creator: current_user, conversation: @conversation))
 		if @post.save
+			@post.supporters << current_user
 			redirect_to @conversation
 		else
 			@call = Call.new()

@@ -1,14 +1,6 @@
 <% provide(:title, "Show Potential User") %>
-This is <%= @potential_user.profile.identable_type+" : "+@potential_user.profile.identable.description %> profile<br/>
 
-<%= button_to "Support this profile", url_for(controller: 'potential_users', action: 'support', id: @potential_user.id ), method: :post, form_class: "button_link" if user_signed_in? && !@potential_user.supporters.include?(current_user)%>
-<%= button_to "Unsupport this profile", url_for(controller: 'potential_users', action: 'unsupport', id: @potential_user.id ), method: :post, form_class: "button_link"  if user_signed_in? && !@potential_user.unsupporters.include?(current_user) %>
-<%= button_to "Dis support this profile", url_for(controller: 'potential_users', action: 'remove_support', id: @potential_user.id ), method: :delete, form_class: "button_link"  if user_signed_in? &&  @potential_user.supporters.include?(current_user) %>
-<%= button_to "Dis unsupport this profile", url_for(controller: 'potential_users', action: 'remove_support', id: @potential_user.id ), method: :delete, form_class: "button_link"  if user_signed_in? &&  @potential_user.unsupporters.include?(current_user) %>
-<br/>
-
-This profile is supported by <%= @potential_user.supporters.inspect.to_s %>
-This profile  is unsupported by <%= @potential_user.unsupporters.inspect.to_s %>
+<%= render '/potential_users/show_supports', :potential_user => @potential_user %>
 
 <h1>Conversations: </h1>
 <%= @conversations.inspect.to_s %>
