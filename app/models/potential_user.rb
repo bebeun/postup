@@ -13,11 +13,11 @@ class PotentialUser < ActiveRecord::Base
 	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
 	
 	def supporters
-		self.user_actions_supporters.select{|x| x.support == "up"}.collect{|x| x.user}
+		self.user_actions_supporters.select{|x| x.support == "up"}.collect{|x| x.creator}
 	end
 	
 	def unsupporters
-		self.user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.user}
+		self.user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.creator}
 	end
 	
 	def is_potential_user?

@@ -1,7 +1,7 @@
 <% provide(:title, "Show Potential User") %>
 
 
-<%= button_to "Make this profile mine !", profiles_attach_to_user_path, method: :post, params: { "profile[global_id]" => get_global_id(@potential_user.profile) }, form_class: "button_link" if user_signed_in? %>
+<%= button_to "Make this profile mine !", profiles_attach_to_user_path, method: :post, params: { "profile[global_id]" => get_profile_global_id(@potential_user.profile) }, form_class: "button_link" if user_signed_in? %>
 
 <%= render '/potential_users/show_supports', :potential_user => @potential_user %>
 

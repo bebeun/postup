@@ -10,6 +10,7 @@ class ProfilesController < ApplicationController
 		if !profile.nil?  &&  profile.class.name == "Facebook"
 			redirect_to new_facebook_facebook_activation_path(profile) and return
 		end
+		
 		#dirty - waiting for omniauth redirect strategy
 		num = profile.owner.id
 		add_profile_to(current_user, profile) if !profile.nil? 

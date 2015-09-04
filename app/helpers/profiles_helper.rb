@@ -30,17 +30,11 @@ module ProfilesHelper
 				x.update_attributes(supportable: user)
 			end
 		end
-		
-		#DIRTY !!!
-		# user.twitters << profile if profile.class.name == "Twitter" 
-		# user.facebooks << profile if profile.class.name == "Facebook"  
-		
 		user.add_profile(profile)
-		
 		user_destroy.destroy! if user_destroy.class.name == "PotentialUser"
 	end
 	
-	def get_global_id(profile)
+	def get_profile_global_id(profile)
 		global_id = 2*profile.id.to_i if profile.class.name == "Twitter" 
 		global_id = 2*profile.id.to_i+1 if profile.class.name == "Facebook"  
 		return global_id

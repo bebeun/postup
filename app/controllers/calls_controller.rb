@@ -12,17 +12,8 @@ class CallsController < ApplicationController
 				end
 				
 			when !call_params[:callable_id].nil? 
-				callable_id = call_params[:callable_id].to_i
-				case
-					#DIRTY
-					when callable_id.to_i % 2 == 0
-						callable_id = callable_id.to_i/2
-						callable_type = "User"
-					when callable_id.to_i % 2 == 1
-						callable_id = (callable_id.to_i-1)/2
-						callable_type = "PotentialUser"
-				end
-				@call = Call.find_or_initialize_by( conversation: @conversation, callable_id: callable_id, callable_type: callable_type) 
+				callable = get_user(call_params[:callable_id])
+				@call = Call.find_or_initialize_by( conversation: @conversation, callable: callable) 
 				@call.supporters << current_user
 		end
 		
@@ -80,6 +71,6 @@ class CallsController < ApplicationController
 
 	private
 		def call_params
-    		params.require(:call).permit(:display, :callable_id, :callable_type)
+    		params.require(:call).permit(:display, :callable_id)
 		end
 end

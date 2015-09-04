@@ -13,7 +13,7 @@ class UsersController < ApplicationController
 	def support
 		user = User.find(params[:id]) 
 		#@user.supporters << current_user
-		user_action = UserAction.find_or_initialize_by(user: current_user, supportable: user)
+		user_action = UserAction.find_or_initialize_by(creator: current_user, supportable: user)
 		user_action.update_attributes(:support => "up")
 		user_action.save!
 		redirect_to user
@@ -21,7 +21,7 @@ class UsersController < ApplicationController
 	
 	def unsupport
 		user = User.find(params[:id]) 
-		user_action = UserAction.find_or_initialize_by(user: current_user, supportable: user)
+		user_action = UserAction.find_or_initialize_by(creator: current_user, supportable: user)
 		user_action.update_attributes(:support => "down")
 		user_action.save!
 		redirect_to user
@@ -29,7 +29,7 @@ class UsersController < ApplicationController
 	
 	def remove_support
 		user = User.find(params[:id]) 
-		user_action = UserAction.find_by(user: current_user, supportable: user)
+		user_action = UserAction.find_by(creator: current_user, supportable: user)
 		user_action.destroy
 		redirect_to user
 	end

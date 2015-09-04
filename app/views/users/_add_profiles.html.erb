@@ -7,12 +7,12 @@ FOR EXISTING PROFILES:
 	<%= select("profile", "global_id", \
 		PotentialUser.all.collect{|p| p.profile}. \
 		select{|p| p.class.name == "Twitter"}. \
-		collect{|p| [p.class.name+" : "+p.description, get_global_id(p) ]} + \
+		collect{|p| [p.class.name+" : "+p.description, get_profile_global_id(p) ]} + \
 		
 		PotentialUser.all.collect{|p| p.profile}. \
 		select{|p| p.class.name == "Facebook"}. \
 		select{|p| !current_user.has_this_profile?(p) && !current_user.has_pending_facebook_activations?(p) && !current_user.has_been_reported_for_facebook?(p)}.  \
-		collect{|p| [p.class.name+" : "+p.description, get_global_id(p) ]} \
+		collect{|p| [p.class.name+" : "+p.description, get_profile_global_id(p) ]} \
 		, {prompt: 'Select Profile'} \
 		,:onchange => "this.form.submit()") \
 	%>

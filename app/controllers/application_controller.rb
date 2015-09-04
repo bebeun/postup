@@ -11,4 +11,5 @@ class ApplicationController < ActionController::Base
 	
 	#including helper
 	include ProfilesHelper
+	include CallsHelper
 end

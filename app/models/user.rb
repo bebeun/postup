@@ -37,11 +37,11 @@ class User < ActiveRecord::Base
 	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
 	
 	def supporters
-		self.user_actions_supporters.select{|x| x.support == "up" }.collect{|x| x.user}
+		self.user_actions_supporters.select{|x| x.support == "up" }.collect{|x| x.creator}
 	end
 	
 	def unsupporters
-		self.user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.user}
+		self.user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.creator}
 	end
 	
 	def supporting
@@ -79,27 +79,3 @@ class User < ActiveRecord::Base
 end	
 
 
-#Before truc...check via regex description...
-	# Include default devise modules. Others available are:
-	# :confirmable, :lockable, :timeoutable and :omniauthable		
-#Callout envoyé
-
-=begin
-	# inverse_of: :users ne marche pas avec through, polymorphic
-	
-	
-	
-There are a few limitations to inverse_of support:
-
-    They do not work with :through associations.
-    They do not work with :polymorphic associations.
-    They do not work with :as associations.
-    For belongs_to associations, has_many inverse associations are ignored.
-
-Every association will attempt to automatically find the inverse association and set the :inverse_of option heuristically (based on the association name). Most associations with standard names will be supported. However, associations that contain the following options will not have their inverses set automatically:
-
-    :conditions
-    :through
-    :polymorphic
-    :foreign_key
-=end
