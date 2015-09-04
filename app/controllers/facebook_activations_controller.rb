@@ -5,12 +5,10 @@ class FacebookActivationsController < ApplicationController
 		
 		cond1 = @facebook.nil?																	#refuse access to new fba page if facebook doesn't exist
 		cond2 = current_user.has_pending_facebook_activations?(@facebook)						#refuse access to new fba page if user already asked for this facebook
-		cond3 = current_user.has_this_identable?(@facebook)										#refuse access to new fba page if user already owns this facebook
-		cond4 = @facebook.profile.profileable.is_user?											#refuse access to new fba page if this facebook is already owned by a User
+		cond3 = current_user.has_this_profile?(@facebook)										#refuse access to new fba page if user already owns this facebook
+		cond4 = @facebook.owner.is_user?														#refuse access to new fba page if this facebook is already owned by a User
 		cond5 = @facebook.facebook_activations.where(user: current_user, reported: true).any?	#this user already ask for this facebook and this was reported
 
-		puts "===========================> là : "+cond5.to_s
-		
 		redirect_to edit_user_registration_path(current_user) and return if cond1 || cond2 || cond3 || cond4 || cond5
 		@facebook_activation = FacebookActivation.new()
 	end
@@ -21,8 +19,8 @@ class FacebookActivationsController < ApplicationController
 				
 		cond1 = facebook.nil?																	#refuse to create fba if facebook doesn't exist
 		cond2 = current_user.has_pending_facebook_activations?(facebook)						#refuse to create fba if user already asked for this facebook
-		cond3 = current_user.has_this_identable?(facebook)										#refuse to create fba if user already owns this facebook
-		cond4 = facebook.profile.profileable.is_user?											#refuse to create fba if this facebook is already owned by a User
+		cond3 = current_user.has_this_profile?(facebook)										#refuse to create fba if user already owns this facebook
+		cond4 = facebook.owner.is_user?															#refuse to create fba if this facebook is already owned by a User
 		cond5 = facebook.facebook_activations.where(user: current_user, reported: true).any?	#this user already ask for this facebook and this was reported
 
 		if cond1 || cond2 || cond3 || cond4 || cond5
@@ -73,7 +71,7 @@ class FacebookActivationsController < ApplicationController
 			flash[:info] = "The Facebook profil: www.facebook.com/"+facebook_activation.facebook.description+" is now yours!!!"	
 			FacebookActivation.all.where(facebook_id: params[:facebook_id]).where.not(id: facebook_activation.id).destroy_all
 			facebook_activation.update_attribute(:activated, true)
-			facebook_activation.facebook.profile.add_profile_to(current_user)
+			add_profile_to(current_user, facebook_activation.facebook)
 		end
 		redirect_to edit_user_registration_path(current_user) 
 	end
@@ -84,10 +82,13 @@ class FacebookActivationsController < ApplicationController
 		cond1 = @facebook_activation.nil? 												#if the activation was never created 
 		cond2 = @facebook_activation.activated											#or is already activated
 		cond3 = @facebook_activation.reported											#the activation has been reported as fraudulent
-		
+		(user_signed_in? ) ? (cond4 = current_user.has_this_facebook_activation?(@facebook_activation)) : (cond4 = false)#current_user certainly made a mistake by trying to report instead of validating the activation
+
 		flash[:info] = "There is a problem" if cond1 || cond2
 		flash[:info] = "This Facebook Activation is has already been reported. www.facebook.com/"+@facebook_activation.facebook.description+" isn't owned by "+@facebook_activation.user.name if cond3
-		redirect_to root_path and return  if cond1 || cond2 || cond3
+		flash[:info] = "Mhhhh...you can t report an activation process you initiated yourself" if cond4
+		
+		redirect_to root_path and return  if cond1 || cond2 || cond3 || cond4
 	end
 	
 	def report_as_abusive

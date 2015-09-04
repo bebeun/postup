@@ -96,18 +96,6 @@ ActiveRecord::Schema.define(version: 20150903125235) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "profiles", force: :cascade do |t|
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-    t.integer  "profileable_id"
-    t.string   "profileable_type"
-    t.integer  "identable_id"
-    t.string   "identable_type"
-  end
-
-  add_index "profiles", ["identable_type", "identable_id"], name: "index_profiles_on_identable_type_and_identable_id"
-  add_index "profiles", ["profileable_type", "profileable_id"], name: "index_profiles_on_profileable_type_and_profileable_id"
-
   create_table "twitters", force: :cascade do |t|
     t.string   "description"
     t.datetime "created_at",  null: false

@@ -11,7 +11,7 @@
 <% else %>
 	<% user =  @conversation.calls.first.callable %>
 	<h1>
-	<%= @conversation.calls.first.supporters.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.identable.description %> 
+	<%= @conversation.calls.first.supporters.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.class.name+" : "+user.profile.description %> 
 	</h1>
 <% end %>
 

@@ -1,34 +1,39 @@
 class User < ActiveRecord::Base
+	# DEVISE
 	devise 	:database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
-
-	has_many :profiles, as: :profileable, :validate => true 
+	validates :name, presence: true
+	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
 	
-	#extra but without << ------------------
-	has_many :twitters, through: :profiles, source: :identable,  source_type: 'Twitter'
-	has_many :facebooks, through: :profiles, source: :identable,  source_type: 'Facebook'
+	# PROFILE Management
+	has_many :twitters, as: :owner, class_name: "Twitter"
+	has_many :facebooks, as: :owner, class_name: "Facebook"
 	
-	def youpi_profiles
-		self.twitters + self.facebooks
+	def profiles 
+		return self.twitters + self.facebooks	
 	end
-	#---------------------------------------
-
+	
+	def add_profile(profile)
+		self.twitters << profile if profile.class.name == "Twitter"
+		self.facebooks << profile if profile.class.name == "Facebook"
+	end
+	
+	# CALL Management
 	has_many :call_actions
 	has_many :callouts, through: :call_actions, source: "call", class_name: "Call"
 	has_many :callins, as: :callable, class_name: "Call"
-	
+
+	# POST Management + POST S/U
+	has_many :posts
+	has_many :posts, inverse_of: :creator
 	has_many :post_actions
 	has_many :postsupports, through: :post_actions, source: "post", class_name: "Post"	
 	
-	#User support/unsupport User or PotentialUser 
-	#---------------------------------------------------------------------------------------------
+	# USER S/U
     has_many :user_actions
-
 	has_many :user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'User'
     has_many :potential_user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser'
-
 	has_many :user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'User'
     has_many :potential_user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser'
-		
 	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
 	
 	def supporters
@@ -46,19 +51,10 @@ class User < ActiveRecord::Base
 	def unsupporting
 		self.user_unsupports + self.potential_user_unsupports
 	end
-	#--------------------------------------------------------------------------------------------
-		
-	has_many :posts
-	has_many :posts, inverse_of: :creator
-	
-	validates :name, presence: true
-	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
-	
+	# FB Activations	
 	has_many :facebook_activations
 	
-	def has_this_identable?(identable)
-		self.profiles.collect{|x| x.identable}.include?(identable)
-	end
+	# Functions
 	def has_this_profile?(profile)
 		self.profiles.include?(profile)
 	end

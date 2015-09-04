@@ -1,7 +1,7 @@
 <h2>Show Call Partial --------------------------- </h2>
 
 <% user =  fff.callable %>
-Callout : 	===> >> <%= user.class.name == "User" ? link_to(user.name, user) : link_to(user.profile.identable_type+" : "+user.profile.identable.description, user ) %>
+Callout : 	===> >> <%= user.class.name == "User" ? link_to(user.name, user) : link_to(user.profile.class.name+" : "+user.profile.description, user ) %>
 
 <%= button_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: fff ), method: :post, form_class: "button_link" if(user_signed_in? && !fff.supporters.include?(current_user))%>
 <%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: fff), method: :delete, form_class: "button_link" if(user_signed_in? && (fff.supporters.include?(current_user)) || fff.unsupporters.include?(current_user))%>

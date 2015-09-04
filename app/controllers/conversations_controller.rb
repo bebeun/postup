@@ -6,7 +6,7 @@ class ConversationsController < ApplicationController
 		else
 			@post = Post.new()
 			@call = Call.new()
-			@profiles = Profile.all - current_user.profiles
+			@profiles = Twitter.all + Facebook.all - current_user.profiles #automatically add all profile type ??
 		end
 	end
 	

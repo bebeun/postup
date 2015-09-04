@@ -1,27 +1,20 @@
 <h2>Add Profiles Partial ------------------------------------ ></h2>
 
-FOR TWITTER:
-<%= form_for(profile, url: profiles_attach_to_user_path, html: { method: :post }) do |f| %>
-	Select the Profile you want to make yours: <br/> 
-	<%= select("profile", "id", \
-		PotentialUser.all.collect{|p| p.profile}. \
-		select{|p| p.identable_type == "Twitter"}. \
-		collect{|p| [p.identable_type+" : "+p.identable.description, p.id ]}, {prompt: 'Select Profile'}, :onchange => "this.form.submit()") \
-	%>
-	<br/><br/>
-<% end %>
 
-FOR FACEBOOK
+FOR EXISTING PROFILES:
 <%= form_for(profile, url: profiles_attach_to_user_path, html: { method: :post }) do |f| %>
 	Select the Profile you want to make yours: <br/> 
-	<%= select("profile", "id", \
-			PotentialUser.all.collect{|p| p.profile}.  \
-			select{|p| p.identable_type == "Facebook"}.  \
-			collect{|p| p.identable}.  \
-			select{|p| !current_user.has_this_identable?(p) && !current_user.has_pending_facebook_activations?(p) && !current_user.has_been_reported_for_facebook?(p)}.  \
-			collect{|p| [p.description,new_facebook_facebook_activation_path(p) ]}  \
-		, {prompt: 'Select FB Profile'},   \
-		:onchange => "window.location.href=this.value")   \
+	<%= select("profile", "global_id", \
+		PotentialUser.all.collect{|p| p.profile}. \
+		select{|p| p.class.name == "Twitter"}. \
+		collect{|p| [p.class.name+" : "+p.description, get_global_id(p) ]} + \
+		
+		PotentialUser.all.collect{|p| p.profile}. \
+		select{|p| p.class.name == "Facebook"}. \
+		select{|p| !current_user.has_this_profile?(p) && !current_user.has_pending_facebook_activations?(p) && !current_user.has_been_reported_for_facebook?(p)}.  \
+		collect{|p| [p.class.name+" : "+p.description, get_global_id(p) ]} \
+		, {prompt: 'Select Profile'} \
+		,:onchange => "this.form.submit()") \
 	%>
 	<br/><br/>
 <% end %>

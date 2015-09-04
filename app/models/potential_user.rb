@@ -1,8 +1,14 @@
 class PotentialUser < ActiveRecord::Base
 	has_many :callins, as: :callable, class_name: "Call"
 	
-	has_one :profile, as: :profileable #, :validate => true
-	validates :profile, presence: true
+	has_one :twitter, as: :owner, class_name: "Twitter"
+	has_one :facebook, as: :owner, class_name: "Facebook"
+	
+	def profile
+		return self.twitter if self.twitter
+		return self.facebook if self.facebook
+	end
+	#validation of a minimum of ONE profile
 	
 	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
 	

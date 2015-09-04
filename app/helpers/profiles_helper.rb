@@ -8,19 +8,48 @@ module ProfilesHelper
 				category = "Twitter"
 				description = display.split('twitter.com')[1].split('/')[1]
 		end
-				
-		return nil if category.nil? || description.nil? 	#in this case, display doesnt match any identable type.
-		
-		identable = category.constantize.find_by_description(description)
-		
-		if !identable.nil? 									#identable and its profile already exist
-			return identable.profile 
-		else  												#one creates a new PotentialUser to attach it to this identable
-			potential_user = PotentialUser.create()
-			potential_user.profile = Profile.new()
-			potential_user.profile.identable =  category.constantize.create(description: description)
-			potential_user.save
-			return potential_user.profile
+		return nil if category.nil? || description.nil? 	#in this case, display doesnt match any profile type.
+		profile = category.constantize.find_by_description(description)
+		if profile.nil? 							
+			profile = category.constantize.new(description: description)
+			profile.owner = PotentialUser.new()
+			profile.save
 		end
+		return profile
+	end
+	
+
+	def add_profile_to(user, profile)
+		user_destroy =  profile.owner
+		user_actions_slaves = UserAction.where(supportable: user_destroy) 	
+		user_actions_masters = UserAction.where(supportable: user)			
+		user_actions_slaves.each do |x|
+			if x.user == user || user_actions_masters.collect{|y| y.user}.include?(x.user)
+				x.destroy
+			else
+				x.update_attributes(supportable: user)
+			end
+		end
+		
+		#DIRTY !!!
+		# user.twitters << profile if profile.class.name == "Twitter" 
+		# user.facebooks << profile if profile.class.name == "Facebook"  
+		
+		user.add_profile(profile)
+		
+		user_destroy.destroy! if user_destroy.class.name == "PotentialUser"
+	end
+	
+	def get_global_id(profile)
+		global_id = 2*profile.id.to_i if profile.class.name == "Twitter" 
+		global_id = 2*profile.id.to_i+1 if profile.class.name == "Facebook"  
+		return global_id
+	end
+	
+	def get_profile(global_id)
+		global_id = global_id.to_i
+		profile = Twitter.find(global_id/2) if global_id % 2 == 0
+		profile = Facebook.find((global_id-1)/2) if global_id % 2 == 1
+		return profile
 	end
 end

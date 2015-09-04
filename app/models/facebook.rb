@@ -1,6 +1,5 @@
 class Facebook < ActiveRecord::Base
-	has_one :profile, :as => :identable
-	
+
 	validates :description, presence: true, allow_blank: false
 	before_save   :downcase_description
 	validates_uniqueness_of :description, :case_sensitive => false, :message => "This Facebook description has already been taken"

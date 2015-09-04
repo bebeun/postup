@@ -9,12 +9,14 @@
 	</ul>
 <% end %>
 
+<%# 2p => USER / 2p+1 => POTENTIAL USER %>
+<%# DIRTY %>
 
 <%= form_for fff do |f| %>
 	Select the Name of the user you want to call out: <br/>
 	<%= select("call", "callable_id", \
-	@User.collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| x.identable_type+" "+x.identable.description }.join(", "), 2*p.id ]} + \
-	@PotentialUser.collect{|p| [ "POTENTIAL USER : "+p.profile.identable_type+" : "+p.profile.identable.description, 2*p.id+1 ]}, \
+	@User.collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| x.class.name+" "+x.description }.join(", "), 2*p.id ]} + \
+	@PotentialUser.collect{|p| [ "POTENTIAL USER : "+p.profile.class.name+" : "+p.profile.description, 2*p.id+1 ]}, \
 	{prompt: 'Select User'}, \
 	:onchange => "this.form.submit()") %>
 	<br/><br/>

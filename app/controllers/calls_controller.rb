@@ -7,13 +7,14 @@ class CallsController < ApplicationController
 			when !call_params[:display].nil?
 				profile = description_by_display(call_params[:display])
 				if !profile.nil?
-					@call = Call.find_or_initialize_by( conversation: @conversation, callable: profile.profileable) 
+					@call = Call.find_or_initialize_by( conversation: @conversation, callable: profile.owner) 
 					@call.supporters << current_user
 				end
 				
 			when !call_params[:callable_id].nil? 
 				callable_id = call_params[:callable_id].to_i
 				case
+					#DIRTY
 					when callable_id.to_i % 2 == 0
 						callable_id = callable_id.to_i/2
 						callable_type = "User"

@@ -1,5 +1,4 @@
 class Twitter < ActiveRecord::Base
-	has_one :profile, :as => :identable
 	
 	validates :description, presence: true, allow_blank: false
 	validates_uniqueness_of :description, :case_sensitive => false, :message => "This Twitter description has already been taken"
