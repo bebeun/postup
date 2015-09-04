@@ -3,7 +3,12 @@
 FOR TWITTER:
 <%= form_for(profile, url: profiles_attach_to_user_path, html: { method: :post }) do |f| %>
 	Select the Profile you want to make yours: <br/> 
-	<%= select("profile", "id", PotentialUser.all.collect{|p| p.profile}.select{|p| p.identable_type == "Twitter"}.collect{|p| [p.identable_type+" : "+p.identable.description, p.id ]}, {prompt: 'Select Profile'}, :onchange => "this.form.submit()") %><br/><br/>
+	<%= select("profile", "id", \
+		PotentialUser.all.collect{|p| p.profile}. \
+		select{|p| p.identable_type == "Twitter"}. \
+		collect{|p| [p.identable_type+" : "+p.identable.description, p.id ]}, {prompt: 'Select Profile'}, :onchange => "this.form.submit()") \
+	%>
+	<br/><br/>
 <% end %>
 
 FOR FACEBOOK

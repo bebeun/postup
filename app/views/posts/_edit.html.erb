@@ -1,3 +1,5 @@
+<h2>Edit Post Partial --------------------------- </h2>
+
 <%= form_for fff do |f| %>
 
 	<% if fff.errors.any? %>
@@ -22,3 +24,5 @@
 <br/>Supported by: <% fff.supporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
 <br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
 <br/> <%= link_to "Cancel", fff.conversation %> 
+
+<h2>------------------------------------------------------ </h2>

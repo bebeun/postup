@@ -11,12 +11,21 @@ class CallsController < ApplicationController
 					@call.supporters << current_user
 				end
 				
-			when !call_params[:callable_id].nil? && !call_params[:callable_type].nil?
-				@call = Call.find_or_initialize_by( conversation: @conversation, callable_id: call_params[:callable_id], callable_type: call_params[:callable_type] ) 
+			when !call_params[:callable_id].nil? 
+				callable_id = call_params[:callable_id].to_i
+				case
+					when callable_id.to_i % 2 == 0
+						callable_id = callable_id.to_i/2
+						callable_type = "User"
+					when callable_id.to_i % 2 == 1
+						callable_id = (callable_id.to_i-1)/2
+						callable_type = "PotentialUser"
+				end
+				@call = Call.find_or_initialize_by( conversation: @conversation, callable_id: callable_id, callable_type: callable_type) 
 				@call.supporters << current_user
 		end
 		
-		if @call.save && (!profile.nil? || (!call_params[:callable_id].nil? && !call_params[:callable_type].nil?))
+		if @call.save && (!profile.nil? || !call_params[:callable_id].nil? )
 			redirect_to @conversation
 		else
 			@post = Post.new()	

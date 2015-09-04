@@ -1,3 +1,5 @@
+<h2>Show Post Partial --------------------------- </h2>
+
 Post : <%= fff.title %>, <%= fff.content %>, <%= link_to fff.creator.name, fff.creator %>
 
 <%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if (user_signed_in? && fff.creator == current_user)%>
@@ -9,3 +11,5 @@ Post : <%= fff.title %>, <%= fff.content %>, <%= link_to fff.creator.name, fff.c
 
 <br/>Supported by: <% fff.supporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
 <br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
+
+<h2>------------------------------------------------------ </h2>

@@ -1,3 +1,5 @@
+<h2>New Call Partial --------------------------- </h2>
+
 <% if @call.errors.any? %>
 	<%= pluralize(@call.errors.count, "error") %> prohibited this conversation from being saved:
 	<ul>
@@ -10,14 +12,12 @@
 
 <%= form_for fff do |f| %>
 	Select the Name of the user you want to call out: <br/>
-	<%= hidden_field_tag("call[callable_type]", "User") %>
-	<%= select("call", "callable_id", @User.collect{|p| [ p.name+" : "+p.profiles.collect{|x| x.identable_type+" "+x.identable.description }.join(", "), p.id ]}, {prompt: 'Select User'}, :onchange => "this.form.submit()") %><br/><br/>
-<% end %>
-
-<%= form_for fff do |f| %>
-	Or select the PotentialUser with its identable description: <br/> 
-	<%= hidden_field_tag("call[callable_type]", "PotentialUser") %>
-	<%= select("call", "callable_id", @PotentialUser.collect{|p| [ p.profile.identable_type+" : "+p.profile.identable.description, p.id ]}, {prompt: 'Select PotentialUser'}, :onchange => "this.form.submit()") %><br/><br/>
+	<%= select("call", "callable_id", \
+	@User.collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| x.identable_type+" "+x.identable.description }.join(", "), 2*p.id ]} + \
+	@PotentialUser.collect{|p| [ "POTENTIAL USER : "+p.profile.identable_type+" : "+p.profile.identable.description, 2*p.id+1 ]}, \
+	{prompt: 'Select User'}, \
+	:onchange => "this.form.submit()") %>
+	<br/><br/>
 <% end %>
 
 
@@ -29,3 +29,5 @@
 	 <%= f.submit %>
 	<br/>
 <% end %>
+
+<h2>--------------------------------------------- </h2>

@@ -1,3 +1,5 @@
+<h2>Show Call Partial --------------------------- </h2>
+
 <% user =  fff.callable %>
 Callout : 	===> >> <%= user.class.name == "User" ? link_to(user.name, user) : link_to(user.profile.identable_type+" : "+user.profile.identable.description, user ) %>
 
@@ -7,6 +9,8 @@ Callout : 	===> >> <%= user.class.name == "User" ? link_to(user.name, user) : li
 	
 <br/>Supported by: <% fff.supporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
 <br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
+
+<h2>------------------------------------------------------ </h2>
 
 
 
