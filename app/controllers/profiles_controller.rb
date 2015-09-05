@@ -10,21 +10,23 @@ class ProfilesController < ApplicationController
 		if !profile.nil?  &&  profile.class.name == "Facebook"
 			redirect_to new_facebook_facebook_activation_path(profile) and return
 		end
-		
-		#dirty - waiting for omniauth redirect strategy
-		num = profile.owner.id
-		add_profile_to(current_user, profile) if !profile.nil? 
-		@profile = Profile.new()
-		
-		#dirty - waiting for omniauth redirect strategy
-		(request.env["HTTP_REFERER"].include?("potential_users/"+num.to_s)) ? (redirect_to edit_user_registration_path) : (redirect_to :back)
+
+		if !profile.nil? 						#dirty - waiting for omniauth redirect strategy
+			num = profile.owner.id
+			add_profile_to(current_user, profile) 
+			@profile = Profile.new()
+		else
+			flash[:info] = " This is not a profile..."
+		end
+	
+		(request.env["HTTP_REFERER"].include?("potential_users/"+num.to_s)) ? (redirect_to edit_user_registration_path) : (redirect_to :back)  		#dirty - waiting for omniauth redirect strategy
 	end
 	
 	
 	def detach_from_user
 		profile = get_profile(profile_params[:global_id])
 		if !profile.nil?  &&  profile.class.name == "Facebook"
-			facebook_activation = FacebookActivation.find_by(facebook: profile, user: current_user )
+			facebook_activation = FacebookActivation.find_by(facebook: profile, creator: current_user )
 			facebook_activation.destroy if !facebook_activation.nil?
 		end
 		profile.owner = PotentialUser.new()

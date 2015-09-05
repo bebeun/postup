@@ -8,7 +8,11 @@ class PotentialUser < ActiveRecord::Base
 		return self.twitter if self.twitter
 		return self.facebook if self.facebook
 	end
-	#validation of a minimum of ONE profile
+	
+	# validate :one_profile
+	# def one_profile
+		# errors.add(:user, "There must be one and only one profile") if profile.nil? 
+	# end
 	
 	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
 	

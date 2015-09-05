@@ -31,9 +31,9 @@ FOR EXISTING PROFILES:
 
 
 <br/>
-<%= "You already asked for these profils: " if current_user.facebook_activations.where(user: current_user, activated: false, reported: false).any? %>
+<%= "You already asked for these profils: " if current_user.facebook_activations.where(creator: current_user, activated: false, reported: false).any? %>
 <ul>
-<% FacebookActivation.all.where(user: current_user, activated: false, reported: false).each do |p|%>
+<% FacebookActivation.all.where(creator: current_user, activated: false, reported: false).each do |p|%>
 	<li><%= p.facebook.description %><i><%= " (Already asked for this profil "+time_ago_in_words(p.updated_at)+" ago)" %></i>
 	<%= button_to "Resend email",  url_for(controller: '/facebook_activations', action: 'resend', id: p), method: :post, form_class: "button_link" if p.updated_at < 2.minutes.ago && p.mailnumber <= 4 %>
 	<% if p.mailnumber >= 2 &&  p.mailnumber <= 4 %>

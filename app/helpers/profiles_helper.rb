@@ -19,18 +19,18 @@ module ProfilesHelper
 	end
 	
 
-	def add_profile_to(user, profile)
+	def add_profile_to(creator, profile)
 		user_destroy =  profile.owner
 		user_actions_slaves = UserAction.where(supportable: user_destroy) 	
-		user_actions_masters = UserAction.where(supportable: user)			
+		user_actions_masters = UserAction.where(supportable: creator)			
 		user_actions_slaves.each do |x|
-			if x.user == user || user_actions_masters.collect{|y| y.user}.include?(x.user)
+			if x.creator == creator || user_actions_masters.collect{|y| y.creator}.include?(x.creator)
 				x.destroy
 			else
-				x.update_attributes(supportable: user)
+				x.update_attributes(supportable: creator)
 			end
 		end
-		user.add_profile(profile)
+		creator.add_profile(profile)
 		user_destroy.destroy! if user_destroy.class.name == "PotentialUser"
 	end
 	

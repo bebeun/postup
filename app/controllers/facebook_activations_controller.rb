@@ -4,10 +4,10 @@ class FacebookActivationsController < ApplicationController
 		@facebook = Facebook.find(params[:facebook_id])	
 		
 		cond1 = @facebook.nil?																	#refuse access to new fba page if facebook doesn't exist
-		cond2 = current_user.has_pending_facebook_activations?(@facebook)						#refuse access to new fba page if user already asked for this facebook
+		cond2 = current_user.has_pending_facebook_activations?(@facebook)						#refuse access to new fba page if creator already asked for this facebook
 		cond3 = current_user.has_this_profile?(@facebook)										#refuse access to new fba page if user already owns this facebook
 		cond4 = @facebook.owner.is_user?														#refuse access to new fba page if this facebook is already owned by a User
-		cond5 = @facebook.facebook_activations.where(user: current_user, reported: true).any?	#this user already ask for this facebook and this was reported
+		cond5 = @facebook.facebook_activations.where(creator: current_user, reported: true).any?	#this user already ask for this facebook and this was reported
 
 		redirect_to edit_user_registration_path(current_user) and return if cond1 || cond2 || cond3 || cond4 || cond5
 		@facebook_activation = FacebookActivation.new()
@@ -18,15 +18,15 @@ class FacebookActivationsController < ApplicationController
 		facebook = Facebook.find(params[:facebook_id])
 				
 		cond1 = facebook.nil?																	#refuse to create fba if facebook doesn't exist
-		cond2 = current_user.has_pending_facebook_activations?(facebook)						#refuse to create fba if user already asked for this facebook
-		cond3 = current_user.has_this_profile?(facebook)										#refuse to create fba if user already owns this facebook
+		cond2 = current_user.has_pending_facebook_activations?(facebook)						#refuse to create fba if creator already asked for this facebook
+		cond3 = current_user.has_this_profile?(facebook)										#refuse to create fba if creator already owns this facebook
 		cond4 = facebook.owner.is_user?															#refuse to create fba if this facebook is already owned by a User
-		cond5 = facebook.facebook_activations.where(user: current_user, reported: true).any?	#this user already ask for this facebook and this was reported
+		cond5 = facebook.facebook_activations.where(creator: current_user, reported: true).any?	#this user already ask for this facebook and this was reported
 
 		if cond1 || cond2 || cond3 || cond4 || cond5
 			flash[:info] = "You can t do this"	
 		else
-			facebook_activation = FacebookActivation.create(facebook: facebook, user: current_user, mailnumber: 1)	
+			facebook_activation = FacebookActivation.create(facebook: facebook, creator: current_user, mailnumber: 1)	
 			UserMailer.facebook_activation(facebook_activation, current_user).deliver_now
 			flash[:info] = "Please check the Email attached to this Facebook profile"	
 		end
@@ -85,7 +85,7 @@ class FacebookActivationsController < ApplicationController
 		(user_signed_in? ) ? (cond4 = current_user.has_this_facebook_activation?(@facebook_activation)) : (cond4 = false)#current_user certainly made a mistake by trying to report instead of validating the activation
 
 		flash[:info] = "There is a problem" if cond1 || cond2
-		flash[:info] = "This Facebook Activation is has already been reported. www.facebook.com/"+@facebook_activation.facebook.description+" isn't owned by "+@facebook_activation.user.name if cond3
+		flash[:info] = "This Facebook Activation is has already been reported. www.facebook.com/"+@facebook_activation.facebook.description+" isn't owned by "+@facebook_activation.creator.name if cond3
 		flash[:info] = "Mhhhh...you can t report an activation process you initiated yourself" if cond4
 		
 		redirect_to root_path and return  if cond1 || cond2 || cond3 || cond4
@@ -104,9 +104,9 @@ class FacebookActivationsController < ApplicationController
 		else
 			if !cond3
 				facebook_activation.update_attribute(:reported, true) 
-				flash[:info] = "This Facebook Activation is cancelled and reported. www.facebook.com/"+facebook_activation.facebook.description+" isn't owned by "+facebook_activation.user.name
+				flash[:info] = "This Facebook Activation is cancelled and reported. www.facebook.com/"+facebook_activation.facebook.description+" isn't owned by "+facebook_activation.creator.name
 			else
-				flash[:info] = "This Facebook Activation is has already been reported. www.facebook.com/"+facebook_activation.facebook.description+" isn't owned by "+facebook_activation.user.name
+				flash[:info] = "This Facebook Activation is has already been reported. www.facebook.com/"+facebook_activation.facebook.description+" isn't owned by "+facebook_activation.creator.name
 			end
 		end
 		redirect_to root_path	

@@ -1,5 +1,4 @@
 class Call < ActiveRecord::Base
-
 	belongs_to :conversation
 	validates :conversation, presence: true
 	
@@ -11,6 +10,8 @@ class Call < ActiveRecord::Base
 	belongs_to :callable, polymorphic: true, :validate => true 
 	#validates_inclusion_of :callable_type, in: ["User","PotentialUser"]
 	validates :callable, presence: true	
+	
+	validates_uniqueness_of :callable_id, :scope => [:conversation_id, :callable_type], :message => "This (Potential) User is already called out in this conversation..."
 
 	validate :callable_vs_supporters
 	def callable_vs_supporters
@@ -18,6 +19,4 @@ class Call < ActiveRecord::Base
 			errors.add(:callable, "You can t support or unsupport your own callout") 
 		end
 	end
-	
-	validates_uniqueness_of :callable_id, :scope => [:conversation_id, :callable_type], :message => "This (Potential) User is already called out in this conversation..."
 end

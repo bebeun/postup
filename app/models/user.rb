@@ -51,6 +51,7 @@ class User < ActiveRecord::Base
 	def unsupporting
 		self.user_unsupports + self.potential_user_unsupports
 	end
+	
 	# FB Activations	
 	has_many :facebook_activations
 	
@@ -59,16 +60,16 @@ class User < ActiveRecord::Base
 		self.profiles.include?(profile)
 	end
 	def has_this_facebook_activation?(facebook_activation)
-		self.id == facebook_activation.user.id
+		self.id == facebook_activation.creator.id
 	end
 	def has_pending_facebook_activations?(facebook)
-		facebook.facebook_activations.collect{|fba| fba.user}.include?(self)
+		facebook.facebook_activations.collect{|fba| fba.creator}.include?(self)
 	end
 	def has_been_reported_for_facebook?(facebook)
-		facebook.facebook_activations.select{|fba| fba.user == self && fba.reported}.any?
+		facebook.facebook_activations.select{|fba| fba.creator == self && fba.reported}.any?
 	end
 	def has_recent_facebook_activations?(facebook)
-		facebook.facebook_activations.where("upadated_at > ?", 2.minutes.ago).collect{|fba| fba.user}.include?(self)
+		facebook.facebook_activations.where("upadated_at > ?", 2.minutes.ago).collect{|fba| fba.creator}.include?(self)
 	end
 	def is_user?
 		true
