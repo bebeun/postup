@@ -41,33 +41,33 @@ class PostsController < ApplicationController
 
 	def support
 		@post = Post.find(params[:id])
-		@post.unsupporters.delete(current_user) if @post.unsupporters.include?(current_user)
+		@post.unsupporters.destroy(current_user) if @post.unsupporters.include?(current_user)
 		@post.supporters << current_user if current_user != @post.creator && !@post.supporters.include?(current_user)
 		redirect_to @post.conversation
 	end
 	
 	def unsupport
 		@post = Post.find(params[:id])
-		@post.supporters.delete(current_user) if @post.supporters.include?(current_user)
+		@post.supporters.destroy(current_user) if @post.supporters.include?(current_user)
 		@post.unsupporters << current_user if current_user != @post.creator && !@post.unsupporters.include?(current_user)
 		redirect_to @post.conversation
 	end
 	
 	def remove
 		@post = Post.find(params[:id])
-		@post.supporters.delete(current_user) if @post.supporters.include?(current_user)
-		@post.unsupporters.delete(current_user) if @post.unsupporters.include?(current_user)
+		@post.supporters.destroy(current_user) if @post.supporters.include?(current_user)
+		@post.unsupporters.destroy(current_user) if @post.unsupporters.include?(current_user)
 		redirect_to @post.conversation
 	end
 	
 	def destroy
 		@post = Post.find(params[:id])
 		@conversation = @post.conversation
-		@post.delete if @post.creator == current_user
+		@post.destroy if @post.creator == current_user
 		if @conversation.calls.any? || @conversation.posts.any? 
 			redirect_to @conversation
 		else
-			@conversation.delete
+			@conversation.destroy
 			redirect_to new_conversation_path
 		end
 	end

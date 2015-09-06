@@ -1,10 +1,13 @@
 class CallAction < ActiveRecord::Base
+	#USER who S/U this CALL
 	belongs_to :creator, :class_name => "User", :foreign_key  => "user_id"
 	validates :creator, presence: true
 	
+	#CALL it refers to
 	belongs_to :call
 	validates :call, presence: true
 	
+	#S or U
 	validates :support, presence: true
 	validates_inclusion_of :support, in: ["up","down"]
 	

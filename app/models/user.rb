@@ -5,8 +5,8 @@ class User < ActiveRecord::Base
 	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
 	
 	# PROFILE Management
-	has_many :twitters, as: :owner, class_name: "Twitter"
-	has_many :facebooks, as: :owner, class_name: "Facebook"
+	has_many :twitters, as: :owner, class_name: "Twitter", dependent: :destroy
+	has_many :facebooks, as: :owner, class_name: "Facebook", dependent: :destroy
 	
 	def profiles 
 		return self.twitters + self.facebooks	
@@ -30,10 +30,10 @@ class User < ActiveRecord::Base
 	
 	# USER S/U
     has_many :user_actions
-	has_many :user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'User'
-    has_many :potential_user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser'
-	has_many :user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'User'
-    has_many :potential_user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser'
+	has_many :user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'User', dependent: :destroy
+    has_many :potential_user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser', dependent: :destroy
+	has_many :user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'User', dependent: :destroy
+    has_many :potential_user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser', dependent: :destroy
 	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
 	
 	def supporters

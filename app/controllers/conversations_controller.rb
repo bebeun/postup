@@ -12,10 +12,10 @@ class ConversationsController < ApplicationController
 	
 	def show
 		@conversation = Conversation.find(params[:id])
+		redirect_it root_path if @conversation.nil?
 		if user_signed_in? 
 			@post = Post.new() 
 			@call = Call.new()
-
 		end
 	end
 	

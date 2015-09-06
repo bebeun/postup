@@ -1,10 +1,13 @@
 class PostAction < ActiveRecord::Base
+	#USER who S/U the POST
 	belongs_to :creator, :class_name => "User", :foreign_key  => "user_id"
 	validates :creator, presence: true
 	
-	belongs_to :post, :validate => true 
+	#POST which is S/U
+	belongs_to :post
 	validates :post, presence: true
 
+	#S or U ?
 	validates :support, presence: true
 	validates_inclusion_of :support, in: ["up","down"]
 	

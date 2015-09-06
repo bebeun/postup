@@ -32,7 +32,7 @@ class CallsController < ApplicationController
 
 	def support
 		@call = Call.find(params[:id])
-		@call.unsupporters.delete(current_user) if @call.unsupporters.include?(current_user)
+		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)
 		@call.supporters << current_user
 		redirect_to @call.conversation
 	end
@@ -42,28 +42,29 @@ class CallsController < ApplicationController
 		@conversation = @call.conversation
 		case 
 			when @call.supporters.many?
-				@call.supporters.delete(current_user) if @call.supporters.include?(current_user)
+				@call.supporters.destroy(current_user) if @call.supporters.include?(current_user)
 				@call.unsupporters << current_user
 			when @call.supporters.count == 1	
-				(@call.supporters.include?(current_user)) ? (@call.delete) : (@call.unsupporters << current_user)
+				(@call.supporters.include?(current_user)) ? (@call.destroy) : (@call.unsupporters << current_user)
 		end
 		if @conversation.calls.any? || @conversation.posts.any? 
 			redirect_to @conversation
 		else
+			@conversation.destroy
 			redirect_to new_conversation_path
 		end
 	end
 
 	def remove
 		@call = Call.find(params[:id])	
-		@call.supporters.delete(current_user) if @call.supporters.include?(current_user)
-		@call.unsupporters.delete(current_user) if @call.unsupporters.include?(current_user)		
+		@call.supporters.destroy(current_user) if @call.supporters.include?(current_user)
+		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)		
 		@conversation = @call.conversation
-		@call.delete if !@call.supporters.any?
+		@call.destroy if !@call.supporters.any?
 		if @conversation.calls.any? || @conversation.posts.any? 
-			redirect_to @call.conversation
+			redirect_to @conversation
 		else
-			@conversation.delete
+			@conversation.destroy
 			redirect_to new_conversation_path
 		end
 	end

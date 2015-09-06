@@ -19,9 +19,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
    end
 
   # PUT /resource
-  # def update
-  #   super
-  # end
+   def update
+		@profile = Profile.new()
+		super
+   end
 
   # DELETE /resource
   # def destroy
