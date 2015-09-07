@@ -13,6 +13,8 @@ class Call < ActiveRecord::Base
 	belongs_to :callable, polymorphic: true, :validate => true 
 	#validates_inclusion_of :callable_type, in: ["User","PotentialUser"]
 	validates :callable, presence: true	
+	belongs_to :creator, :class_name => "User", :foreign_key  => "creator_id"
+	validates :creator, presence: true
 	
 	validate :callable_vs_supporters	
 	def callable_vs_supporters
