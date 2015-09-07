@@ -6,16 +6,15 @@ class CallsController < ApplicationController
 		case	
 			when !call_params[:display].nil?
 				profile = description_by_display(call_params[:display])
-				if !profile.nil?
-					@call = Call.find_or_initialize_by( conversation: @conversation, callable: profile.owner) 
-					@call.supporters << current_user
-				end
-				
+				callable = profile.owner if !profile.nil?
 			when !call_params[:callable_id].nil? 
 				callable = get_user(call_params[:callable_id])
-				@call = Call.find_or_initialize_by( conversation: @conversation, callable: callable) 
-				@call.supporters << current_user
 		end
+		
+		@call = Call.find_or_initialize_by( conversation: @conversation, callable: callable) 
+		@call.creator = current_user if @call.creator.nil?
+		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)
+		@call.supporters << current_user if !@call.supporters.include?(current_user)
 		
 		if @call.save && (!profile.nil? || !call_params[:callable_id].nil? )
 			redirect_to @conversation

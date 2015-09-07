@@ -5,8 +5,8 @@ class User < ActiveRecord::Base
 	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
 	
 	# PROFILE Management
-	has_many :twitters, as: :owner, class_name: "Twitter", dependent: :destroy
-	has_many :facebooks, as: :owner, class_name: "Facebook", dependent: :destroy
+	has_many :twitters, as: :owner, class_name: "Twitter"
+	has_many :facebooks, as: :owner, class_name: "Facebook"
 	
 	def profiles 
 		return self.twitters + self.facebooks	
@@ -18,9 +18,12 @@ class User < ActiveRecord::Base
 	end
 	
 	# CALL Management
+	#CALL S/U
 	has_many :call_actions
 	has_many :callouts, through: :call_actions, source: "call", class_name: "Call"
 	has_many :callins, as: :callable, class_name: "Call"
+	#CALL creation
+	has_many :created_callouts, class_name: "Call", :foreign_key  => "creator_id"
 
 	# POST Management + POST S/U
 	has_many :posts
