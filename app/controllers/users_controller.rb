@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 	def show
 		@user = User.find(params[:id]) 
-		@postscreated = Post.where(creator: @user)
+		@postscreated = Post.select{ |x| x.creator == @user }
 		@postssupported = Post.select { |w| (w.supporters.include?(@user) || w.unsupporters.include?(@user))}
 		@callins = @user.callins
 		@callouts = @user.callouts

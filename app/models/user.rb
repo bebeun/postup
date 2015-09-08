@@ -17,6 +17,47 @@ class User < ActiveRecord::Base
 		self.facebooks << profile if profile.class.name == "Facebook"
 	end
 	
+	def can_post?(conversation)
+		#(last is DIRTY - index on updated_at ??)	
+		parent = conversation if conversation.creator == self
+		parent = Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any?
+		#self is called out
+		if !parent.nil?
+			#he has not yet posted
+			answered = parent.child_post.nil?
+			#and none of his calls have been yet answered by posting
+			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?
+			#and none of his calls have been forwarded 
+			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?
+			return answered && child_answered && forwarded
+		else
+			return false
+		end
+	end
+	
+	def can_call?(conversation)
+		#(last is DIRTY - index on updated_at ??)	
+		parent = conversation if conversation.creator == self
+		parent = Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any?
+		#self is called out
+		if !parent.nil?
+			#and none of his calls have been yet answered by posting
+			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?
+			#and none of his calls have been forwarded 
+			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?
+			return child_answered && forwarded
+		else
+			return false
+		end
+	end
+	
+	def parent_call(conversation)
+		#DIRTY
+		return Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any? 
+		return conversation if conversation.creator == self
+	end
+	
+	
 	# CALL Management
 	#CALL S/U
 	has_many :call_actions

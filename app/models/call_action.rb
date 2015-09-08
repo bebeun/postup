@@ -12,4 +12,11 @@ class CallAction < ActiveRecord::Base
 	validates_inclusion_of :support, in: ["up","down"]
 	
 	validates_uniqueness_of :user_id, :scope => [:call_id],	:message => "Error on the join model. This callout already exists"	
+	
+	validate :callable_vs_supporters	
+	def callable_vs_supporters
+	if creator == call.callable 
+			errors.add(:callable, "You can t support or unsupport your own callout") 
+		end
+	end
 end

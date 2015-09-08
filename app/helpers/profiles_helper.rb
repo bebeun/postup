@@ -31,6 +31,8 @@ module ProfilesHelper
 			end
 		end
 		creator.add_profile(profile)
+		#post support transport ?
+		#call support transport ?
 		user_destroy.destroy! if user_destroy.class.name == "PotentialUser"
 	end
 	

@@ -5,5 +5,10 @@ class Conversation < ActiveRecord::Base
 	belongs_to :creator, :class_name => 'User', :foreign_key  => "creator_id"
 	validates :creator, presence: true
 	
-	#Mini 1 POST : to be added
+	has_many :child_calls, as: :parent, class_name: "Call"
+	has_one :child_post, as: :parent, class_name: "Post"
+	
+	def has_content?
+		return self.posts.any? || self.calls.any?
+	end
 end

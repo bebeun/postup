@@ -29,8 +29,8 @@
 
 <% if user_signed_in? %>
 	<br/>
-	<%= render '/posts/new', :fff => [@conversation, @post] %>
+	<%= render '/posts/new', :fff => [@conversation, @post] if current_user.can_post?(@conversation)%>
 	<br/>
-	<%= render '/calls/new', :fff => [@conversation, @call] %> 
+	<%= render '/calls/new', :fff => [@conversation, @call] if current_user.can_call?(@conversation) %> 
 	<br/>
 <% end %>
