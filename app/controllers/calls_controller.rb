@@ -31,7 +31,7 @@ class CallsController < ApplicationController
 
 	def support
 		@call = Call.find(params[:id])
-		redirect_to @call.conversation and return if !@call.can_be_s_or_u? || @call.callable == current_user
+		redirect_to @call.conversation and return if !current_user.can_s_or_u_call?(@call)
 		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)
 		@call.supporters << current_user
 		redirect_to @call.conversation
@@ -40,7 +40,7 @@ class CallsController < ApplicationController
 	def unsupport
 		@call = Call.find(params[:id])
 		@conversation = @call.conversation	
-		redirect_to @conversation and return if !@call.can_be_s_or_u? || @call.callable == current_user || @call.should_not_be_unsupported_or_destroyed_by(current_user)
+		redirect_to @conversation and return if !current_user.can_s_or_u_call?(@call) || current_user.can_not_unsupport_or_destroy?(@call)
 		case 
 			when @call.supporters.many?
 				@call.supporters.destroy(current_user) if @call.supporters.include?(current_user)
@@ -59,7 +59,7 @@ class CallsController < ApplicationController
 	def remove
 		@call = Call.find(params[:id])	
 		@conversation = @call.conversation
-		redirect_to @conversation and return if @call.should_not_be_unsupported_or_destroyed_by(current_user) #??????
+		redirect_to @conversation and return if current_user.can_not_unsupport_or_destroy?(@call)
 		@call.supporters.destroy(current_user) if @call.supporters.include?(current_user)
 		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)		
 		@call.destroy if !@call.supporters.any?

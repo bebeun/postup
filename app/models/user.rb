@@ -18,9 +18,7 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_post?(conversation)
-		#(last is DIRTY - index on updated_at ??)	
-		parent = conversation if conversation.creator == self
-		parent = Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any?
+		parent = self.parent_call(conversation)
 		#self is called out
 		if !parent.nil?
 			#he has not yet posted
@@ -36,9 +34,7 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_call?(conversation)
-		#(last is DIRTY - index on updated_at ??)	
-		parent = conversation if conversation.creator == self
-		parent = Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any?
+		parent = self.parent_call(conversation)
 		#self is called out
 		if !parent.nil?
 			#and none of his calls have been yet answered by posting
@@ -52,9 +48,30 @@ class User < ActiveRecord::Base
 	end
 	
 	def parent_call(conversation)
-		#DIRTY
-		return Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any? 
-		return conversation if conversation.creator == self
+		#(last is DIRTY - index on updated_at ??)	
+		parent = nil
+		parent = conversation if conversation.creator == self
+		parent = Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any?
+		return parent
+	end
+	
+	#if call has given a post, the s/u have been switched to the post. the call can't be s/u anymore
+	def can_s_or_u_call?(call)
+		return call.child_post.nil? && call.callable != self
+	end
+	
+	#Critical situation: a call has given children ( child_calls, child_post )
+	#one shouldn't unsupport (which could lead to destroy it) or destroy it
+	#(in fact, to check for child_post is redundant with "can_be_s_or_u?")
+	#keep the TREE RELEVANT and VALID
+	def can_not_unsupport_or_destroy?(call)
+		return call.supporters.count == 1 && call.supporters.include?(self) && (call.child_calls.any? || !call.child_post.nil?)
+	end
+	
+	#post has a parent. this parent has child_calls. 
+	#if they are either answered or forwarded, edition/destruction of post is not allowed.
+	def can_edit_or_destroy?(post)
+		return !post.parent.child_calls.collect{|x| x.child_post}.any? && !post.parent.child_calls.collect{|x| x.child_calls}.flatten.any? && post.creator == self
 	end
 	
 	

@@ -2,9 +2,11 @@
 
 Post : <%= fff.title %>, <%= fff.content %>, <%= link_to fff.creator.name, fff.creator %>
 
-<% if (fff.can_be_edited? && user_signed_in? && fff.creator == current_user)%>
-	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" %>
-	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, fff), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } %>
+<% if user_signed_in? %>
+	<% if current_user.can_edit_or_destroy?(fff) %>
+		<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" %>
+		<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, fff), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } %>
+	<% end %>
 <% end %>
 
 <% if user_signed_in? && fff.creator != current_user %>
