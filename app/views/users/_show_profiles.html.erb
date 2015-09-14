@@ -3,7 +3,6 @@
 	<% user.profiles.each do |ff| %>
 		<li> 
 			<%= ff.class.name+" : "+ff.description %> 
-			<%= button_to "Remove", url_for(controller: '/profiles', action: 'detach_from_user' ), method: :post, data: { confirm: "Are you sure? This can not be undone" }, params: { "profile[global_id]" => get_profile_global_id(ff)}, form_class: "button_link" if user_signed_in? && user == current_user%>
 		</li>
 	<% end %>
 </ul>

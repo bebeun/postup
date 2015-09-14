@@ -11,24 +11,25 @@
 
 
 
-<%= form_for fff do |f| %>
+<%= form_tag(calls_path) do %>
+
 	Select the Name of the user you want to call out: <br/>
-	<%# TO BE PERFECT callable_id should be global_id %>
-	<%= select("call", "callable_id", \
-	@User.collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| x.class.name+" "+x.description }.join(", "), get_user_global_id(p) ]} + \
-	@PotentialUser.collect{|p| [ "POTENTIAL USER : "+p.profile.class.name+" : "+p.profile.description, get_user_global_id(p) ]}, \
-	{prompt: 'Select User'}, \
-	:onchange => "this.form.submit()") %>
-	<br/><br/>
+	<%= select_tag 'call[global_id]', \
+	options_for_select(@User.collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| x.class.name+" "+x.description }.join(", "), get_user_global_id(p) ]} + \
+	@PotentialUser.to_a.collect{|p| [ "POTENTIAL USER : "+p.profile.class.name+" : "+p.profile.description, get_user_global_id(p) ]}), \
+	prompt: "Select User", \
+	:onchange => "this.form.submit()"  %>
 <% end %>
 
 
-<%= form_for fff do |f| %>
+
+
+<%= form_tag(calls_path) do %>
 	Or enter a new profil URL <br/>
 	(exemple: www.facebook.com/bebeun92 or www.twitter.com/benoit81) <br/>
 	<%= text_field_tag 'call[display]', 'Entire a new profile URL...' %>
 	
-	 <%= f.submit %>
+	 <%= submit_tag 'Submit' %>
 	<br/>
 <% end %>
 

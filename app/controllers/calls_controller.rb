@@ -8,8 +8,8 @@ class CallsController < ApplicationController
 			when !call_params[:display].nil?
 				profile = description_by_display(call_params[:display])
 				callable = profile.owner if !profile.nil?
-			when !call_params[:callable_id].nil? 
-				callable = get_user(call_params[:callable_id])
+			when !call_params[:global_id].nil? 
+				callable = get_user(call_params[:global_id])
 		end
 		
 		@call = Call.find_or_initialize_by( conversation: @conversation, callable: callable, parent: current_user.parent_call(@conversation)) 
@@ -74,6 +74,6 @@ class CallsController < ApplicationController
 
 	private
 		def call_params
-    		params.require(:call).permit(:display, :callable_id)
+    		params.require(:call).permit(:display, :global_id)
 		end
 end

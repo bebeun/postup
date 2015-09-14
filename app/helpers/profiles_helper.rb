@@ -1,20 +1,11 @@
 module ProfilesHelper
 	def description_by_display(display)
-		case
-			when display.include?("facebook.com")
-				category = "Facebook"
-				description = display.split('facebook.com')[1].split('/')[1]
-			when display.include?("twitter.com")
-				category = "Twitter"
-				description = display.split('twitter.com')[1].split('/')[1]
+		profile = nil
+		Profile::PROFILE_TYPES.each do |x|
+			profile = Profile.build_with(x, display) if Profile.is_it?(x,display)
+			#check for priority
 		end
-		return nil if category.nil? || description.nil? 	#in this case, display doesnt match any profile type.
-		profile = category.constantize.find_by_description(description)
-		if profile.nil? 							
-			profile = category.constantize.new(description: description)
-			profile.owner = PotentialUser.new()
-			profile.save
-		end
+		profile.owner ||= PotentialUser.new() and profile.save if !profile.nil?
 		return profile
 	end
 	
@@ -57,15 +48,14 @@ module ProfilesHelper
 	end
 	
 	def get_profile_global_id(profile)
-		global_id = 2*profile.id.to_i if profile.class.name == "Twitter" 
-		global_id = 2*profile.id.to_i+1 if profile.class.name == "Facebook"  
+		global_id = Profile::PROFILE_TYPES.count*profile.id.to_i + Profile::PROFILE_TYPES.index(profile.class.name)
 		return global_id
 	end
 	
 	def get_profile(global_id)
 		global_id = global_id.to_i
-		profile = Twitter.find(global_id/2) if global_id % 2 == 0
-		profile = Facebook.find((global_id-1)/2) if global_id % 2 == 1
+		classname = Profile::PROFILE_TYPES[global_id%Profile::PROFILE_TYPES.count]
+		profile = classname.constantize.find((global_id-global_id%Profile::PROFILE_TYPES.count)/Profile::PROFILE_TYPES.count)
 		return profile
 	end
 end

@@ -5,14 +5,17 @@ class User < ActiveRecord::Base
 	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
 	
 	# PROFILE Management
+	# MAKE MORE GENERAL
 	has_many :twitters, as: :owner, class_name: "Twitter"
 	has_many :facebooks, as: :owner, class_name: "Facebook"
 	
 	def profiles 
+	# MAKE MORE GENERAL
 		return self.twitters + self.facebooks	
 	end
 	
 	def add_profile(profile)
+	# MAKE MORE GENERAL
 		self.twitters << profile if profile.class.name == "Twitter"
 		self.facebooks << profile if profile.class.name == "Facebook"
 	end
@@ -114,6 +117,7 @@ class User < ActiveRecord::Base
 	end
 	
 	# FB Activations	
+	# MAKE MORE GENERAL
 	has_many :facebook_activations
 	
 	# Functions

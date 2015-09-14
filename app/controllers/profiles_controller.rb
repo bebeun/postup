@@ -7,9 +7,8 @@ class ProfilesController < ApplicationController
 			when !profile_params[:display].nil?
 				profile = description_by_display(profile_params[:display])
 		end
-		if !profile.nil?  &&  profile.class.name == "Facebook"
-			redirect_to new_facebook_facebook_activation_path(profile) and return
-		end
+
+		redirect_to new_facebook_facebook_activation_path(profile) and return if profile.class.name == "Facebook"
 
 		if !profile.nil? 						#dirty - waiting for omniauth redirect strategy
 			num = profile.owner.id

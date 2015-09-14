@@ -6,7 +6,8 @@ class ConversationsController < ApplicationController
 		else
 			@post = Post.new()
 			@call = Call.new()
-			@profiles = Twitter.all + Facebook.all - current_user.profiles #automatically add all profile type ??
+			@profiles = Profile::PROFILE_TYPES.collect{|x|  x.constantize.all}.flatten
+			@profiles -= current_user.profiles 
 		end
 	end
 	
