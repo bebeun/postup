@@ -3,6 +3,8 @@ class Profile
 	attr_accessor :profilable_type, :profilable_id, :global_id, :display
 	PROFILE_TYPES = ["Twitter", "Facebook"]
 	PROFILE_REGEXP = {"Twitter" => "twitter.com", "Facebook" => "facebook.com"}
+	PROFILE_NAME_PLURAL = {"Twitter" => "twitters", "Facebook" => "facebooks"}
+	PROFILE_NAME_SINGULAR = {"Twitter" => "twitter", "Facebook" => "facebook"}
 	
 	def self.is_it?(type, display)
 		return display.include?(PROFILE_REGEXP[type])

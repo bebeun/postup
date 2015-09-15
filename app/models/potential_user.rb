@@ -3,13 +3,19 @@ class PotentialUser < ActiveRecord::Base
 	has_many :callins, as: :callable, class_name: "Call"
 	
 	#PROFILE owned by this POTENTIAL USER (only one!)
-	has_one :twitter, as: :owner, class_name: "Twitter"
-	has_one :facebook, as: :owner, class_name: "Facebook"
+	Profile::PROFILE_TYPES.each do |x|
+		eval("has_one :"+Profile::PROFILE_NAME_SINGULAR[x]+", as: :owner, class_name: "+x)
+	end
 	
 	def profile
-		return self.twitter if self.twitter
-		return self.facebook if self.facebook
+		Profile::PROFILE_TYPES.each do |x|
+			eval("return self."+Profile::PROFILE_NAME_SINGULAR[x]+" if self."+Profile::PROFILE_NAME_SINGULAR[x])
+		end
 	end
+	
+	# def profile=(profile)
+		# profile.update_attributes(owner: self)
+	# end
 	
 	# validate :one_profile
 	# def one_profile

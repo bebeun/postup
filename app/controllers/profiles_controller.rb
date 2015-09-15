@@ -1,15 +1,11 @@
 class ProfilesController < ApplicationController
 
 	def attach_to_user
-		case
-			when !profile_params[:global_id].nil? 
-				profile = get_profile(profile_params[:global_id])	
-			when !profile_params[:display].nil?
-				profile = description_by_display(profile_params[:display])
-		end
-
+		profile = get_profile(profile_params[:global_id])	if !profile_params[:global_id].nil? 
+		profile = description_by_display(profile_params[:display]) if !profile_params[:display].nil?
+	
 		redirect_to new_facebook_facebook_activation_path(profile) and return if profile.class.name == "Facebook"
-
+		
 		if !profile.nil? 						#dirty - waiting for omniauth redirect strategy
 			num = profile.owner.id
 			add_profile_to(current_user, profile) 

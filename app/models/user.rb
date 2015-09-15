@@ -4,32 +4,27 @@ class User < ActiveRecord::Base
 	validates :name, presence: true
 	validates_uniqueness_of :name, :case_sensitive => false, :message => "This name has already been taken"
 	
-	# PROFILE Management
-	# MAKE MORE GENERAL
-	has_many :twitters, as: :owner, class_name: "Twitter"
-	has_many :facebooks, as: :owner, class_name: "Facebook"
+	# PROFILE Management	
+	Profile::PROFILE_TYPES.each do |x|
+		eval("has_many :"+Profile::PROFILE_NAME_PLURAL[x]+", as: :owner, class_name: "+x)
+	end
 	
 	def profiles 
-	# MAKE MORE GENERAL
-		return self.twitters + self.facebooks	
+		code_string = Profile::PROFILE_TYPES.collect{|x| "self."+Profile::PROFILE_NAME_PLURAL[x]}
+		code_string = code_string.join(" + ")
+		return eval(code_string)
 	end
 	
 	def add_profile(profile)
-	# MAKE MORE GENERAL
-		self.twitters << profile if profile.class.name == "Twitter"
-		self.facebooks << profile if profile.class.name == "Facebook"
+		profile.update_attributes(owner: self)
 	end
 	
 	def can_post?(conversation)
-		parent = self.parent_call(conversation)
-		#self is called out
+		parent = self.parent_call(conversation)													#self is called out
 		if !parent.nil?
-			#he has not yet posted
-			answered = parent.child_post.nil?
-			#and none of his calls have been yet answered by posting
-			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?
-			#and none of his calls have been forwarded 
-			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?
+			answered = parent.child_post.nil?													#he has not yet posted
+			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?					#and none of his calls have been yet answered by posting
+			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?   			#and none of his calls have been forwarded 
 			return answered && child_answered && forwarded
 		else
 			return false
@@ -37,13 +32,10 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_call?(conversation)
-		parent = self.parent_call(conversation)
-		#self is called out
+		parent = self.parent_call(conversation)													#self is called out
 		if !parent.nil?
-			#and none of his calls have been yet answered by posting
-			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?
-			#and none of his calls have been forwarded 
-			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?
+			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?					#and none of his calls have been yet answered by posting
+			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?				#and none of his calls have been forwarded 
 			return child_answered && forwarded
 		else
 			return false
