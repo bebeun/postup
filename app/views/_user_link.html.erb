@@ -1,5 +1,9 @@
-<% if(xx.class.name == "User") %>
-	<%= link_to(xx.name, xx) %>
-<% else %>
-	<%= link_to(xx.profile.class.name+" : "+xx.profile.description, xx) %>
+<% (xx.class.name == "User") ? (name = xx.name) : (name = xx.profile.class.name+" : "+xx.profile.description) %>
+<% if user_signed_in? %>
+	<% if current_user == xx %>
+		<% name = "You" %>
+	<% end %>
 <% end %>
+<%= (name == "You") ? (name) : (link_to(name, xx)) %>
+
+

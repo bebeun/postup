@@ -4,6 +4,7 @@ class PostsController < ApplicationController
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_post?(@conversation)
 		@post = Post.new(post_params.merge(conversation: @conversation, parent: current_user.parent_call(@conversation)))
 		@post.supporters << current_user
+		#switch call s/u to post s/u !!!   ================================>  inherited = true
 		if @post.save
 			redirect_to @conversation
 		else

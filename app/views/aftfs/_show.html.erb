@@ -1,0 +1,28 @@
+<h2>Aftf</h2>
+
+<% if user_signed_in? && (fff.creator == current_user) %>  
+	<%= "You asked for the floor" %>  
+	<%= button_to "Remove Aftf",  url_for(controller: 'aftfs', action: 'destroy', id: fff), method: :delete, data: { confirm: "Are you sure?" },form_class: "button_link" if fff.alive?%>
+	<%= (fff.accepted?) ? ("and were accepted by") : ("and were refused by") if !fff.alive? %>
+	<%= render '/user_link', :xx => fff.parent_call.callable if !fff.alive? %>
+<% else %>
+	<%= link_to(fff.creator.name,fff.creator)+" asked for the floor".html_safe %>
+	<%= (fff.accepted?) ? ("and was accepted by") : ("and was refused by") if !fff.alive? %>
+	<%= render '/user_link', :xx => fff.parent_call.callable if !fff.alive? %>
+<% end %>
+
+<% if user_signed_in? && fff.creator != current_user && fff.alive?%>
+	<%= button_to "Up This Aftf", url_for(controller: 'aftfs', action: 'support', id: fff ), method: :post, form_class: "button_link" if !fff.supporters.include?(current_user)%>
+	<%= button_to "Remove feeling",  url_for(controller: 'aftfs', action: 'remove', id: fff), method: :delete, form_class: "button_link" if (fff.supporters.include?(current_user)) || fff.unsupporters.include?(current_user)%>
+	<%= button_to "Down This Aftf",  url_for(controller: 'aftfs', action: 'unsupport', id: fff  ), method: :post, form_class: "button_link" if !fff.unsupporters.include?(current_user) %>
+	<%= button_to "Accept this AFTF", url_for(controller: 'aftfs', action: 'accept', id: fff ), method: :post, form_class: "button_link" if current_user.can_call?(fff.conversation)%>
+	<%= button_to "Refuse this AFTF", url_for(controller: 'aftfs', action: 'refuse', id: fff ), method: :post, form_class: "button_link" if current_user.can_call?(fff.conversation)%>
+<% end %>
+
+
+<br/>Supported by: <% fff.supporters.each do |x| %>  <%= render '/user_link', :xx => x %>  <% end %>
+<br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= render '/user_link', :xx => x %>  <% end %>
+
+
+
+

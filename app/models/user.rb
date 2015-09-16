@@ -42,8 +42,16 @@ class User < ActiveRecord::Base
 		end
 	end
 	
+	def can_aftf?(conversation)
+		cond = !can_post?(conversation) && !can_call?(conversation) 											#can't do anything
+		cond &&= !conversation.aftfs.select{|x| x.alive? && x.creator == self}.any?								#has not an aftf alive (not answered)
+		action = conversation.aftfs.last(Aftf::MAX_AFTF_PER_CONV).select{|x| !x.accepted && x.creator == self}	#has not been refused the floor more than 3 times in a row
+		cond &&= (action.count != Aftf::MAX_AFTF_PER_CONV)	#Max number of AFTF in a conv
+		return cond
+	end
+	
 	def parent_call(conversation)
-		#(last is DIRTY - index on updated_at ??)	
+		#===========================================>(last is DIRTY - index on updated_at ??)	
 		parent = nil
 		parent = conversation if conversation.creator == self
 		parent = Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any?
@@ -83,6 +91,9 @@ class User < ActiveRecord::Base
 	has_many :posts, inverse_of: :creator
 	has_many :post_actions
 	has_many :postsupports, through: :post_actions, source: "post", class_name: "Post"	
+	
+	#AFTF Management + ASTF S/USER
+	has_many :aftfs
 	
 	# USER S/U
     has_many :user_actions

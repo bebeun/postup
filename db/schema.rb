@@ -11,7 +11,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150908112939) do
+ActiveRecord::Schema.define(version: 20150915234148) do
+
+  create_table "aftf_actions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "creator_id"
+    t.string   "support"
+    t.integer  "aftf_id"
+  end
+
+  add_index "aftf_actions", ["aftf_id"], name: "index_aftf_actions_on_aftf_id"
+  add_index "aftf_actions", ["creator_id"], name: "index_aftf_actions_on_creator_id"
+
+  create_table "aftfs", force: :cascade do |t|
+    t.integer  "creator_id"
+    t.integer  "conversation_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.boolean  "accepted"
+    t.integer  "parent_call_id"
+  end
+
+  add_index "aftfs", ["conversation_id"], name: "index_aftfs_on_conversation_id"
+  add_index "aftfs", ["creator_id"], name: "index_aftfs_on_creator_id"
+  add_index "aftfs", ["parent_call_id"], name: "index_aftfs_on_parent_call_id"
 
   create_table "call_actions", force: :cascade do |t|
     t.integer  "user_id"
@@ -34,7 +58,6 @@ ActiveRecord::Schema.define(version: 20150908112939) do
     t.string   "parent_type"
   end
 
-  add_index "calls", ["callable_id", "callable_type", "conversation_id"], name: "index_on_calls_for_callable_conversation", unique: true
   add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id"
   add_index "calls", ["conversation_id"], name: "index_calls_on_conversation_id"
   add_index "calls", ["parent_type", "parent_id"], name: "index_calls_on_parent_type_and_parent_id"

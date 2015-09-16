@@ -11,4 +11,6 @@ class Conversation < ActiveRecord::Base
 	def has_content?
 		return self.posts.any? || self.calls.any?
 	end
+	
+	has_many :aftfs, dependent: :destroy
 end

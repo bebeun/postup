@@ -13,6 +13,9 @@ class Call < ActiveRecord::Base
 	belongs_to :callable, polymorphic: true
 	#validates_inclusion_of :callable_type, in: ["User","PotentialUser"]
 	validates :callable, presence: true	
+	
+	#AFTF which is eventually linked to this CALL
+	has_one :aftf, class_name: "Aftf", foreign_key: "parent_call_id"
 
 	#USER who made the call
 	def creator
@@ -27,11 +30,12 @@ class Call < ActiveRecord::Base
 		end
 	end
 	
-	validates_uniqueness_of :callable_id, :scope => [:conversation_id, :callable_type], :message => "This (Potential) User is already called out in this conversation..."
+	validates_uniqueness_of :callable_id, :scope => [:conversation_id, :callable_type, :parent_id, :parent_type], :message => "This (Potential) User is already called out in this conversation..."
 	
 	#PARENT (CONVERSATION or CALL)
 	belongs_to :parent, polymorphic: true
 	validates :parent, presence: true	
 	has_many :child_calls, as: :parent, class_name: "Call"
 	has_one :child_post, as: :parent, class_name: "Post"
+	
 end

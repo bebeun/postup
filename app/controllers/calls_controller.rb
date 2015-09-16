@@ -11,14 +11,15 @@ class CallsController < ApplicationController
 			when !call_params[:global_id].nil? 
 				callable = get_user(call_params[:global_id])
 		end
-		
-		puts "===============================> CALLABLE : "+callable.inspect.to_s
-		
+				
 		@call = Call.find_or_initialize_by( conversation: @conversation, callable: callable, parent: current_user.parent_call(@conversation)) 
 		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)
 		@call.supporters << current_user if !@call.supporters.include?(current_user)
 		
-		if @call.save && (!profile.nil? || !call_params[:global_id].nil? )
+		aftf = Aftf.find_by(conversation: @call.conversation, creator: callable)
+		@call.aftf = aftf if aftf.alive? if !aftf.nil?  # ================================> et si plusieurs ?
+		
+		if @call.save! && (!profile.nil? || !call_params[:global_id].nil? )
 			redirect_to @conversation
 		else
 			@post = Post.new()	

@@ -1,6 +1,6 @@
-<h2>Show Post Partial --------------------------- </h2>
+<h2>Post</h2>
 
-Post : <%= fff.title %>, <%= fff.content %>, <%= link_to fff.creator.name, fff.creator %>
+<%= render '/user_link', :xx => fff.creator %> said: <%= fff.title %>, <%= fff.content %>
 
 <% if user_signed_in? %>
 	<% if current_user.can_edit_or_destroy?(fff) %>
@@ -15,7 +15,6 @@ Post : <%= fff.title %>, <%= fff.content %>, <%= link_to fff.creator.name, fff.c
 	<%= button_to "Down This Post",  url_for(controller: 'posts', action: 'unsupport', id: fff  ), method: :post, form_class: "button_link" if !fff.unsupporters.include?(current_user) %>
 <% end %>
 
-<br/>Supported by: <% fff.supporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
-<br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
+<br/>Supported by: <% fff.supporters.each do |x| %>  <%= render '/user_link', :xx => x %> <% end %>
+<br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= render '/user_link', :xx => x %> <% end %>
 
-<h2>------------------------------------------------------ </h2>

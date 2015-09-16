@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :conversations do #ici ça génère trop de lignes
 		resources :posts, only: [:create, :edit]
 		resources :calls, only: [:create]
+		resources :aftfs, only: [:create]
   end	
   
   resources :posts, only: [:create, :destroy, :update]
@@ -23,6 +24,13 @@ Rails.application.routes.draw do
   post 'calls/:id/unsupport' => 'calls#unsupport'
   
   resources :calls, only: [:create]
+
+  resources :aftfs, only: [:create, :destroy]
+  post 'aftfs/:id/support' => 'aftfs#support'
+  delete 'aftfs/:id/remove' => 'aftfs#remove'
+  post 'aftfs/:id/unsupport' => 'aftfs#unsupport'
+  post 'aftfs/:id/accept' => 'aftfs#accept'
+  post 'aftfs/:id/refuse' => 'aftfs#refuse'
   
   post 'profiles/attach_to_user' => 'profiles#attach_to_user' 
   post 'profiles/detach_from_user' => 'profiles#detach_from_user'
