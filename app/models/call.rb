@@ -1,4 +1,12 @@
 class Call < ActiveRecord::Base
+	#check for AFTF which this CALL could have accepted
+	before_destroy :cancel_accepted_aftfs
+	def cancel_accepted_aftfs
+		self.parent.child_aftfs.select{|x| x.creator == self.callable && x.accepted}.each do |x|
+			x.update_attributes(accepted: nil, parent_call: nil)
+		end
+	end 
+	
 	#CONVERSATION
 	belongs_to :conversation
 	validates :conversation, presence: true
@@ -14,8 +22,8 @@ class Call < ActiveRecord::Base
 	#validates_inclusion_of :callable_type, in: ["User","PotentialUser"]
 	validates :callable, presence: true	
 	
-	#AFTF which is eventually linked to this CALL
-	has_one :aftf, class_name: "Aftf", foreign_key: "parent_call_id"
+	#AFTF which is eventually linked to this CALL (This CALL has entitled its CALLABLE to answer an AFTF )
+	has_many :child_aftfs, as: :parent_call, class_name: "Aftf"
 
 	#USER who made the call
 	def creator

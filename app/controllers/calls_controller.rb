@@ -16,10 +16,11 @@ class CallsController < ApplicationController
 		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)
 		@call.supporters << current_user if !@call.supporters.include?(current_user)
 		
-		aftf = Aftf.find_by(conversation: @call.conversation, creator: callable)
-		@call.aftf = aftf if aftf.alive? if !aftf.nil?  # ================================> et si plusieurs ?
+		aftf = Aftf.select{|x| x.conversation == @call.conversation && x.creator == callable && x.alive?}.last
+		#switch aftf s/u to call s/u !!! ================================> inherited = true
 		
 		if @call.save! && (!profile.nil? || !call_params[:global_id].nil? )
+			aftf.update_attributes!(accepted: true, parent_call: @call.parent) if aftf.alive? if !aftf.nil?
 			redirect_to @conversation
 		else
 			@post = Post.new()	

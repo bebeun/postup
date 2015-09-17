@@ -8,7 +8,7 @@ class AftfsController < ApplicationController
 	
 	def support
 		@aftf = Aftf.find(params[:id])
-		redirect_to @aftf.conversation and return if !user_signed_in? || current_user == @aftf.creator || !@aftf.alive? || @aftf.supporters.include?(current_user)
+		redirect_to @aftf.conversation and return if !user_signed_in? || !current_user.can_s_or_u_aftf?(@aftf) || @aftf.supporters.include?(current_user)
 		@aftf.unsupporters.destroy(current_user) if @aftf.unsupporters.include?(current_user)
 		@aftf.supporters << current_user 
 		redirect_to @aftf.conversation
@@ -16,7 +16,7 @@ class AftfsController < ApplicationController
 	
 	def unsupport
 		@aftf = Aftf.find(params[:id])
-		redirect_to @aftf.conversation and return if !user_signed_in? || current_user == @aftf.creator || !@aftf.alive? || @aftf.unsupporters.include?(current_user)
+		redirect_to @aftf.conversation and return if !user_signed_in? || !current_user.can_s_or_u_aftf?(@aftf) || @aftf.unsupporters.include?(current_user)
 		@aftf.supporters.destroy(current_user) if @aftf.supporters.include?(current_user)
 		@aftf.unsupporters << current_user 
 		redirect_to @aftf.conversation
@@ -24,7 +24,7 @@ class AftfsController < ApplicationController
 	
 	def remove
 		@aftf = Aftf.find(params[:id])
-		redirect_to @aftf.conversation and return if !user_signed_in? || current_user == @aftf.creator || !@aftf.alive?
+		redirect_to @aftf.conversation and return if !user_signed_in? || !current_user.can_s_or_u_aftf?(@aftf) 
 		@aftf.supporters.destroy(current_user) if @aftf.supporters.include?(current_user)
 		@aftf.unsupporters.destroy(current_user) if @aftf.unsupporters.include?(current_user)
 		redirect_to @aftf.conversation

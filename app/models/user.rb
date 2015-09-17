@@ -62,6 +62,11 @@ class User < ActiveRecord::Base
 	def can_s_or_u_call?(call)
 		return call.child_post.nil? && call.callable != self
 	end
+
+	#if call has given a post, the s/u have been switched to the post. the call can't be s/u anymore
+	def can_s_or_u_aftf?(aftf)
+		return aftf.creator != self && aftf.alive?
+	end
 	
 	#Critical situation: a call has given children ( child_calls, child_post )
 	#one shouldn't unsupport (which could lead to destroy it) or destroy it

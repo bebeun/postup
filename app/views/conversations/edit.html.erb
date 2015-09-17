@@ -27,7 +27,13 @@ A SERIEUSEMNT REVOIR   ================================>
 	<% end %>	
 </ul>
 <ul>
-	<% @conversation.aftfs.select{|x| x.alive?}.each do |f| %>
+	<% @conversation.aftfs.select{|x| x.parent_call == @conversation}.each do |f| %>
+		<li><%= render '/aftfs/show', :fff => f %></li>
+	<% end %>	
+</ul>
+<%= "AFTF IN THE AIR: " if @conversation.aftfs.select{|x| x.alive? }.any? %>
+<ul>
+	<% @conversation.aftfs.select{|x| x.alive? }.each do |f| %>
 		<li><%= render '/aftfs/show', :fff => f %></li>
 	<% end %>	
 </ul>
