@@ -1,4 +1,5 @@
 class CallAction < ActiveRecord::Base
+
 	#USER who S/U this CALL
 	belongs_to :creator, :class_name => "User", :foreign_key  => "user_id"
 	validates :creator, presence: true
@@ -11,7 +12,7 @@ class CallAction < ActiveRecord::Base
 	validates :support, presence: true
 	validates_inclusion_of :support, in: ["up","down"]
 	
-	validates_uniqueness_of :user_id, :scope => [:call_id],	:message => "Error on the join model. This callout already exists"	
+	validates_uniqueness_of :user_id, :scope => [:call_id],	:message => "Error on the join model. You already s/u this callout"	
 	
 	validate :callable_vs_supporters	
 	def callable_vs_supporters
