@@ -94,6 +94,12 @@ class User < ActiveRecord::Base
 		return !post.parent.child_calls.any? && post.creator == self
 	end
 	
+	#post has a parent. this parent has child_calls. 
+	#if one can't edit or destroy, the post can be made not visible
+	def can_hide?(post)
+		return post.parent.child_calls.any? && post.creator == self && post.visible
+	end
+	
 	def displayable_user(conversation)
 		users = User.all - [self]
 		if !conversation.nil?

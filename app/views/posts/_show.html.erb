@@ -1,12 +1,14 @@
 <h2>Post</h2>
-
-<%= render '/user_link', :xx => fff.creator %> said: <%= fff.title %>, <%= fff.content %>
+<% if fff.visible %>
+	<%= render '/user_link', :xx => fff.creator %> said: <%= fff.title %>, <%= fff.content %>
+<% else %>
+	<%= render '/user_link', :xx => fff.creator %> <%= (fff.creator == current_user) ? ("have erased your post...") : ("has erased its post...") %> 
+<% end %>
 
 <% if user_signed_in? %>
-	<% if current_user.can_edit_or_destroy?(fff) %>
-		<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" %>
-		<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, fff), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } %>
-	<% end %>
+	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_edit_or_destroy?(fff) %>
+	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'hide', id: fff ), method: :post, data: { confirm: "Are you sure?" }, form_class: "button_link" if !current_user.can_edit_or_destroy?(fff) && current_user.can_hide?(fff) %>
+	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, fff), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } if current_user.can_edit_or_destroy?(fff) %>
 <% end %>
 
 <% if user_signed_in? && fff.creator != current_user %>

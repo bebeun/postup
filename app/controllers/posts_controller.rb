@@ -64,6 +64,15 @@ class PostsController < ApplicationController
 		redirect_to @post.conversation
 	end
 	
+	def hide
+		@post = Post.find(params[:id])
+		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_hide?(@post)
+		@post.update_attributes!(visible: false)
+		@post.supporters.destroy(current_user) if @post.supporters.include?(current_user)
+		@post.unsupporters.destroy(current_user) if @post.unsupporters.include?(current_user)
+		redirect_to @post.conversation
+	end
+	
 	def destroy
 		@post = Post.find(params[:id])
 		@conversation = @post.conversation

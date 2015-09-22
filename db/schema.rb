@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150917000257) do
+ActiveRecord::Schema.define(version: 20150922215406) do
 
   create_table "aftf_actions", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -107,13 +107,14 @@ ActiveRecord::Schema.define(version: 20150917000257) do
   add_index "post_actions", ["user_id"], name: "index_post_actions_on_user_id"
 
   create_table "posts", force: :cascade do |t|
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
     t.integer  "conversation_id"
     t.text     "title"
     t.text     "content"
     t.integer  "parent_id"
     t.string   "parent_type"
+    t.boolean  "visible",         default: true
   end
 
   add_index "posts", ["conversation_id"], name: "index_posts_on_conversation_id"

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   post 'posts/:id/support' => 'posts#support'
   delete 'posts/:id/remove' => 'posts#remove'
   post 'posts/:id/unsupport' => 'posts#unsupport' 
+  post 'posts/:id/hide' => 'posts#hide'
   
   post 'calls/:id/support' => 'calls#support'
   delete 'calls/:id/remove' => 'calls#remove'
