@@ -9,6 +9,10 @@
 	</ul>
 <% end %>
 
+<b><%=  "Be careful, if you call someone now, you won't be able to post after..." if current_user.alert_before_call?(@conversation) %></b>
+
+<br/><br/>
+
 <%= form_tag(fff) do %>
 	Select the Name of the user you want to call out: <br/>
 	<%= select_tag 'call[global_id]', \

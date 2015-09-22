@@ -23,9 +23,18 @@ class User < ActiveRecord::Base
 		parent = self.parent_call(conversation)													#self is called out
 		if !parent.nil?
 			answered = parent.child_post.nil?													#he has not yet posted
-			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?					#and none of his calls have been yet answered by posting
-			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?   			#and none of his calls have been forwarded 
-			return answered && child_answered && forwarded
+			child_answered = !parent.child_calls.any?											#and has not yet called
+			return answered && child_answered
+		else
+			return false
+		end
+	end
+	
+	def alert_before_call?(conversation)														# if a user call before posting,...
+		parent = self.parent_call(conversation)													# ...warn him he won't be able to post after.
+		if !parent.nil?
+			not_answered = parent.child_post.nil?												#he has not yet posted
+			return not_answered
 		else
 			return false
 		end
@@ -34,6 +43,8 @@ class User < ActiveRecord::Base
 	def can_call?(conversation)
 		parent = self.parent_call(conversation)													#self is called out
 		if !parent.nil?
+			#===> parent.child_post. moins de 1h ??
+			#===> bouton pour dire "je ne fwd pas ?"
 			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?					#and none of his calls have been yet answered by posting
 			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?				#and none of his calls have been forwarded 
 			return child_answered && forwarded
@@ -46,7 +57,7 @@ class User < ActiveRecord::Base
 		cond = !can_post?(conversation) && !can_call?(conversation) 											#can't do anything
 		cond &&= !conversation.aftfs.select{|x| x.alive? && x.creator == self}.any?								#has not an aftf alive (not answered)
 		action = conversation.aftfs.last(Aftf::MAX_AFTF_PER_CONV).select{|x| !x.accepted && x.creator == self}	#has not been refused the floor more than 3 times in a row
-		cond &&= (action.count != Aftf::MAX_AFTF_PER_CONV)	#Max number of AFTF in a conv
+		cond &&= (action.count != Aftf::MAX_AFTF_PER_CONV)														#Max number of AFTF in a conv
 		return cond
 	end
 	
@@ -58,9 +69,9 @@ class User < ActiveRecord::Base
 		return parent
 	end
 	
-	#if call has given a post, the s/u have been switched to the post. the call can't be s/u anymore
+	#if call has given a post or child calls, the s/u have been switched to the post. the call can't be s/u anymore
 	def can_s_or_u_call?(call)
-		return call.child_post.nil? && call.callable != self
+		return call.child_post.nil? && call.callable != self && !call.child_calls.any? #==============>garder le !call.child_calls.any?
 	end
 
 	#if call has given a post, the s/u have been switched to the post. the call can't be s/u anymore
@@ -73,13 +84,14 @@ class User < ActiveRecord::Base
 	#(in fact, to check for child_post is redundant with "can_be_s_or_u?")
 	#keep the TREE RELEVANT and VALID
 	def can_not_unsupport_or_destroy?(call)
-		return call.supporters.count == 1 && call.supporters.include?(self) && (call.child_calls.any? || !call.child_post.nil?)
+		# return call.supporters.count == 1 && call.supporters.include?(self) && (call.child_calls.any? || !call.child_post.nil?)
+		return false
 	end
 	
 	#post has a parent. this parent has child_calls. 
 	#if they are either answered or forwarded, edition/destruction of post is not allowed.
 	def can_edit_or_destroy?(post)
-		return !post.parent.child_calls.collect{|x| x.child_post}.any? && !post.parent.child_calls.collect{|x| x.child_calls}.flatten.any? && post.creator == self
+		return !post.parent.child_calls.any? && post.creator == self
 	end
 	
 	def displayable_user(conversation)

@@ -3,12 +3,13 @@
 <% user =  fff.callable %>
 Callout : 	( initially created by: <%= render '/user_link', :xx => fff.creator %> ) ===> >> <%= render '/user_link', :xx => user %>
 
-
 <% if user_signed_in? %>
 	<% if current_user.can_s_or_u_call?(fff) %>
-		<%= button_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: fff ), method: :post, form_class: "button_link" if !fff.supporters.include?(current_user)%>
-		<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: fff), method: :delete, form_class: "button_link" if !current_user.can_not_unsupport_or_destroy?(fff) && (fff.supporters.include?(current_user) || fff.unsupporters.include?(current_user))%>
-		<%= button_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: fff ), method: :post, form_class: "button_link" if !current_user.can_not_unsupport_or_destroy?(fff) && !fff.unsupporters.include?(current_user) %>
+		<%= button_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: fff ), method: :post, form_class: "button_link" if !fff.supporters.include?(current_user) %>
+		<% if !current_user.can_not_unsupport_or_destroy?(fff) %>
+			<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: fff), method: :delete, form_class: "button_link" if fff.supporters.include?(current_user) || fff.unsupporters.include?(current_user) %>
+			<%= button_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: fff ), method: :post, form_class: "button_link" if !fff.unsupporters.include?(current_user) %>
+		<% end %>
 	<% end %>
 <% end %>
 

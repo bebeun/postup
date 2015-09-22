@@ -5,6 +5,7 @@ class ConversationsController < ApplicationController
 			redirect_to new_user_session_path
 		else
 			@conversation = Conversation.new()
+			@conversation.creator = current_user
 			@post = Post.new()
 			@call = Call.new()
 			@profiles = Profile::PROFILE_TYPES.collect{|x|  x.constantize.all}.flatten

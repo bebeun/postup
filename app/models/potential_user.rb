@@ -14,7 +14,7 @@ class PotentialUser < ActiveRecord::Base
 	end
 	
 	def can_post?(conversation)
-		return !self.parent_call(conversation).nil?													#self is called out
+		return !self.parent_call(conversation).nil?													#self is called out (as a potential user...)
 	end
 	
 	def parent_call(conversation)
