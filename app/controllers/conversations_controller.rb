@@ -4,6 +4,7 @@ class ConversationsController < ApplicationController
 			flash[:danger] = "Please sign in before creating a new conversation."
 			redirect_to new_user_session_path
 		else
+			@conversation = Conversation.new()
 			@post = Post.new()
 			@call = Call.new()
 			@profiles = Profile::PROFILE_TYPES.collect{|x|  x.constantize.all}.flatten
@@ -15,9 +16,9 @@ class ConversationsController < ApplicationController
 		@conversation = Conversation.find(params[:id])
 		redirect_it root_path if @conversation.nil?
 		if user_signed_in? 
-			@aftf = Aftf.new()
-			@post = Post.new() 
-			@call = Call.new()
+			@aftf = Aftf.new() if current_user.can_aftf?(@conversation)
+			@post = Post.new() if current_user.can_post?(@conversation)
+			@call = Call.new() if current_user.can_call?(@conversation)
 		end
 	end
 	

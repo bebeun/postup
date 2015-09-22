@@ -5,7 +5,7 @@ module ProfilesHelper
 			profile = Profile.build_with(x, display) if Profile.is_it?(x,display)
 			#check for priority
 		end
-		profile.owner ||= PotentialUser.new() and profile.save if !profile.nil?
+		profile.owner ||= PotentialUser.new()  if !profile.nil? 
 		return profile
 	end
 	

@@ -37,7 +37,7 @@ class AftfsController < ApplicationController
 		#switch aftf s/u to call s/u !!! ================================> inherited = true
 		call.supporters << current_user
 		call.save!
-		@aftf.parent_call = call.parent
+		@aftf.answer_call = call.parent
 		@aftf.accepted = true
 		@aftf.save!
 		redirect_to @aftf.conversation
@@ -46,7 +46,7 @@ class AftfsController < ApplicationController
 	def refuse
 		@aftf = Aftf.find(params[:id])
 		redirect_to @aftf.conversation and return if !user_signed_in? || !current_user.can_call?(@aftf.conversation) || !@aftf.alive?
-		@aftf.parent_call = current_user.parent_call(@aftf.conversation)
+		@aftf.answer_call = current_user.parent_call(@aftf.conversation)
 		@aftf.accepted = false
 		@aftf.save!
 		redirect_to @aftf.conversation

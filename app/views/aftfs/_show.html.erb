@@ -4,13 +4,13 @@
 	<%= "You asked for the floor" %>  
 	<%= button_to "Remove Aftf",  url_for(controller: 'aftfs', action: 'destroy', id: fff), method: :delete, data: { confirm: "Are you sure?" },form_class: "button_link" if fff.alive?%>
 	<%= (fff.accepted?) ? ("and were accepted by") : ("and were refused by") if !fff.alive? %>
-	<%= render '/user_link', :xx => fff.parent_call.callable if !fff.alive? && fff.parent_call_type == "Call"%>
-	<%= render '/user_link', :xx => fff.parent_call.creator if !fff.alive? && fff.parent_call_type == "Conversation"%>
+	<%= render '/user_link', :xx => fff.answer_call.callable if !fff.alive? && fff.answer_call_type == "Call"%>
+	<%= render '/user_link', :xx => fff.answer_call.creator if !fff.alive? && fff.answer_call_type == "Conversation"%>
 <% else %>
 	<%= link_to(fff.creator.name,fff.creator)+" asked for the floor".html_safe %>
 	<%= (fff.accepted?) ? ("and was accepted by") : ("and was refused by") if !fff.alive? %>
-	<%= render '/user_link', :xx => fff.parent_call.callable if !fff.alive? && fff.parent_call_type == "Call" %>
-	<%= render '/user_link', :xx => fff.parent_call.creator if !fff.alive? && fff.parent_call_type == "Conversation" %>
+	<%= render '/user_link', :xx => fff.answer_call.callable if !fff.alive? && fff.answer_call_type == "Call" %>
+	<%= render '/user_link', :xx => fff.answer_call.creator if !fff.alive? && fff.answer_call_type == "Conversation" %>
 <% end %>
 
 <% if user_signed_in? %>

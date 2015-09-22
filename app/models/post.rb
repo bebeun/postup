@@ -8,6 +8,7 @@ class Post < ActiveRecord::Base
 		return self.parent.creator if parent_type == "Conversation"
 		return self.parent.callable if parent_type == "Call"
 	end
+	
 	#creator must support at least its own post
 	validate :creator_is_supporter	
 	def creator_is_supporter

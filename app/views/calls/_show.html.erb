@@ -22,7 +22,7 @@ Callout : 	( initially created by: <%= render '/user_link', :xx => fff.creator %
 	<% fff.conversation.calls.where(parent: fff).each do |f| %>
 		<li><%= render '/calls/show', :fff => f %></li>
 	<% end %>	
-	<% fff.conversation.aftfs.where(parent_call: fff).each do |f| %>
+	<% fff.conversation.aftfs.where(answer_call: fff).each do |f| %>
 		<li><%= render '/aftfs/show', :fff => f %></li>
 	<% end %>
 </ul>

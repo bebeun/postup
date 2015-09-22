@@ -1,7 +1,6 @@
 <% provide(:title, "New conversation") %>
 
-<% @User = User.all - [current_user] %>
-<% @PotentialUser = PotentialUser.all %>
+<%= @conversation.title %>
 
 <br/>
 <%= render '/posts/new', :fff => @post %>

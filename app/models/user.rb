@@ -82,6 +82,26 @@ class User < ActiveRecord::Base
 		return !post.parent.child_calls.collect{|x| x.child_post}.any? && !post.parent.child_calls.collect{|x| x.child_calls}.flatten.any? && post.creator == self
 	end
 	
+	def displayable_user(conversation)
+		users = User.all - [self]
+		if !conversation.nil?
+			users -= conversation.calls.where(callable_type: "User")\
+			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self))}\
+			.select { |call| call.callable.can_post?(conversation) || call.callable.can_call?(conversation)}\
+			.collect{|call| call.callable }
+		end
+		return users
+	end
+	
+	def displayable_potential_user(conversation)
+		potential_users = PotentialUser.all
+		if !conversation.nil?
+			potential_users -= conversation.calls.where(callable_type: "PotentialUser")\
+			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self)) }\
+			.collect{|call| call.callable } 
+		end
+		return potential_users
+	end
 	
 	# CALL Management
 	#CALL S/U

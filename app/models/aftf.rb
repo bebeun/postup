@@ -5,7 +5,7 @@ class Aftf < ActiveRecord::Base
 	belongs_to :conversation
 	validates :conversation, presence: true	
 
-	belongs_to :parent_call, polymorphic: true
+	belongs_to :answer_call, polymorphic: true
 	#validates :accepted
 	
 	MAX_AFTF_PER_CONV = 3

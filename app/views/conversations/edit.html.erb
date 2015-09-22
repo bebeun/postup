@@ -1,23 +1,7 @@
 <% provide(:title, "Edit a Post") %>
-A SERIEUSEMNT REVOIR   ================================> 
-<% if user_signed_in? %>
-	<% @User = User.all - [current_user] - \
-	@conversation.calls.where(callable_type: "User")\
-	.select { |w| (w.supporters.include?(current_user) || w.unsupporters.include?(current_user))}\
-	.select { |w| w.callable.can_post?(@conversation) || w.callable.can_call?(@conversation)}\
-	.collect{|x| x.callable } %>
-	<% @PotentialUser = PotentialUser.all - @conversation.calls.where(callable_type: "PotentialUser").select { |w| (w.supporters.include?(current_user) || w.unsupporters.include?(current_user)) }.collect{|x| x.callable } %>
-<% end %>
 
 
-<% if @conversation.posts.any? %>
-	<h1><%= @conversation.posts.first.title %></h1>
-<% else %>
-	<% user =  @conversation.calls.first.callable %>
-	<h1>
-	<%= @conversation.calls.first.supporters.collect{|x| x.name }.join(" + ") %> >> <%= user.class.name == "User" ? user.name : user.profile.class.name+" : "+user.profile.description %> 
-	</h1>
-<% end %>
+<%= @conversation.title%>
 
 <%= render '/posts/edit', :fff => @post %>
 

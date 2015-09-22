@@ -2,8 +2,8 @@ class Call < ActiveRecord::Base
 	#check for AFTF which this CALL could have accepted
 	before_destroy :cancel_accepted_aftfs
 	def cancel_accepted_aftfs
-		self.parent.child_aftfs.select{|x| x.creator == self.callable && x.accepted}.each do |x|
-			x.update_attributes(accepted: nil, parent_call: nil)
+		self.parent.answer_aftfs.select{|x| x.creator == self.callable && x.accepted}.each do |x|
+			x.update_attributes(accepted: nil, answer_call: nil)
 		end
 	end 
 	
@@ -15,7 +15,7 @@ class Call < ActiveRecord::Base
 	has_many :call_actions, dependent: :destroy
 	has_many :supporters, -> { where(call_actions: {support: "up"})}, through: :call_actions, source: "creator", class_name: "User"
 	has_many :unsupporters, -> { where(call_actions: {support: "down"})}, through: :call_actions, source: "creator", class_name: "User"
-	validates :supporters, :length => {:minimum => 1, :message => "At least one supporter is required" }	
+	#validates :supporters, :length => {:minimum => 1, :message => "At least one supporter is required" }	
 	
 	#USER / POTENTIAL USER who is called out
 	belongs_to :callable, polymorphic: true
@@ -23,7 +23,7 @@ class Call < ActiveRecord::Base
 	validates :callable, presence: true	
 	
 	#AFTF which is eventually linked to this CALL (This CALL has entitled its CALLABLE to answer an AFTF )
-	has_many :child_aftfs, as: :parent_call, class_name: "Aftf"
+	has_many :answer_aftfs, as: :answer_call, class_name: "Aftf"
 
 	#USER who made the call
 	def creator

@@ -13,6 +13,17 @@ class PotentialUser < ActiveRecord::Base
 		end
 	end
 	
+	def can_post?(conversation)
+		return !self.parent_call(conversation).nil?													#self is called out
+	end
+	
+	def parent_call(conversation)
+		#===========================================>(last is DIRTY - index on updated_at ??)	
+		parent = nil
+		parent = Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any?
+		return parent
+	end
+	
 	# def profile=(profile)
 		# profile.update_attributes(owner: self)
 	# end

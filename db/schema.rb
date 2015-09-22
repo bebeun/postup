@@ -30,13 +30,13 @@ ActiveRecord::Schema.define(version: 20150917000257) do
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.boolean  "accepted"
-    t.integer  "parent_call_id"
-    t.string   "parent_call_type"
+    t.integer  "answer_call_id"
+    t.string   "answer_call_type"
   end
 
+  add_index "aftfs", ["answer_call_type", "answer_call_id"], name: "index_aftfs_on_answer_call_type_and_answer_call_id"
   add_index "aftfs", ["conversation_id"], name: "index_aftfs_on_conversation_id"
   add_index "aftfs", ["creator_id"], name: "index_aftfs_on_creator_id"
-  add_index "aftfs", ["parent_call_type", "parent_call_id"], name: "index_aftfs_on_parent_call_type_and_parent_call_id"
 
   create_table "call_actions", force: :cascade do |t|
     t.integer  "user_id"

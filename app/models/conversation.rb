@@ -8,11 +8,28 @@ class Conversation < ActiveRecord::Base
 	
 	has_many :child_calls, as: :parent, class_name: "Call"
 	has_one :child_post, as: :parent, class_name: "Post"
-	has_many :child_aftfs, as: :parent_call, class_name: "Aftf"
+	has_many :answer_aftfs, as: :answer_call, class_name: "Aftf"
 	
 	def has_content?
 		return self.posts.any? || self.calls.any?
 	end
+	
+	def title
+		if self.has_content?
+			if self.posts.any? 
+				return self.posts.first.title
+			else
+				user =  self.calls.first.callable
+				user.class.name == "User" ? name = user.name : name = user.profile.class.name+" : "+user.profile.description
+				return self.calls.first.supporters.collect{|x| x.name }.join(" + ").to_s+" >>  "+name
+			end
+		else
+			return "This is a new conversation! "
+		end
+	
+	end
+	
+	
 	#AFTF which is eventually linked to this CONVERSATION (This CONVERSATION has entitled its CREATOR to answer an AFTF at its beginning )
 	
 end
