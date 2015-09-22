@@ -41,47 +41,47 @@ class PostsController < ApplicationController
 	end
 
 	def support
-		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || current_user == @post.creator || @post.supporters.include?(current_user)
-		@post.unsupporters.destroy(current_user) if @post.unsupporters.include?(current_user)
-		@post.supporters << current_user 
-		redirect_to @post.conversation
+		post = Post.find(params[:id])
+		redirect_to post.conversation and return if !user_signed_in? || current_user == post.creator || post.supporters.include?(current_user)
+		post.unsupporters.destroy(current_user) if post.unsupporters.include?(current_user)
+		post.supporters << current_user 
+		redirect_to post.conversation
 	end
 	
 	def unsupport
-		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || current_user == @post.creator || @post.unsupporters.include?(current_user)
-		@post.supporters.destroy(current_user) if @post.supporters.include?(current_user)
-		@post.unsupporters << current_user 
-		redirect_to @post.conversation
+		post = Post.find(params[:id])
+		redirect_to post.conversation and return if !user_signed_in? || current_user == post.creator || post.unsupporters.include?(current_user)
+		post.supporters.destroy(current_user) if post.supporters.include?(current_user)
+		post.unsupporters << current_user 
+		redirect_to post.conversation
 	end
 	
 	def remove
-		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || current_user == @post.creator
-		@post.supporters.destroy(current_user) if @post.supporters.include?(current_user)
-		@post.unsupporters.destroy(current_user) if @post.unsupporters.include?(current_user)
-		redirect_to @post.conversation
+		post = Post.find(params[:id])
+		redirect_to post.conversation and return if !user_signed_in? || current_user == post.creator
+		post.supporters.destroy(current_user) if post.supporters.include?(current_user)
+		post.unsupporters.destroy(current_user) if post.unsupporters.include?(current_user)
+		redirect_to post.conversation
 	end
 	
 	def hide
-		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_hide?(@post)
-		@post.update_attributes!(visible: false)
-		@post.supporters.destroy(current_user) if @post.supporters.include?(current_user)
-		@post.unsupporters.destroy(current_user) if @post.unsupporters.include?(current_user)
-		redirect_to @post.conversation
+		post = Post.find(params[:id])
+		redirect_to post.conversation and return if !user_signed_in? || !current_user.can_hide?(post)
+		post.update_attributes!(visible: false)
+		post.supporters.destroy(current_user) if post.supporters.include?(current_user)
+		post.unsupporters.destroy(current_user) if post.unsupporters.include?(current_user)
+		redirect_to post.conversation
 	end
 	
 	def destroy
-		@post = Post.find(params[:id])
-		@conversation = @post.conversation
-		redirect_to @conversation and return if !user_signed_in? || !current_user.can_edit_or_destroy?(@post)
-		@post.destroy if @post.creator == current_user
-		if @conversation.has_content?
-			redirect_to @conversation
+		post = Post.find(params[:id])
+		conversation = post.conversation
+		redirect_to conversation and return if !user_signed_in? || !current_user.can_edit_or_destroy?(post)
+		post.destroy if post.creator == current_user
+		if conversation.has_content?
+			redirect_to conversation
 		else
-			@conversation.destroy
+			conversation.destroy
 			redirect_to new_conversation_path
 		end
 	end

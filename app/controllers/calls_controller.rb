@@ -37,43 +37,43 @@ class CallsController < ApplicationController
 
 
 	def support
-		@call = Call.find(params[:id])
-		redirect_to @call.conversation and return if !current_user.can_s_or_u_call?(@call)
-		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)
-		@call.supporters << current_user
-		redirect_to @call.conversation
+		call = Call.find(params[:id])
+		redirect_to call.conversation and return if !current_user.can_s_or_u_call?(call)
+		call.unsupporters.destroy(current_user) if call.unsupporters.include?(current_user)
+		call.supporters << current_user
+		redirect_to call.conversation
 	end
 
 	def unsupport
-		@call = Call.find(params[:id])
-		@conversation = @call.conversation	
-		redirect_to @conversation and return if !current_user.can_s_or_u_call?(@call) || current_user.can_not_unsupport_or_destroy?(@call)
+		call = Call.find(params[:id])
+		conversation = call.conversation	
+		redirect_to conversation and return if !current_user.can_s_or_u_call?(call) || current_user.can_not_unsupport_or_destroy?(call)
 		case 
-			when @call.supporters.many?
-				@call.supporters.destroy(current_user) if @call.supporters.include?(current_user)
-				@call.unsupporters << current_user
-			when @call.supporters.count == 1	
-				(@call.supporters.include?(current_user)) ? (@call.destroy) : (@call.unsupporters << current_user)
+			when call.supporters.many?
+				call.supporters.destroy(current_user) if call.supporters.include?(current_user)
+				call.unsupporters << current_user
+			when call.supporters.count == 1	
+				(call.supporters.include?(current_user)) ? (call.destroy) : (call.unsupporters << current_user)
 		end
-		if @conversation.has_content?
-			redirect_to @conversation
+		if conversation.has_content?
+			redirect_to conversation
 		else
-			@conversation.destroy
+			conversation.destroy
 			redirect_to new_conversation_path
 		end
 	end
 	
 	def remove
-		@call = Call.find(params[:id])	
-		@conversation = @call.conversation
-		redirect_to @conversation and return if current_user.can_not_unsupport_or_destroy?(@call)
-		@call.supporters.destroy(current_user) if @call.supporters.include?(current_user)
-		@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)		
-		@call.destroy if !@call.supporters.any?
-		if @conversation.has_content?
-			redirect_to @conversation
+		call = Call.find(params[:id])	
+		conversation = call.conversation
+		redirect_to conversation and return if current_user.can_not_unsupport_or_destroy?(call)
+		call.supporters.destroy(current_user) if call.supporters.include?(current_user)
+		call.unsupporters.destroy(current_user) if call.unsupporters.include?(current_user)		
+		call.destroy if !call.supporters.any?
+		if conversation.has_content?
+			redirect_to conversation
 		else
-			@conversation.destroy
+			conversation.destroy
 			redirect_to new_conversation_path
 		end
 	end

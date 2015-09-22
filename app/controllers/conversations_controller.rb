@@ -4,8 +4,7 @@ class ConversationsController < ApplicationController
 			flash[:danger] = "Please sign in before creating a new conversation."
 			redirect_to new_user_session_path
 		else
-			@conversation = Conversation.new()
-			@conversation.creator = current_user
+			@conversation = Conversation.new(creator: current_user)
 			@post = Post.new()
 			@call = Call.new()
 			@profiles = Profile::PROFILE_TYPES.collect{|x|  x.constantize.all}.flatten
