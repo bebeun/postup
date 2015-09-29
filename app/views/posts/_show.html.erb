@@ -1,22 +1,22 @@
 <h2>Post</h2>
-<% if fff.visible %>
-	<%= render '/user_link', :xx => fff.creator %> said: <%= fff.title %>, <%= fff.content %>
+<% if post.visible %>
+	<%= render '/user_link', :user => post.creator %> said: <%= post.title %>, <%= post.content %>
 <% else %>
-	<%= render '/user_link', :xx => fff.creator %> <%= (fff.creator == current_user) ? ("have erased your post...") : ("has erased its post...") %> 
+	<%= render '/user_link', :user => post.creator %> <%= (post.creator == current_user) ? ("have erased your post...") : ("has erased its post...") %> 
 <% end %>
 
 <% if user_signed_in? %>
-	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_edit_or_destroy?(fff) %>
-	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'hide', id: fff ), method: :post, data: { confirm: "Are you sure?" }, form_class: "button_link" if !current_user.can_edit_or_destroy?(fff) && current_user.can_hide?(fff) %>
-	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, fff), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } if current_user.can_edit_or_destroy?(fff) %>
+	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_edit_or_destroy?(post) %>
+	<%= button_to "Erase this post", url_for(controller: 'posts', action: 'hide', id: post ), method: :post, data: { confirm: "Are you sure?" }, form_class: "button_link" if !current_user.can_edit_or_destroy?(post) && current_user.can_hide?(post) %>
+	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, post), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } if current_user.can_edit_or_destroy?(post) %>
 <% end %>
 
-<% if user_signed_in? && fff.creator != current_user %>
-	<%= button_to "Up This Post", url_for(controller: 'posts', action: 'support', id: fff ), method: :post, form_class: "button_link" if !fff.supporters.include?(current_user)%>
-	<%= button_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: fff), method: :delete, form_class: "button_link" if (fff.supporters.include?(current_user)) || fff.unsupporters.include?(current_user)%>
-	<%= button_to "Down This Post",  url_for(controller: 'posts', action: 'unsupport', id: fff  ), method: :post, form_class: "button_link" if !fff.unsupporters.include?(current_user) %>
+<% if user_signed_in? && post.creator != current_user %>
+	<%= button_to "Up This Post", url_for(controller: 'posts', action: 'support', id: post ), method: :post, form_class: "button_link" if !post.supporters.include?(current_user)%>
+	<%= button_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: post), method: :delete, form_class: "button_link" if (post.supporters.include?(current_user)) || post.unsupporters.include?(current_user)%>
+	<%= button_to "Down This Post",  url_for(controller: 'posts', action: 'unsupport', id: post  ), method: :post, form_class: "button_link" if !post.unsupporters.include?(current_user) %>
 <% end %>
 
-<br/>Supported by: <% fff.supporters.each do |x| %>  <%= render '/user_link', :xx => x %> <% end %>
-<br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= render '/user_link', :xx => x %> <% end %>
+<br/>Supported by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
+<br/>Unsupported by: <% post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
 

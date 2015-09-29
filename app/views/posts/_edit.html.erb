@@ -1,11 +1,11 @@
 <h2>Edit Post Partial --------------------------- </h2>
 
-<%= form_for fff do |f| %>
+<%= form_for post do |f| %>
 
-	<% if fff.errors.any? %>
-		<%= pluralize(@post.errors.count, "error") %> prohibited this post from being updated:
+	<% if post.errors.any? %>
+		<%= pluralize(post.errors.count, "error") %> prohibited this post from being updated:
 		<ul>
-			<% @post.errors.full_messages.each do |msg| %>
+			<% post.errors.full_messages.each do |msg| %>
 				<li><%= msg %></li>
 			<% end %>
 		</ul>
@@ -20,9 +20,9 @@
 	<%= f.submit %>
 <% end %>
 
-<%= button_to "Delete this post",  url_for(controller: 'posts', action: 'destroy', id: fff ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if (user_signed_in? && fff.creator == current_user)%>
-<br/>Supported by: <% fff.supporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
-<br/>Unsupported by: <% fff.unsupporters.each do |x| %>  <%= link_to x.name, x %> <% end %>
-<br/> <%= link_to "Cancel", fff.conversation %> 
+<%= button_to "Delete this post",  url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if (user_signed_in? && post.creator == current_user)%>
+<br/>Supported by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
+<br/>Unsupported by: <% post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
+<br/> <%= link_to "Cancel", post.conversation %> 
 
 <h2>------------------------------------------------------ </h2>

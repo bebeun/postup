@@ -3,31 +3,31 @@
 
 <%= @conversation.title%>
 
-<%= render '/posts/edit', :fff => @post %>
+<%= render '/posts/edit', :post => @post %>
 
 <ul>
 	<% @conversation.calls.where(parent: @conversation).each do |f| %>
-		<li><%= render '/calls/show', :fff => f %></li>
+		<li><%= render '/calls/show', :call => f %></li>
 	<% end %>	
 </ul>
 <ul>
 	<% @conversation.aftfs.select{|x| x.parent_call == @conversation}.each do |f| %>
-		<li><%= render '/aftfs/show', :fff => f %></li>
+		<li><%= render '/aftfs/show', :aftf => f %></li>
 	<% end %>	
 </ul>
 <%= "AFTF IN THE AIR: " if @conversation.aftfs.select{|x| x.alive? }.any? %>
 <ul>
 	<% @conversation.aftfs.select{|x| x.alive? }.each do |f| %>
-		<li><%= render '/aftfs/show', :fff => f %></li>
+		<li><%= render '/aftfs/show', :aftf => f %></li>
 	<% end %>	
 </ul>
 
 <% if user_signed_in? %>
 	<br/>
-	<%= render '/aftfs/new', :fff => [@conversation, Aftf.new()] if current_user.can_aftf?(@conversation)%>
+	<%= render '/aftfs/new', :aftf => [@conversation, Aftf.new()] if current_user.can_aftf?(@conversation)%>
 	<br/>
-	<%= render '/posts/new', :fff => [@conversation, Post.new()] if current_user.can_post?(@conversation)%>
+	<%= render '/posts/new', :post => [@conversation, Post.new()] if current_user.can_post?(@conversation)%>
 	<br/>
-	<%= render '/calls/new', :fff => [@conversation, Call.new()] if current_user.can_call?(@conversation)%> 
+	<%= render '/calls/new', :call => [@conversation, Call.new()] if current_user.can_call?(@conversation)%> 
 	<br/>
 <% end %>

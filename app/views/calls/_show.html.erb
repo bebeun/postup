@@ -1,30 +1,30 @@
 <h2>Call</h2>
 
-<% user =  fff.callable %>
-Callout : 	( initially created by: <%= render '/user_link', :xx => fff.creator %> ) ===> >> <%= render '/user_link', :xx => user %>
+<% user =  call.callable %>
+Callout : 	( initially created by: <%= render '/user_link', :user => call.creator %> ) ===> >> <%= render '/user_link', :user => user %>
 
 <% if user_signed_in? %>
-	<% if current_user.can_s_or_u_call?(fff) %>
-		<%= button_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: fff ), method: :post, form_class: "button_link" if !fff.supporters.include?(current_user) %>
-		<% if !current_user.can_not_unsupport_or_destroy?(fff) %>
-			<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: fff), method: :delete, form_class: "button_link" if fff.supporters.include?(current_user) || fff.unsupporters.include?(current_user) %>
-			<%= button_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: fff ), method: :post, form_class: "button_link" if !fff.unsupporters.include?(current_user) %>
+	<% if current_user.can_s_or_u_call?(call) %>
+		<%= button_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: call ), method: :post, form_class: "button_link" if !call.supporters.include?(current_user) %>
+		<% if !current_user.can_not_unsupport_or_destroy?(call) %>
+			<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), method: :delete, form_class: "button_link" if call.supporters.include?(current_user) || call.unsupporters.include?(current_user) %>
+			<%= button_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: call ), method: :post, form_class: "button_link" if !call.unsupporters.include?(current_user) %>
 		<% end %>
 	<% end %>
 <% end %>
 
-<br/>Supported by: <% fff.supporters.each do |x| %>  <%= render '/user_link', :xx => x %><% end %>
-<br/>Unsupported by: <% fff.unsupporters.each do |x| %> <%= render '/user_link', :xx => x %><% end %>
+<br/>Supported by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
+<br/>Unsupported by: <% call.unsupporters.each do |x| %> <%= render '/user_link', :user => x %><% end %>
 
 <ul>
-	<% fff.conversation.posts.where(parent: fff).each do |f| %>
-		<li><%= render '/posts/show', :fff => f %></li>
+	<% call.conversation.posts.where(parent: call).each do |f| %>
+		<li><%= render '/posts/show', :post => f %></li>
 	<% end %>
-	<% fff.conversation.calls.where(parent: fff).each do |f| %>
-		<li><%= render '/calls/show', :fff => f %></li>
+	<% call.conversation.calls.where(parent: call).each do |f| %>
+		<li><%= render '/calls/show', :call => f %></li>
 	<% end %>	
-	<% fff.conversation.aftfs.where(answer_call: fff).each do |f| %>
-		<li><%= render '/aftfs/show', :fff => f %></li>
+	<% call.conversation.aftfs.where(answer_call: call).each do |f| %>
+		<li><%= render '/aftfs/show', :aftf => f %></li>
 	<% end %>
 </ul>
 

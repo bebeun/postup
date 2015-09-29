@@ -91,13 +91,13 @@ class User < ActiveRecord::Base
 	#post has a parent. this parent has child_calls. 
 	#if they are either answered or forwarded, edition/destruction of post is not allowed.
 	def can_edit_or_destroy?(post)
-		return !post.parent.child_calls.any? && post.creator == self
+		return !post.brother_calls.any? && post.creator == self 
 	end
 	
 	#post has a parent. this parent has child_calls. 
 	#if one can't edit or destroy, the post can be made not visible
 	def can_hide?(post)
-		return post.parent.child_calls.any? && post.creator == self && post.visible
+		return post.brother_calls.any? && post.creator == self && post.visible
 	end
 	
 	def displayable_user(conversation)

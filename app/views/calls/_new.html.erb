@@ -13,7 +13,7 @@
 
 <br/><br/>
 
-<%= form_tag(fff) do %>
+<%= form_tag(call) do %>
 	Select the Name of the user you want to call out: <br/>
 	<%= select_tag 'call[global_id]', \
 	options_for_select(current_user.displayable_user(@conversation).collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| x.class.name+" "+x.description }.join(", "), get_user_global_id(p) ]} + \
@@ -23,7 +23,7 @@
 <% end %>
 
 
-<%= form_tag(fff) do %>
+<%= form_tag(call) do %>
 	Or enter a new profil URL <br/>
 	(exemple: www.facebook.com/bebeun92 or www.twitter.com/benoit81) <br/>
 	<%= text_field_tag 'call[display]', 'Entire a new profile URL...' %>

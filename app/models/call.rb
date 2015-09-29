@@ -7,6 +7,11 @@ class Call < ActiveRecord::Base
 		end
 	end 
 	
+	#brother post
+	def brother_post
+		return self.parent.child_post
+	end
+	
 	#CONVERSATION
 	belongs_to :conversation
 	validates :conversation, presence: true

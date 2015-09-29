@@ -1,11 +1,11 @@
 <h2>New Post Partial --------------------------- </h2>
 
-<%= form_for fff do |f| %>
+<%= form_for post do |f| %>
 
-	<% if @post.errors.any? %>
-		<%= pluralize(@post.errors.count, "error") %> prohibited this post from being added to the conversation:
+	<% if post.errors.any? %>
+		<%= pluralize(post.errors.count, "error") %> prohibited this post from being added to the conversation:
 		<ul>
-			<% @post.errors.full_messages.each do |msg| %>
+			<% post.errors.full_messages.each do |msg| %>
 				<li><%= msg %></li>
 			<% end %>
 		</ul>

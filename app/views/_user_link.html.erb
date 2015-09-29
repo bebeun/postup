@@ -1,9 +1,9 @@
-<% (xx.class.name == "User") ? (name = xx.name) : (name = xx.profile.class.name+" : "+xx.profile.description) %>
+<% (user.class.name == "User") ? (name = user.name) : (name = user.profile.class.name+" : "+user.profile.description) %>
 <% if user_signed_in? %>
-	<% if current_user == xx %>
+	<% if current_user == user %>
 		<% name = "You" %>
 	<% end %>
 <% end %>
-<%= (name == "You") ? (name) : (link_to(name, xx)) %>
+<%= (name == "You") ? (name) : (link_to(name, user)) %>
 
 

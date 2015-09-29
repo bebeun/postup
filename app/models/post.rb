@@ -9,6 +9,11 @@ class Post < ActiveRecord::Base
 		return self.parent.callable if parent_type == "Call"
 	end
 	
+	#brother calls
+	def brother_calls
+		return self.parent.child_calls
+	end
+	
 	#creator must support at least its own post
 	validate :creator_is_supporter	
 	def creator_is_supporter
