@@ -1,9 +1,27 @@
 class Call < ActiveRecord::Base
 	#check for AFTF which this CALL could have accepted
-	before_destroy :cancel_accepted_aftfs
+	before_destroy :cancel_accepted_aftfs, :merge_alive_aftfs
 	def cancel_accepted_aftfs
 		self.parent.answer_aftfs.select{|x| x.creator == self.callable && x.accepted}.each do |x|
 			x.update_attributes(accepted: nil, answer_call: nil)
+		end
+	end 
+	
+	#case with 2 AFTF in the air (one was in the air and the other falls in the air because of destroying its answer_call)
+	def merge_alive_aftfs
+		aftfs_to_merge = self.conversation.aftfs.select{|x| x.creator == self.callable && x.alive?}
+		if aftfs_to_merge.many?
+			eldest_aftf = aftfs_to_merge.first
+			aftfs_to_merge -= [eldest_aftf]
+			aftfs_to_merge.each do |x|
+				x.supporters.each do |y|
+					eldest_aftf.supporters << y if (!eldest_aftf.supporters.include?(y) && !eldest_aftf.unsupporters.include?(y))
+				end
+				x.unsupporters.each do |y|
+					eldest_aftf.unsupporters << y if (!eldest_aftf.supporters.include?(y) && !eldest_aftf.unsupporters.include?(y))
+				end
+				x.destroy
+			end
 		end
 	end 
 	

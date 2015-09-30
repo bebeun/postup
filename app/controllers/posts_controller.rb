@@ -20,14 +20,14 @@ class PostsController < ApplicationController
 	def edit
 		@post = Post.find(params[:id])
 		@conversation = @post.conversation
-		redirect_to @conversation and return if !user_signed_in? || !current_user.can_edit_or_destroy?(@post)
+		redirect_to @conversation and return if !user_signed_in? || !current_user.can_edit?(@post)
 		@call = Call.new()		
 		render '/conversations/edit' 
 	end
 
 	def update
 		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_or_destroy?(@post)
+		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_destroy?(@post)
 		@post.assign_attributes(post_params)
 		changed = @post.changed?
 		if @post.save
@@ -76,7 +76,7 @@ class PostsController < ApplicationController
 	def destroy
 		post = Post.find(params[:id])
 		conversation = post.conversation
-		redirect_to conversation and return if !user_signed_in? || !current_user.can_edit_or_destroy?(post)
+		redirect_to conversation and return if !user_signed_in? || !current_user.can_destroy?(post)
 		post.destroy if post.creator == current_user
 		if conversation.has_content?
 			redirect_to conversation

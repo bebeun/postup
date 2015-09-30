@@ -6,9 +6,9 @@
 <% end %>
 
 <% if user_signed_in? %>
-	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_edit_or_destroy?(post) %>
-	<%= button_to "Erase this post", url_for(controller: 'posts', action: 'hide', id: post ), method: :post, data: { confirm: "Are you sure?" }, form_class: "button_link" if !current_user.can_edit_or_destroy?(post) && current_user.can_hide?(post) %>
-	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, post), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } if current_user.can_edit_or_destroy?(post) %>
+	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy?(post) %>
+	<%= button_to "Erase this post", url_for(controller: 'posts', action: 'hide', id: post ), method: :post, data: { confirm: "Are you sure?" }, form_class: "button_link" if !current_user.can_destroy?(post) && current_user.can_hide?(post) %>
+	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, post), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } if current_user.can_edit?(post) %>
 <% end %>
 
 <% if user_signed_in? && post.creator != current_user %>
