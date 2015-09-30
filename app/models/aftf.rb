@@ -8,6 +8,13 @@ class Aftf < ActiveRecord::Base
 	belongs_to :answer_call, polymorphic: true
 	#validates :accepted
 	
+	#USER who made the call
+	def decider
+		return self.answer_call.creator if answer_call.class.name == "Conversation"
+		return self.answer_call.callable if answer_call.class.name == "Call"
+		return nil if answer_call.nil?
+	end
+	
 	MAX_AFTF_PER_CONV = 3
 	
 	def alive?

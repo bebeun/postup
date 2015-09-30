@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 		code_string = code_string.join(" + ")
 		return eval(code_string)
 	end
-	
+		
 	def add_profile(profile)
 		profile.update_attributes(owner: self)
 	end
@@ -77,6 +77,14 @@ class User < ActiveRecord::Base
 	#if call has given a post, the s/u have been switched to the post. the call can't be s/u anymore
 	def can_s_or_u_aftf?(aftf)
 		return aftf.creator != self && aftf.alive?
+	end
+	
+	def can_disrefuse_aftf?(aftf) 
+		if !aftf.answer_call.nil?
+			return !aftf.accepted && aftf.decider == self 
+		else
+			return false
+		end
 	end
 	
 	#Critical situation: a call has given children ( child_calls, child_post )

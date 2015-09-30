@@ -11,6 +11,7 @@
 	<%= (aftf.accepted?) ? ("and was accepted by") : ("and was refused by") if !aftf.alive? %>
 	<%= render '/user_link', :user => aftf.answer_call.callable if !aftf.alive? && aftf.answer_call_type == "Call" %>
 	<%= render '/user_link', :user => aftf.answer_call.creator if !aftf.alive? && aftf.answer_call_type == "Conversation" %>
+	<%= button_to "Disrefuse", url_for(controller: 'aftfs', action: 'disrefuse', id: aftf ), method: :post, form_class: "button_link" if current_user.can_disrefuse_aftf?(aftf) %>
 <% end %>
 
 <% if user_signed_in? %>

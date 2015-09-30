@@ -52,6 +52,15 @@ class AftfsController < ApplicationController
 		redirect_to aftf.conversation
 	end
 	
+	def disrefuse
+		aftf = Aftf.find(params[:id])
+		redirect_to aftf.conversation and return if !user_signed_in? || !current_user.can_disrefuse_aftf?(aftf) 
+		aftf.answer_call = nil
+		aftf.accepted = nil
+		aftf.save!
+		redirect_to aftf.conversation
+	end
+	
 	def destroy
 		aftf = Aftf.find(params[:id])
 		conversation = aftf.conversation
