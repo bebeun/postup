@@ -15,6 +15,11 @@ class Aftf < ActiveRecord::Base
 		return nil if answer_call.nil?
 	end
 	
+	def decider_call
+		puts " le decider_call =======================================> " +Call.where(callable: self.creator, conversation: self.conversation , parent: self.answer_call).last.inspect.to_s
+		return Call.where(callable: self.creator, conversation: self.conversation , parent: self.answer_call).last #dirty =====!!!
+	end
+	
 	MAX_AFTF_PER_CONV = 3
 	
 	def alive?

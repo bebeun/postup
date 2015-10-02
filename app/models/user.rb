@@ -76,15 +76,15 @@ class User < ActiveRecord::Base
 
 	#if call has given a post, the s/u have been switched to the post. the call can't be s/u anymore
 	def can_s_or_u_aftf?(aftf)
-		return aftf.creator != self && aftf.alive?
+		return aftf.creator != self && aftf.alive? && !self.can_call?(aftf.conversation)
 	end
 	
 	def can_disrefuse_aftf?(aftf) 
-		if !aftf.answer_call.nil?
-			return !aftf.accepted && aftf.decider == self 
-		else
-			return false
-		end
+		(aftf.answer_call.nil?) ? (false) : (!aftf.accepted && aftf.decider == self )
+	end
+	
+	def can_disaccept_aftf?(aftf) 
+		(aftf.answer_call.nil?) ? (false) : (aftf.accepted && aftf.decider == self && aftf.decider_call.child_post.nil? && !aftf.decider_call.child_calls.any?)
 	end
 	
 	#Critical situation: a call has given children ( child_calls, child_post )
