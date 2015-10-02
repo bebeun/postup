@@ -7,6 +7,7 @@ FOR EXISTING PROFILES:
 	<%= select("profile", "global_id", \
 		PotentialUser.all.collect{|p| p.profile}. \
 		select{|p| p.class.name == "Twitter"}. \
+		select{|p| !current_user.has_this_profile?(p)}.  \
 		collect{|p| [p.class.name+" : "+p.description, get_profile_global_id(p) ]} + \
 		
 		PotentialUser.all.collect{|p| p.profile}. \

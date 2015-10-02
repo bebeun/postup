@@ -3,18 +3,16 @@ class ProfilesController < ApplicationController
 	def attach_to_user
 		profile = get_profile(profile_params[:global_id])	if !profile_params[:global_id].nil? 
 		profile = description_by_display(profile_params[:display]) if !profile_params[:display].nil?
-	
-		redirect_to new_facebook_facebook_activation_path(profile) and return if profile.class.name == "Facebook"
 		
-		if !profile.nil? 						#dirty - waiting for omniauth redirect strategy
-			num = profile.owner.id
-			add_profile_to(current_user, profile) 
-			@profile = Profile.new()
-		else
+		profile.save! if profile.new_record? if !profile.nil?
+		
+		redirect_to new_facebook_facebook_activation_path(profile) and return if profile.class.name == "Facebook"
+		redirect_to new_twitter_twitter_activation_path(profile) and return if profile.class.name == "Twitter"
+		
+		if profile.nil?
 			flash[:info] = " This is not a profile..."
+			redirect_to :back	
 		end
-	
-		(request.env["HTTP_REFERER"].include?("potential_users/"+num.to_s)) ? (redirect_to edit_user_registration_path) : (redirect_to :back)  		#dirty - waiting for omniauth redirect strategy
 	end
 	
 	

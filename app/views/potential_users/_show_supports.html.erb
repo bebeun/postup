@@ -12,10 +12,10 @@ This is <%= potential_user.profile.class.name+" : "+potential_user.profile.descr
 
 <ul>
 	<li><%= potential_user.profile.class.name+" : "+potential_user.profile.description %> is supported by:
-		<%  potential_user.supporters.each do |x| %><%= render '/user_link', :xx => x %><% end %>		
+		<%  potential_user.supporters.each do |x| %><%= render '/user_link', :user => x %><% end %>		
 	</li>
 	<li><%= potential_user.profile.class.name+" : "+potential_user.profile.description %> is unsupported by:
-		<%  potential_user.unsupporters.each do |x| %><%= render '/user_link', :xx => x %><% end %>
+		<%  potential_user.unsupporters.each do |x| %><%= render '/user_link', :user => x %><% end %>
 	</li>
 </ul>
 

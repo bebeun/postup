@@ -1,6 +1,6 @@
 <% provide(:title, "Show User") %>
 
-<% if(user_signed_in? && @user != current_user) %> 
+<% if (user_signed_in? && @user != current_user) || !user_signed_in?%> 
 	<%= "This is #{@user.name} profile" %> 
 <% else %>
 	<%= "Dear #{@user.name} , this is your profile. You can also " %> 
