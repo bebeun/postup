@@ -20,7 +20,7 @@
 	<%= f.submit %>
 <% end %>
 
-<%= button_to "Delete this post",  url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy?(post)%>
+<%= button_to "Delete this post",  url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy_post?(post)%>
 <br/>Supported by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
 <br/>Unsupported by: <% post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
 <br/> <%= link_to "Cancel", post.conversation %> 

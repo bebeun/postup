@@ -41,5 +41,5 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
   
   #Personnal configuration
-  config.action_mailer.default_url_options = { host: 'benoit5699.ddns.net', port: 3000 }
+  config.action_mailer.default_url_options = { host: 'post-up.net', port: 3000 }
 end

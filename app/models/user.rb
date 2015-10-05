@@ -98,13 +98,13 @@ class User < ActiveRecord::Base
 	
 	#post has a parent. this parent has child_calls. 
 	#if they are either answered or forwarded, edition/destruction of post is not allowed.
-	def can_destroy?(post)
+	def can_destroy_post?(post)
 		return !post.brother_calls.any? && post.creator == self 
 	end
 	
 		#post has a parent. this parent has child_calls. 
 	#if they are either answered or forwarded, edition/destruction of post is not allowed.
-	def can_edit?(post)
+	def can_edit_post?(post)
 		return !post.brother_calls.any? && post.creator == self && post.visible
 	end
 	
