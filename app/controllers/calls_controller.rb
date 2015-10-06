@@ -15,13 +15,13 @@ class CallsController < ApplicationController
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if callable.nil?
 
 		@call = callable.parent_call(@conversation) if callable.can_post?(@conversation) 
-		@call = Call.new( conversation: @conversation, callable: callable, parent: current_user.parent_call(@conversation)) if !callable.can_post?(@conversation)
+		@call = Call.new(conversation: @conversation, callable: callable, parent: current_user.parent_call(@conversation)) if !callable.can_post?(@conversation)
 		
 		aftf = Aftf.select{|x| x.conversation == @call.conversation && x.creator == callable && x.alive?}.last #dirty !!!!!
 		#switch aftf s/u to call s/u !!! ================================> inherited = true
 		
 		if @call.save!
-			aftf.update_attributes!(accepted: true, answer_call: @call.parent) if aftf.alive? if !aftf.nil?
+			aftf.update_attributes!(accepted: true, answer_call: @call.parent, decider_call: @call) if aftf.alive? if !aftf.nil?
 			@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)
 			@call.supporters << current_user if !@call.supporters.include?(current_user)
 			redirect_to @conversation
@@ -47,7 +47,7 @@ class CallsController < ApplicationController
 	def unsupport
 		call = Call.find(params[:id])
 		conversation = call.conversation	
-		redirect_to conversation and return if !current_user.can_s_or_u_call?(call) || current_user.can_not_unsupport_or_destroy?(call)
+		redirect_to conversation and return if !current_user.can_s_or_u_call?(call) 
 		case 
 			when call.supporters.many?
 				call.supporters.destroy(current_user) if call.supporters.include?(current_user)
@@ -66,7 +66,7 @@ class CallsController < ApplicationController
 	def remove
 		call = Call.find(params[:id])	
 		conversation = call.conversation
-		redirect_to conversation and return if current_user.can_not_unsupport_or_destroy?(call)
+		redirect_to conversation and return if !current_user.can_s_or_u_call?(call)
 		call.supporters.destroy(current_user) if call.supporters.include?(current_user)
 		call.unsupporters.destroy(current_user) if call.unsupporters.include?(current_user)		
 		call.destroy if !call.supporters.any?

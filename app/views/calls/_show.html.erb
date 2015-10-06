@@ -6,10 +6,8 @@ Callout : 	( initially created by: <%= render '/user_link', :user => call.creato
 <% if user_signed_in? %>
 	<% if current_user.can_s_or_u_call?(call) %>
 		<%= button_to "Up This Callout",  url_for(controller: 'calls', action: 'support', id: call ), method: :post, form_class: "button_link" if !call.supporters.include?(current_user) %>
-		<% if !current_user.can_not_unsupport_or_destroy?(call) %>
-			<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), method: :delete, form_class: "button_link" if call.supporters.include?(current_user) || call.unsupporters.include?(current_user) %>
-			<%= button_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: call ), method: :post, form_class: "button_link" if !call.unsupporters.include?(current_user) %>
-		<% end %>
+		<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), method: :delete, form_class: "button_link" if call.supporters.include?(current_user) || call.unsupporters.include?(current_user) %>
+		<%= button_to "Down This Callout",  url_for(controller: 'calls', action: 'unsupport', id: call ), method: :post, form_class: "button_link" if !call.unsupporters.include?(current_user) %>
 	<% end %>
 <% end %>
 

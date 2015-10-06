@@ -30,16 +30,6 @@ class User < ActiveRecord::Base
 		end
 	end
 	
-	def alert_before_call?(conversation)														# if a user call before posting,...
-		parent = self.parent_call(conversation)													# ...warn him he won't be able to post after.
-		if !parent.nil?
-			not_answered = parent.child_post.nil?												#he has not yet posted
-			return not_answered
-		else
-			return false
-		end
-	end
-	
 	def can_call?(conversation)
 		parent = self.parent_call(conversation)													#self is called out
 		if !parent.nil?
@@ -52,6 +42,18 @@ class User < ActiveRecord::Base
 			return false
 		end
 	end
+	
+	def alert_before_call?(conversation)														# if a user call before posting,...
+		parent = self.parent_call(conversation)													# ...warn him he won't be able to post after.
+		if !parent.nil?
+			not_answered = parent.child_post.nil?												#he has not yet posted
+			return not_answered
+		else
+			return false
+		end
+	end
+	
+
 	
 	def can_aftf?(conversation)
 		cond = !can_post?(conversation) && !can_call?(conversation) 											#can't do anything
@@ -76,25 +78,17 @@ class User < ActiveRecord::Base
 
 	#if call has given a post, the s/u have been switched to the post. the call can't be s/u anymore
 	def can_s_or_u_aftf?(aftf)
-		return aftf.creator != self && aftf.alive? && !self.can_call?(aftf.conversation)
+		return aftf.creator != self && aftf.alive? 
 	end
 	
 	def can_disrefuse_aftf?(aftf) 
-		(aftf.answer_call.nil?) ? (false) : (!aftf.accepted && aftf.decider == self )
+		!aftf.alive? && !aftf.accepted && aftf.decider == self && !aftf.conversation.aftfs.select{|x| x.creator == aftf.creator  && (x.created_at > aftf.created_at)}.any? 
 	end
 	
 	def can_disaccept_aftf?(aftf) 
-		(aftf.answer_call.nil?) ? (false) : (aftf.accepted && aftf.decider == self && aftf.decider_call.child_post.nil? && !aftf.decider_call.child_calls.any?)
+		!aftf.alive? && aftf.accepted && aftf.decider == self && aftf.decider_call.child_post.nil? && !aftf.decider_call.child_calls.any?
 	end
-	
-	#Critical situation: a call has given children ( child_calls, child_post )
-	#one shouldn't unsupport (which could lead to destroy it) or destroy it
-	#(in fact, to check for child_post is redundant with "can_be_s_or_u?")
-	#keep the TREE RELEVANT and VALID
-	def can_not_unsupport_or_destroy?(call)
-		# return call.supporters.count == 1 && call.supporters.include?(self) && (call.child_calls.any? || !call.child_post.nil?)
-		return false
-	end
+
 	
 	#post has a parent. this parent has child_calls. 
 	#if they are either answered or forwarded, edition/destruction of post is not allowed.
@@ -102,7 +96,7 @@ class User < ActiveRecord::Base
 		return !post.brother_calls.any? && post.creator == self 
 	end
 	
-		#post has a parent. this parent has child_calls. 
+	#post has a parent. this parent has child_calls. 
 	#if they are either answered or forwarded, edition/destruction of post is not allowed.
 	def can_edit_post?(post)
 		return !post.brother_calls.any? && post.creator == self && post.visible

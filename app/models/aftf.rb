@@ -6,7 +6,8 @@ class Aftf < ActiveRecord::Base
 	validates :conversation, presence: true	
 
 	belongs_to :answer_call, polymorphic: true
-	#validates :accepted
+	#attribut accepted  => is true, false or nil
+	belongs_to :decider_call, class_name: "Call", inverse_of: :authorised_aftf
 	
 	#USER who made the call
 	def decider
@@ -14,12 +15,7 @@ class Aftf < ActiveRecord::Base
 		return self.answer_call.callable if answer_call.class.name == "Call"
 		return nil if answer_call.nil?
 	end
-	
-	def decider_call
-		puts " le decider_call =======================================> " +Call.where(callable: self.creator, conversation: self.conversation , parent: self.answer_call).last.inspect.to_s
-		return Call.where(callable: self.creator, conversation: self.conversation , parent: self.answer_call).last #dirty =====!!!
-	end
-	
+		
 	MAX_AFTF_PER_CONV = 3
 	
 	def alive?

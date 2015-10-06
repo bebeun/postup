@@ -26,24 +26,39 @@ module ProfilesHelper
 		end
 		
 		#CALL where callable: PotentialUser
-		# destroy_calls = Call.where(callable: user_destroy)
-		# destroy_calls.each do |x|
-			# conversation = x.conversation
-			# futur_calls = conversation.calls.where(callable: creator)
-			# if !futur_calls.any?
-				# x.update_attributes(callable: creator)
-			# else
-				# if !futur_calls.last.child_post.nil?
-					# récupère les s/u du destroy_calls
-				# else	
-					# x.update_attributes(callable: creator)
-				# end
-			# end
-			
-		# end
+		destroy_calls = Call.where(callable: user_destroy)
+		destroy_calls.each do |x| 
+			if x.creator == creator
+				x.destroy
+			else
+				conversation = x.conversation
+				futur_calls = conversation.calls.where(callable: creator)
+				case
+					when !creator.can_post?(conversation) && !creator.can_call?(conversation)
+						x.update_attributes(callable: creator)
+					when !creator.can_post?(conversation) && creator.can_call?(conversation)
+						post = creator.parent_call(conversation).child_post
+						x.supporters.each do |y|
+							post.supporters << y if !post.supporters.include?(y) && !post.unsupporters.include?(y)
+						end
+						x.unsupporters.each do |y|
+							post.unsupporters << y if !post.supporters.include?(y) && !post.unsupporters.include?(y)
+						end
+						x.destroy
+					when creator.can_post?(conversation) 
+						call = creator.parent_call(conversation)
+						x.supporters.each do |y|
+							call.supporters << y if !call.supporters.include?(y) && !call.unsupporters.include?(y) && call.callable != y 
+						end
+						x.unsupporters.each do |y|
+							call.unsupporters << y if !call.supporters.include?(y) && !call.unsupporters.include?(y) && call.callable != y 
+						end
+						x.destroy
+				end
+			end
+		end
 		
 		creator.add_profile(profile)
-		#call 
 		user_destroy.destroy! if user_destroy.class.name == "PotentialUser"
 	end
 	

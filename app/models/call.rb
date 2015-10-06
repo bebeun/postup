@@ -14,16 +14,14 @@ class Call < ActiveRecord::Base
 			eldest_aftf = aftfs_to_merge.first
 			aftfs_to_merge -= [eldest_aftf]
 			aftfs_to_merge.each do |x|
-				x.supporters.each do |y|
-					eldest_aftf.supporters << y if (!eldest_aftf.supporters.include?(y) && !eldest_aftf.unsupporters.include?(y))
-				end
-				x.unsupporters.each do |y|
-					eldest_aftf.unsupporters << y if (!eldest_aftf.supporters.include?(y) && !eldest_aftf.unsupporters.include?(y))
-				end
+				x.supporters.each{|y| eldest_aftf.supporters << y if (!eldest_aftf.supporters.include?(y) && !eldest_aftf.unsupporters.include?(y))}
+				x.unsupporters.each{|y| eldest_aftf.unsupporters << y if (!eldest_aftf.supporters.include?(y) && !eldest_aftf.unsupporters.include?(y))} 
 				x.destroy
 			end
 		end
 	end 
+	
+
 	
 	#brother post
 	def brother_post
@@ -40,13 +38,15 @@ class Call < ActiveRecord::Base
 	has_many :unsupporters, -> { where(call_actions: {support: "down"})}, through: :call_actions, source: "creator", class_name: "User"
 	#validates :supporters, :length => {:minimum => 1, :message => "At least one supporter is required" }	
 	
+
+	
 	#USER / POTENTIAL USER who is called out
 	belongs_to :callable, polymorphic: true
-	#validates_inclusion_of :callable_type, in: ["User","PotentialUser"]
 	validates :callable, presence: true	
 	
 	#AFTF which is eventually linked to this CALL (This CALL has entitled its CALLABLE to answer an AFTF )
 	has_many :answer_aftfs, as: :answer_call, class_name: "Aftf"
+	has_one :authorised_aftf, class_name: "Aftf", foreign_key: "decider_call_id"
 
 	#USER who made the call
 	def creator
