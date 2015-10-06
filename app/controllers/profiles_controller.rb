@@ -4,23 +4,26 @@ class ProfilesController < ApplicationController
 		profile = get_profile(profile_params[:global_id])	if !profile_params[:global_id].nil? 
 		profile = description_by_display(profile_params[:display]) if !profile_params[:display].nil?
 		
-		profile.save! if profile.new_record? if !profile.nil?
-		
-		redirect_to new_facebook_facebook_activation_path(profile) and return if profile.class.name == "Facebook"
-		redirect_to new_twitter_twitter_activation_path(profile) and return if profile.class.name == "Twitter"
-		
-		if profile.nil?
+		if !profile.nil?
+			profile.save! if profile.new_record? 
+		else
 			flash[:info] = " This is not a profile..."
-			redirect_to :back	
+			redirect_to :back and return			
 		end
+		
+		Profile::PROFILE_TYPES.each do |x|
+			eval("redirect_to new_"+Profile::PROFILE_NAME_SINGULAR[x]+"_"+Profile::PROFILE_NAME_SINGULAR[x]+"_activation_path(profile) and return if profile.class.name == \""+x+"\"")
+		end
+
 	end
 	
 	
 	def detach_from_user
 		profile = get_profile(profile_params[:global_id])
-		if !profile.nil?  &&  profile.class.name == "Facebook"
-			facebook_activation = FacebookActivation.find_by(facebook: profile, creator: current_user )
-			facebook_activation.destroy if !facebook_activation.nil?
+		if !profile.nil?
+			if Profile::PROFILE_ACTIVATION_TO_DESTROY[profile.class.name]
+				eval(profile.class.name+"Activation.where("+Profile::PROFILE_NAME_SINGULAR[profile.class.name]+": profile, creator: current_user ).destroy_all")
+			end
 		end
 		profile.owner = PotentialUser.new()
 		profile.save
