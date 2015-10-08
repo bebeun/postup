@@ -3,9 +3,9 @@ class PostsController < ApplicationController
 		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_post?(@conversation)
 		@post = Post.new(post_params.merge(conversation: @conversation, parent: current_user.parent_call(@conversation)))
-		@post.supporters << current_user
-		#switch call s/u to post s/u !!!   ================================>  inherited = true
-		if @post.save
+
+		if @post.save!
+			@post.supporters << current_user   # Handling Object S / U
 			redirect_to @conversation
 		else
 			@call = Call.new()
@@ -31,7 +31,7 @@ class PostsController < ApplicationController
 		@post.assign_attributes(post_params)
 		changed = @post.changed?
 		if @post.save
-			@post.supporters.destroy_all and @post.unsupporters.destroy_all and @post.supporters << current_user if changed
+			@post.supporters.destroy_all and @post.unsupporters.destroy_all and @post.supporters << current_user if changed    # Handling Object S / U
 			redirect_to @post.conversation
 		else
 			@conversation = @post.conversation
@@ -44,7 +44,7 @@ class PostsController < ApplicationController
 		post = Post.find(params[:id])
 		redirect_to post.conversation and return if !user_signed_in? || current_user == post.creator || post.supporters.include?(current_user)
 		post.unsupporters.destroy(current_user) if post.unsupporters.include?(current_user)
-		post.supporters << current_user 
+		post.supporters << current_user    # Handling Object S / U
 		redirect_to post.conversation
 	end
 	
@@ -52,15 +52,15 @@ class PostsController < ApplicationController
 		post = Post.find(params[:id])
 		redirect_to post.conversation and return if !user_signed_in? || current_user == post.creator || post.unsupporters.include?(current_user)
 		post.supporters.destroy(current_user) if post.supporters.include?(current_user)
-		post.unsupporters << current_user 
+		post.unsupporters << current_user     # Handling Object S / U
 		redirect_to post.conversation
 	end
 	
 	def remove
 		post = Post.find(params[:id])
 		redirect_to post.conversation and return if !user_signed_in? || current_user == post.creator
-		post.supporters.destroy(current_user) if post.supporters.include?(current_user)
-		post.unsupporters.destroy(current_user) if post.unsupporters.include?(current_user)
+		post.supporters.destroy(current_user) if post.supporters.include?(current_user)    # Handling Object S / U
+		post.unsupporters.destroy(current_user) if post.unsupporters.include?(current_user)     # Handling Object S / U
 		redirect_to post.conversation
 	end
 	
@@ -68,8 +68,8 @@ class PostsController < ApplicationController
 		post = Post.find(params[:id])
 		redirect_to post.conversation and return if !user_signed_in? || !current_user.can_hide?(post)
 		post.update_attributes!(visible: false)
-		post.supporters.destroy(current_user) if post.supporters.include?(current_user)
-		post.unsupporters.destroy(current_user) if post.unsupporters.include?(current_user)
+		post.supporters.destroy(current_user) if post.supporters.include?(current_user)    # Handling Object S / U ????????????
+		post.unsupporters.destroy(current_user) if post.unsupporters.include?(current_user)     # Handling Object S / U   ????????????
 		redirect_to post.conversation
 	end
 	
@@ -77,7 +77,7 @@ class PostsController < ApplicationController
 		post = Post.find(params[:id])
 		conversation = post.conversation
 		redirect_to conversation and return if !user_signed_in? || !current_user.can_destroy_post?(post)
-		post.destroy if post.creator == current_user
+		post.destroy 
 		if conversation.has_content?
 			redirect_to conversation
 		else

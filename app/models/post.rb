@@ -14,18 +14,11 @@ class Post < ActiveRecord::Base
 		return self.parent.child_calls
 	end
 	
-	#creator must support at least its own post
-	validate :creator_is_supporter	
-	def creator_is_supporter
-	if !self.supporters.include?(self.creator)
-			errors.add(:callable, "Creator must support its own post...") 
-		end
-	end
 
 	#POST S/U
-	has_many :post_actions, dependent: :destroy
-	has_many :supporters, -> { where(post_actions: {support: "up"})}, through: :post_actions, source: "creator", class_name: "User"
-	has_many :unsupporters, -> { where(post_actions: {support: "down"})}, through: :post_actions, source: "creator", class_name: "User"
+	has_many :object_actions, as: :object, dependent: :destroy
+	has_many :supporters, -> { where(object_actions: {support: "up"})}, through: :object_actions, source: "creator", class_name: "User"
+	has_many :unsupporters, -> { where(object_actions: {support: "down"})}, through: :object_actions, source: "creator", class_name: "User"
 	
 	#POST content
 	validates :title, presence: true

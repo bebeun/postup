@@ -31,12 +31,11 @@ class Call < ActiveRecord::Base
 	#CONVERSATION
 	belongs_to :conversation
 	validates :conversation, presence: true
-	
+		
 	#CALL S/U
-	has_many :call_actions, dependent: :destroy
-	has_many :supporters, -> { where(call_actions: {support: "up"})}, through: :call_actions, source: "creator", class_name: "User"
-	has_many :unsupporters, -> { where(call_actions: {support: "down"})}, through: :call_actions, source: "creator", class_name: "User"
-	#validates :supporters, :length => {:minimum => 1, :message => "At least one supporter is required" }	
+	has_many :object_actions, as: :object, dependent: :destroy
+	has_many :supporters, -> { where(object_actions: {support: "up"})}, through: :object_actions, source: "creator", class_name: "User"
+	has_many :unsupporters, -> { where(object_actions: {support: "down"})}, through: :object_actions, source: "creator", class_name: "User"
 	
 	#USER / POTENTIAL USER who is called out
 	belongs_to :callable, polymorphic: true
@@ -52,12 +51,6 @@ class Call < ActiveRecord::Base
 		return self.parent.callable if parent_type == "Call"
 	end
 	
-	validate :callable_vs_creator	
-	def callable_vs_creator
-	if callable == creator
-			errors.add(:callable, "You can t support call out yourself...") 
-		end
-	end
 	
 	validates_uniqueness_of :callable_id, :scope => [:conversation_id, :callable_type, :parent_id, :parent_type], :message => "This (Potential) User is already called out in this conversation..."
 	

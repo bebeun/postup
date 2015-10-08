@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  object_id: 
+  object_type: Object
+  support: MyString
+
+two:
+  object_id: 
+  object_type: Object
+  support: MyString

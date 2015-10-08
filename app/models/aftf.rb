@@ -21,9 +21,11 @@ class Aftf < ActiveRecord::Base
 	def alive?
 		return self.accepted.nil?
 	end
-	#============================> unicité conversation, creator, alive?=true, 
+	
+	validates_uniqueness_of :creator_id, :scope => [:conversation_id], conditions: -> { where(accepted: nil) }  
+	
   	#AFTF S/U
-	has_many :aftf_actions, dependent: :destroy
-	has_many :supporters, -> { where(aftf_actions: {support: "up"})}, through: :aftf_actions, source: "creator", class_name: "User"
-	has_many :unsupporters, -> { where(aftf_actions: {support: "down"})}, through: :aftf_actions, source: "creator", class_name: "User"
+	has_many :object_actions, as: :object, dependent: :destroy
+	has_many :supporters, -> { where(object_actions: {support: "up"})}, through: :object_actions, source: "creator", class_name: "User"
+	has_many :unsupporters, -> { where(object_actions: {support: "down"})}, through: :object_actions, source: "creator", class_name: "User"
 end

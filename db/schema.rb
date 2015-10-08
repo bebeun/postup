@@ -11,18 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151006185217) do
-
-  create_table "aftf_actions", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer  "creator_id"
-    t.string   "support"
-    t.integer  "aftf_id"
-  end
-
-  add_index "aftf_actions", ["aftf_id"], name: "index_aftf_actions_on_aftf_id"
-  add_index "aftf_actions", ["creator_id"], name: "index_aftf_actions_on_creator_id"
+ActiveRecord::Schema.define(version: 20151008145821) do
 
   create_table "aftfs", force: :cascade do |t|
     t.integer  "creator_id"
@@ -39,17 +28,6 @@ ActiveRecord::Schema.define(version: 20151006185217) do
   add_index "aftfs", ["conversation_id"], name: "index_aftfs_on_conversation_id"
   add_index "aftfs", ["creator_id"], name: "index_aftfs_on_creator_id"
   add_index "aftfs", ["decider_call_id"], name: "index_aftfs_on_decider_call_id"
-
-  create_table "call_actions", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "call_id"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.string   "support",    default: "up"
-  end
-
-  add_index "call_actions", ["call_id"], name: "index_call_actions_on_call_id"
-  add_index "call_actions", ["user_id"], name: "index_call_actions_on_user_id"
 
   create_table "calls", force: :cascade do |t|
     t.datetime "created_at",      null: false
@@ -97,16 +75,17 @@ ActiveRecord::Schema.define(version: 20151006185217) do
 
   add_index "facebooks", ["owner_type", "owner_id"], name: "index_facebooks_on_owner_type_and_owner_id"
 
-  create_table "post_actions", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "post_id"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.string   "support",    default: "up"
+  create_table "object_actions", force: :cascade do |t|
+    t.integer  "object_id"
+    t.string   "object_type"
+    t.string   "support"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "creator_id"
   end
 
-  add_index "post_actions", ["post_id"], name: "index_post_actions_on_post_id"
-  add_index "post_actions", ["user_id"], name: "index_post_actions_on_user_id"
+  add_index "object_actions", ["creator_id"], name: "index_object_actions_on_creator_id"
+  add_index "object_actions", ["object_type", "object_id"], name: "index_object_actions_on_object_type_and_object_id"
 
   create_table "posts", force: :cascade do |t|
     t.datetime "created_at",                     null: false

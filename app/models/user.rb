@@ -130,22 +130,21 @@ class User < ActiveRecord::Base
 		return potential_users
 	end
 	
+	
 	# CALL Management
 	#CALL S/U
-	has_many :call_actions
-	has_many :callouts, through: :call_actions, source: "call", class_name: "Call"
+	has_many :object_actions
+	has_many :callouts, through: :object_actions, source: :object, source_type: "Call"
 	has_many :callins, as: :callable, class_name: "Call"
-	#CALL creation
-	has_many :created_callouts, class_name: "Call", :foreign_key  => "creator_id"
 
 	# POST Management + POST S/U
-	has_many :posts
 	has_many :posts, inverse_of: :creator
-	has_many :post_actions
-	has_many :postsupports, through: :post_actions, source: "post", class_name: "Post"	
+	has_many :postsupports, through: :object_actions, source: :object, source_type: "Post"
 	
 	#AFTF Management + ASTF S/USER
-	has_many :aftfs
+	has_many :aftfs, inverse_of: :creator
+	has_many :aftfsupports, through: :object_actions, source: :object, source_type: "Aftf"
+	
 	
 	# USER S/U
     has_many :user_actions
