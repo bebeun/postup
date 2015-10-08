@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151008145821) do
+ActiveRecord::Schema.define(version: 20151008203217) do
 
   create_table "aftfs", force: :cascade do |t|
     t.integer  "creator_id"
@@ -79,9 +79,10 @@ ActiveRecord::Schema.define(version: 20151008145821) do
     t.integer  "object_id"
     t.string   "object_type"
     t.string   "support"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.integer  "creator_id"
+    t.boolean  "relevant",    default: true
   end
 
   add_index "object_actions", ["creator_id"], name: "index_object_actions_on_creator_id"

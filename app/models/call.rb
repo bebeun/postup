@@ -37,6 +37,9 @@ class Call < ActiveRecord::Base
 	has_many :supporters, -> { where(object_actions: {support: "up"})}, through: :object_actions, source: "creator", class_name: "User"
 	has_many :unsupporters, -> { where(object_actions: {support: "down"})}, through: :object_actions, source: "creator", class_name: "User"
 	
+	
+	has_many :relevant_supporters, -> { where(object_actions: {support: "up", relevant: true})}, through: :object_actions, source: "creator", class_name: "User"
+
 	#USER / POTENTIAL USER who is called out
 	belongs_to :callable, polymorphic: true
 	validates :callable, presence: true	

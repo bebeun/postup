@@ -28,4 +28,6 @@ class Aftf < ActiveRecord::Base
 	has_many :object_actions, as: :object, dependent: :destroy
 	has_many :supporters, -> { where(object_actions: {support: "up"})}, through: :object_actions, source: "creator", class_name: "User"
 	has_many :unsupporters, -> { where(object_actions: {support: "down"})}, through: :object_actions, source: "creator", class_name: "User"
+	
+	has_many :relevant_supporters, -> { where(object_actions: {support: "up", relevant: true})}, through: :object_actions, source: "creator", class_name: "User"
 end
