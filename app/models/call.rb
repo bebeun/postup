@@ -38,8 +38,6 @@ class Call < ActiveRecord::Base
 	has_many :unsupporters, -> { where(call_actions: {support: "down"})}, through: :call_actions, source: "creator", class_name: "User"
 	#validates :supporters, :length => {:minimum => 1, :message => "At least one supporter is required" }	
 	
-
-	
 	#USER / POTENTIAL USER who is called out
 	belongs_to :callable, polymorphic: true
 	validates :callable, presence: true	
