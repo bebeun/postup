@@ -24,7 +24,7 @@ Rails.application.routes.draw do
 	delete 'calls/:id/remove' => 'calls#remove'
 	post 'calls/:id/unsupport' => 'calls#unsupport'
   
-	resources :calls, only: [:create]
+	resources :calls, only: [:create, :destroy]
 
 	resources :aftfs, only: [:create, :destroy]
 	post 'aftfs/:id/support' => 'aftfs#support'
@@ -33,7 +33,6 @@ Rails.application.routes.draw do
 	post 'aftfs/:id/accept' => 'aftfs#accept'
 	post 'aftfs/:id/refuse' => 'aftfs#refuse'
 	post 'aftfs/:id/disrefuse' => 'aftfs#disrefuse'
-	post 'aftfs/:id/disaccept' => 'aftfs#disaccept'
   
 	post 'profiles/attach_to_user' => 'profiles#attach_to_user' 
 	post 'profiles/detach_from_user' => 'profiles#detach_from_user'

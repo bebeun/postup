@@ -3,7 +3,7 @@ class FacebookActivation < ActiveRecord::Base
 	before_create :create_token
 	# Creates and assigns the activation token and digest.
     def create_token
-		self.token  = SecureRandom.urlsafe_base64(64, false)
+		token  = SecureRandom.urlsafe_base64(64, false)
     end	
 	
 	#USER who requested this Facebook

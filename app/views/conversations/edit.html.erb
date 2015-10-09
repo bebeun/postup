@@ -4,6 +4,11 @@
 <%= @conversation.title%>
 
 <%= render '/posts/edit', :post => @post %>
+<ul>
+	<% @conversation.posts.where(parent: @conversation).each do |f| %>
+		<li><%= render '/posts/show', :post => f %></li>
+	<% end %>
+</ul>
 
 <ul>
 	<% @conversation.calls.where(parent: @conversation).each do |f| %>
@@ -11,7 +16,7 @@
 	<% end %>	
 </ul>
 <ul>
-	<% @conversation.aftfs.select{|x| x.parent_call == @conversation}.each do |f| %>
+	<% @conversation.aftfs.select{|x| x.answer_call == @conversation}.each do |f| %>
 		<li><%= render '/aftfs/show', :aftf => f %></li>
 	<% end %>	
 </ul>
@@ -22,12 +27,13 @@
 	<% end %>	
 </ul>
 
+
 <% if user_signed_in? %>
 	<br/>
-	<%= render '/aftfs/new', :aftf => [@conversation, Aftf.new()] if current_user.can_aftf?(@conversation)%>
+	<%= render '/aftfs/new', :aftf => [@conversation, @aftf] if current_user.can_aftf?(@conversation)%>
 	<br/>
-	<%= render '/posts/new', :post => [@conversation, Post.new()] if current_user.can_post?(@conversation)%>
+	<%= render '/posts/new', :post => [@conversation, @post] if current_user.can_post?(@conversation)%>
 	<br/>
-	<%= render '/calls/new', :call => [@conversation, Call.new()] if current_user.can_call?(@conversation)%> 
+	<%= render '/calls/new', :call => [@conversation, @call] if current_user.can_call?(@conversation) %> 
 	<br/>
 <% end %>

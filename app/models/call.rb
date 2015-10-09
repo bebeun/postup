@@ -1,15 +1,29 @@
 class Call < ActiveRecord::Base
 	#check for AFTF which this CALL could have accepted
-	before_destroy :cancel_accepted_aftfs, :merge_alive_aftfs
+	before_destroy :cancel_accepted_aftfs, :transfer_call_s_u_down, :merge_alive_aftfs
 	def cancel_accepted_aftfs
-		self.parent.answer_aftfs.select{|x| x.creator == self.callable && x.accepted}.each do |x|
-			x.update_attributes(accepted: nil, answer_call: nil)
-		end
+		authorised_aftf.update_attributes(accepted: nil, answer_call: nil, decider_call: nil) if !authorised_aftf.nil?
 	end 
+
+	def transfer_call_s_u_up
+		if !authorised_aftf.nil?
+			authorised_aftf.supporters.each{|y| supporters << y if (!supporters.include?(y) && !unsupporters.include?(y))}
+			authorised_aftf.unsupporters.each{|y| unsupporters << y if (!supporters.include?(y) && !unsupporters.include?(y))} 
+			ObjectAction.where(object: authorised_aftf).destroy_all
+		end
+	end	
 	
+	def transfer_call_s_u_down
+		if !authorised_aftf.nil?
+			supporters.each{|y| authorised_aftf.supporters << y if (!authorised_aftf.supporters.include?(y) && !authorised_aftf.unsupporters.include?(y))}
+			unsupporters.each{|y| authorised_aftf.unsupporters << y if (!authorised_aftf.supporters.include?(y) && !authorised_aftf.unsupporters.include?(y))} 
+			ObjectAction.where(object: self).destroy_all			
+			creator.remove(authorised_aftf)
+		end
+	end
 	#case with 2 AFTF in the air (one was in the air and the other falls in the air because of destroying its answer_call)
 	def merge_alive_aftfs
-		aftfs_to_merge = self.conversation.aftfs.select{|x| x.creator == self.callable && x.alive?}
+		aftfs_to_merge = conversation.aftfs.select{|x| x.creator == callable && x.alive?}
 		if aftfs_to_merge.many?
 			eldest_aftf = aftfs_to_merge.first
 			aftfs_to_merge -= [eldest_aftf]
@@ -25,7 +39,7 @@ class Call < ActiveRecord::Base
 	
 	#brother post
 	def brother_post
-		return self.parent.child_post
+		return parent.child_post
 	end
 	
 	#CONVERSATION
@@ -50,8 +64,8 @@ class Call < ActiveRecord::Base
 
 	#USER who made the call
 	def creator
-		return self.parent.creator if parent_type == "Conversation"
-		return self.parent.callable if parent_type == "Call"
+		return parent.creator if parent_type == "Conversation"
+		return parent.callable if parent_type == "Call"
 	end
 	
 	

@@ -14,7 +14,7 @@ class PotentialUser < ActiveRecord::Base
 	end
 	
 	def can_post?(conversation)
-		return !self.parent_call(conversation).nil?													#self is called out (as a potential user...)
+		return !parent_call(conversation).nil?													#self is called out (as a potential user...)
 	end
 	
 	def parent_call(conversation)
@@ -36,10 +36,10 @@ class PotentialUser < ActiveRecord::Base
 	#S/U
 	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
 	def supporters
-		self.user_actions_supporters.select{|x| x.support == "up"}.collect{|x| x.creator}
+		user_actions_supporters.select{|x| x.support == "up"}.collect{|x| x.creator}
 	end
 	def unsupporters
-		self.user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.creator}
+		user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.creator}
 	end
 	def is_potential_user?
 		true

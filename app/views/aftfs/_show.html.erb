@@ -4,27 +4,24 @@
 	<%= "You asked for the floor" %>  
 	<%= button_to "Remove Aftf",  url_for(controller: 'aftfs', action: 'destroy', id: aftf), method: :delete, data: { confirm: "Are you sure?" },form_class: "button_link" if aftf.alive?%>
 	<%= (aftf.accepted?) ? ("and were accepted by") : ("and were refused by") if !aftf.alive? %>
-	<%= render '/user_link', :user => aftf.answer_call.callable if !aftf.alive? && aftf.answer_call_type == "Call"%>
-	<%= render '/user_link', :user => aftf.answer_call.creator if !aftf.alive? && aftf.answer_call_type == "Conversation"%>
+	<%= render '/user_link', :user => aftf.decider if !aftf.alive? %>
 <% else %>
 	<%= link_to(aftf.creator.name,aftf.creator)+" asked for the floor".html_safe %>
 	<%= (aftf.accepted?) ? ("and was accepted by") : ("and was refused by") if !aftf.alive? %>
-	<%= render '/user_link', :user => aftf.answer_call.callable if !aftf.alive? && aftf.answer_call_type == "Call" %>
-	<%= render '/user_link', :user => aftf.answer_call.creator if !aftf.alive? && aftf.answer_call_type == "Conversation" %>
+	<%= render '/user_link', :user => aftf.decider if !aftf.alive? %>
 <% end %>
 
 <% if user_signed_in? %> 
 	<%= button_to "Disrefuse", url_for(controller: 'aftfs', action: 'disrefuse', id: aftf ), method: :post, form_class: "button_link" if current_user.can_disrefuse_aftf?(aftf) %>
-	<%= button_to "Disaccept", url_for(controller: 'aftfs', action: 'disaccept', id: aftf ), method: :post, form_class: "button_link" if current_user.can_disaccept_aftf?(aftf) %>
+	<%= button_to "Disaccept", url_for(controller: 'calls', action: 'destroy', id: aftf.decider_call ), method: :delete, form_class: "button_link" if current_user.can_disaccept_aftf?(aftf) %>
 <% end %>
 
 <% if user_signed_in? %>
-	<% if current_user.can_s_or_u_aftf?(aftf)%>
-		<%= button_to "Up This Aftf", url_for(controller: 'aftfs', action: 'support', id: aftf ), method: :post, form_class: "button_link" if !aftf.supporters.include?(current_user)%>
-		<%= button_to "Remove feeling",  url_for(controller: 'aftfs', action: 'remove', id: aftf), method: :delete, form_class: "button_link" if (aftf.supporters.include?(current_user)) || aftf.unsupporters.include?(current_user)%>
-		<%= button_to "Down This Aftf",  url_for(controller: 'aftfs', action: 'unsupport', id: aftf  ), method: :post, form_class: "button_link" if !aftf.unsupporters.include?(current_user) %>
-	<% end %>
-		<% if current_user.can_call?(aftf.conversation) && aftf.alive?%>	
+	<%= button_to "Up This Aftf", url_for(controller: 'aftfs', action: 'support', id: aftf ), method: :post, form_class: "button_link" if current_user.can_s_aftf?(aftf)%>
+	<%= button_to "Remove feeling",  url_for(controller: 'aftfs', action: 'remove', id: aftf), method: :delete, form_class: "button_link" if current_user.can_remove_s_or_u_aftf?(aftf)%>
+	<%= button_to "Down This Aftf",  url_for(controller: 'aftfs', action: 'unsupport', id: aftf  ), method: :post, form_class: "button_link" if current_user.can_u_aftf?(aftf) %>
+
+	<% if current_user.can_accept_aftf?(aftf) %>	
 		<%= button_to "Accept this AFTF", url_for(controller: 'aftfs', action: 'accept', id: aftf ), method: :post, form_class: "button_link" %>
 		<%= button_to "Refuse this AFTF", url_for(controller: 'aftfs', action: 'refuse', id: aftf ), method: :post, form_class: "button_link" %>
 	<% end %>

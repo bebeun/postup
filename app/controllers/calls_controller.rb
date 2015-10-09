@@ -12,17 +12,15 @@ class CallsController < ApplicationController
 				callable = get_user(call_params[:global_id])
 		end
 		
-		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if callable.nil?
-
+		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if callable.nil? || callable == current_user
+		
 		@call = callable.parent_call(@conversation) if callable.can_post?(@conversation) # ??????? ou can_call ??
 		@call = Call.new(conversation: @conversation, callable: callable, parent: current_user.parent_call(@conversation)) if !callable.can_post?(@conversation)
-		
 		aftf = Aftf.select{|x| x.conversation == @call.conversation && x.creator == callable && x.alive?}.last #dirty !!!!!
 		
 		if @call.save!
-			aftf.update_attributes!(accepted: true, answer_call: @call.parent, decider_call: @call) if aftf.alive? if !aftf.nil?
-			@call.unsupporters.destroy(current_user) if @call.unsupporters.include?(current_user)   # Handling Object S / U
-			@call.supporters << current_user if !@call.supporters.include?(current_user)    # Handling Object S / U
+			aftf.update_attributes!(accepted: true, answer_call: @call.parent, decider_call: @call) and @call.transfer_call_s_u_up if aftf.alive? if !aftf.nil?
+			current_user.supports(@call)
 			redirect_to @conversation
 		else
 			@post = Post.new()	
@@ -34,47 +32,34 @@ class CallsController < ApplicationController
 		end
 	end
 
+	def destroy
+		call = Call.find(params[:id])
+		redirect_to call.conversation and return if !current_user.can_destroy_call?(call)
+		conversation = call.conversation
+		call.destroy
+		redirect_to conversation
+	end
 
 	def support
 		call = Call.find(params[:id])
-		redirect_to call.conversation and return if !current_user.can_s_or_u_call?(call)
-		call.unsupporters.destroy(current_user) if call.unsupporters.include?(current_user)   # Handling Object S / U
-		call.supporters << current_user   # Handling Object S / U
+		redirect_to call.conversation and return if !current_user.can_s_call?(call)
+		current_user.supports(call) 
 		redirect_to call.conversation
 	end
 
-	def unsupport    # Handling Object S / U
+	def unsupport   
 		call = Call.find(params[:id])
-		conversation = call.conversation	
-		redirect_to conversation and return if !current_user.can_s_or_u_call?(call) 
-		case 
-			when call.supporters.many?
-				call.supporters.destroy(current_user) if call.supporters.include?(current_user)
-				call.unsupporters << current_user
-			when call.supporters.count == 1	
-				(call.supporters.include?(current_user)) ? (call.destroy) : (call.unsupporters << current_user)
-		end
-		if conversation.has_content?
-			redirect_to conversation
-		else
-			conversation.destroy
-			redirect_to new_conversation_path
-		end
+		redirect_to call.conversation and return if !current_user.can_u_call?(call)
+		current_user.unsupports(call) 
+		redirect_to call.conversation
 	end
 	
-	def remove    # Handling Object S / U
+	def remove   
 		call = Call.find(params[:id])	
 		conversation = call.conversation
-		redirect_to conversation and return if !current_user.can_s_or_u_call?(call)
-		call.supporters.destroy(current_user) if call.supporters.include?(current_user)
-		call.unsupporters.destroy(current_user) if call.unsupporters.include?(current_user)		
-		call.destroy if !call.supporters.any?
-		if conversation.has_content?
-			redirect_to conversation
-		else
-			conversation.destroy
-			redirect_to new_conversation_path
-		end
+		redirect_to conversation and return if !current_user.can_remove_s_or_u_call?(call)
+		current_user.remove(call)	
+		redirect_to call.conversation
 	end
 
 

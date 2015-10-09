@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_post?(conversation)
-		parent = self.parent_call(conversation)													#self is called out
+		parent = parent_call(conversation)													#self is called out
 		if !parent.nil?
 			answered = parent.child_post.nil?													#he has not yet posted
 			child_answered = !parent.child_calls.any?											#and has not yet called
@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_call?(conversation)
-		parent = self.parent_call(conversation)													#self is called out
+		parent = parent_call(conversation)													#self is called out
 		if !parent.nil?
 			#===> parent.child_post. moins de 1h ??
 			#===> bouton pour dire "je ne fwd pas ?"
@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
 	end
 	
 	def alert_before_call?(conversation)														# if a user call before posting,...
-		parent = self.parent_call(conversation)													# ...warn him he won't be able to post after.
+		parent = parent_call(conversation)													# ...warn him he won't be able to post after.
 		if !parent.nil?
 			not_answered = parent.child_post.nil?												#he has not yet posted
 			return not_answered
@@ -72,37 +72,80 @@ class User < ActiveRecord::Base
 	end
 	
 	#if call has given a post or child calls, the s/u have been switched to the post. the call can't be s/u anymore
-	def can_s_or_u_call?(call)
-		return call.child_post.nil? && call.callable != self && !call.child_calls.any? #==============>garder le !call.child_calls.any?
+	def can_s_call?(call)
+		return call.creator != self && call.child_post.nil? && call.callable != self && !call.child_calls.any? && !call.supporters.include?(self)#==============>garder le !call.child_calls.any?
+	end
+	def can_u_call?(call)
+		return call.creator != self && call.child_post.nil? && call.callable != self && !call.child_calls.any? && !call.unsupporters.include?(self)#==============>garder le !call.child_calls.any?
+	end
+	def can_remove_s_or_u_call?(call)
+		return call.creator != self && call.child_post.nil? && call.callable != self && !call.child_calls.any? && (call.supporters.include?(self) || call.unsupporters.include?(self))#==============>garder le !call.child_calls.any?
+	end
+	def can_destroy_call?(call)
+		return call.creator == self && call.child_post.nil? && !call.child_calls.any? 
 	end
 
-	#if call has given a post, the s/u have been switched to the post. the call can't be s/u anymore
-	def can_s_or_u_aftf?(aftf)
-		return aftf.creator != self && aftf.alive? 
+	def can_s_aftf?(aftf)
+		return aftf.creator != self && aftf.alive? && !aftf.supporters.include?(self) && !can_call?(aftf.conversation)
 	end
 	
+	def can_u_aftf?(aftf)
+		return aftf.creator != self && aftf.alive? && !aftf.unsupporters.include?(self) && !can_call?(aftf.conversation)
+	end
+	
+	def can_remove_s_or_u_aftf?(aftf)
+		return aftf.creator != self && (aftf.supporters.include?(self) || aftf.unsupporters.include?(self)) && aftf.alive? 
+	end
+		
+	def can_accept_aftf?(aftf)
+		can_call?(aftf.conversation) && aftf.alive?
+	end
 	def can_disrefuse_aftf?(aftf) 
 		!aftf.alive? && !aftf.accepted && aftf.decider == self && !aftf.conversation.aftfs.select{|x| x.creator == aftf.creator  && (x.created_at > aftf.created_at)}.any? 
 	end
 	
 	def can_disaccept_aftf?(aftf) 
-		!aftf.alive? && aftf.accepted && aftf.decider == self && aftf.decider_call.child_post.nil? && !aftf.decider_call.child_calls.any?
+		if aftf.decider_call.nil?
+			return false 
+		else
+			return !aftf.alive? && aftf.accepted && aftf.decider == self && aftf.decider_call.child_post.nil? && !aftf.decider_call.child_calls.any?
+		end
 	end
 
 	
-	#post has a parent. this parent has child_calls. 
-	#if they are either answered or forwarded, edition/destruction of post is not allowed.
 	def can_destroy_post?(post)
 		return !post.brother_calls.any? && post.creator == self     #idealement forwarded AND answered
 	end
 	
-	#post has a parent. this parent has child_calls. 
-	#if they are either answered or forwarded, edition/destruction of post is not allowed.
 	def can_edit_post?(post)
 		return !post.brother_calls.any? && post.creator == self && post.visible     #idealement forwarded AND answered
 	end
 	
+	def can_s_post?(post)
+		return post.creator != self && !post.supporters.include?(self)
+	end
+	def can_u_post?(post)
+		return post.creator != self && !post.unsupporters.include?(self)
+	end
+	def can_remove_s_or_u_post?(post)
+		return post.creator != self && (post.supporters.include?(self) || post.unsupporters.include?(self))
+	end
 	
+	def supports(object)
+		object.unsupporters.destroy(self) if object.unsupporters.include?(self)
+		object.supporters << self if !object.supporters.include?(self) 
+	end
+	
+	def unsupports(object)
+		object.supporters.destroy(self) if object.supporters.include?(self)
+		object.unsupporters << self if !object.unsupporters.include?(self) 
+	end
+	
+	def remove(object)
+		object.supporters.destroy(self) if object.supporters.include?(self)
+		object.unsupporters.destroy(self) if object.unsupporters.include?(self)
+	end
+
 	#post has a parent. this parent has child_calls. 
 	#if one can't edit or destroy, the post can be made not visible
 	def can_hide?(post)
@@ -155,19 +198,19 @@ class User < ActiveRecord::Base
 	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
 	
 	def supporters
-		self.user_actions_supporters.select{|x| x.support == "up" }.collect{|x| x.creator}
+		user_actions_supporters.select{|x| x.support == "up" }.collect{|x| x.creator}
 	end
 	
 	def unsupporters
-		self.user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.creator}
+		user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.creator}
 	end
 	
 	def supporting
-		self.user_supports + self.potential_user_supports
+		user_supports + potential_user_supports
 	end
 
 	def unsupporting
-		self.user_unsupports + self.potential_user_unsupports
+		user_unsupports + potential_user_unsupports
 	end
 	
 	# FB Activations	
@@ -176,10 +219,10 @@ class User < ActiveRecord::Base
 	
 	# Functions
 	def has_this_profile?(profile)
-		self.profiles.include?(profile)
+		profiles.include?(profile)
 	end
 	def has_this_facebook_activation?(facebook_activation)
-		self.id == facebook_activation.creator.id
+		id == facebook_activation.creator.id
 	end
 	def has_pending_facebook_activations?(facebook)
 		facebook.facebook_activations.collect{|fba| fba.creator}.include?(self)

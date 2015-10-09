@@ -11,15 +11,15 @@ class Aftf < ActiveRecord::Base
 	
 	#USER who made the call
 	def decider
-		return self.answer_call.creator if answer_call.class.name == "Conversation"
-		return self.answer_call.callable if answer_call.class.name == "Call"
+		return answer_call.creator if answer_call.class.name == "Conversation"
+		return answer_call.callable if answer_call.class.name == "Call"
 		return nil if answer_call.nil?
 	end
 		
 	MAX_AFTF_PER_CONV = 3
 	
 	def alive?
-		return self.accepted.nil?
+		return accepted.nil?
 	end
 	
 	validates_uniqueness_of :creator_id, :scope => [:conversation_id], conditions: -> { where(accepted: nil) }  

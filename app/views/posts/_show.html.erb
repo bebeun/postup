@@ -8,13 +8,11 @@
 <% if user_signed_in? %>
 	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy_post?(post) %>
 	<%= button_to "Erase this post", url_for(controller: 'posts', action: 'hide', id: post ), method: :post, data: { confirm: "Are you sure?" }, form_class: "button_link" if !current_user.can_destroy_post?(post) && current_user.can_hide?(post) %>
-	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, post), method: :get, data: { confirm: "Are you sure? This will reset all (un)supports" } if current_user.can_edit_post?(post) %>
-<% end %>
+	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, post), method: :get if current_user.can_edit_post?(post) %>
 
-<% if user_signed_in? && post.creator != current_user %>
-	<%= button_to "Up This Post", url_for(controller: 'posts', action: 'support', id: post ), method: :post, form_class: "button_link" if !post.supporters.include?(current_user)%>
-	<%= button_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: post), method: :delete, form_class: "button_link" if (post.supporters.include?(current_user)) || post.unsupporters.include?(current_user)%>
-	<%= button_to "Down This Post",  url_for(controller: 'posts', action: 'unsupport', id: post  ), method: :post, form_class: "button_link" if !post.unsupporters.include?(current_user) %>
+	<%= button_to "Up This Post", url_for(controller: 'posts', action: 'support', id: post ), method: :post, form_class: "button_link" if current_user.can_s_post?(post)%>
+	<%= button_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: post), method: :delete, form_class: "button_link" if current_user.can_remove_s_or_u_post?(post) %>
+	<%= button_to "Down This Post",  url_for(controller: 'posts', action: 'unsupport', id: post  ), method: :post, form_class: "button_link" if current_user.can_u_post?(post) %>
 <% end %>
 
 <br/>Supported by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
