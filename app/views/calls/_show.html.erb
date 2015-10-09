@@ -1,28 +1,38 @@
-<h2>Call</h2>
-
-<% user =  call.callable %>
-Callout : 	( initially created by: <%= render '/user_link', :user => call.creator %> ) ===> >> <%= render '/user_link', :user => user %>
-
-<% if user_signed_in? %>
-	<%= button_to "Up This Call",  url_for(controller: 'calls', action: 'support', id: call ), method: :post, form_class: "button_link" if current_user.can_s_call?(call) %>
-	<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), method: :delete, form_class: "button_link" if current_user.can_remove_s_or_u_call?(call) %>
-	<%= button_to "Down This Call",  url_for(controller: 'calls', action: 'unsupport', id: call ), method: :post, form_class: "button_link" if current_user.can_u_call?(call) %>
-	<%= button_to "Remove Call",  url_for(controller: 'calls', action: 'destroy', id: call ), method: :delete, form_class: "button_link" if current_user.can_destroy_call?(call) %>
+<ul>
+<% if !call.authorised_aftf.nil? %>
+	<li>
+	<%= render '/aftfs/show', :aftf => call.authorised_aftf  %>
+	</li>
 <% end %>
 
-<br/>Supported by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
-<br/>Unsupported by: <% call.unsupporters.each do |x| %> <%= render '/user_link', :user => x %><% end %>
+	<li>
+	<h2>Call</h2>
+	<% user =  call.callable %>
+	Callout : 	( initially created by: <%= render '/user_link', :user => call.creator %> ) ===> >> <%= render '/user_link', :user => user %>
 
-<ul>
-	<% call.conversation.posts.where(parent: call).each do |f| %>
-		<li><%= render '/posts/show', :post => f %></li>
+	<% if user_signed_in? %>
+		<%= button_to "Up This Call",  url_for(controller: 'calls', action: 'support', id: call ), method: :post, form_class: "button_link" if current_user.can_s_call?(call) %>
+		<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), method: :delete, form_class: "button_link" if current_user.can_remove_s_or_u_call?(call) %>
+		<%= button_to "Down This Call",  url_for(controller: 'calls', action: 'unsupport', id: call ), method: :post, form_class: "button_link" if current_user.can_u_call?(call) %>
+		<%= button_to "Remove Call",  url_for(controller: 'calls', action: 'destroy', id: call ), method: :delete, form_class: "button_link" if current_user.can_destroy_call?(call) %>
 	<% end %>
-	<% call.conversation.calls.where(parent: call).each do |f| %>
-		<li><%= render '/calls/show', :call => f %></li>
+
+	<br/>Supported by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
+	<br/>Unsupported by: <% call.unsupporters.each do |x| %> <%= render '/user_link', :user => x %><% end %>
+	</li>
+	
+	<% if !call.child_post.nil? %>
+		<li>
+			<%= render '/posts/show', :post => call.child_post %>
+		</li>
+	<% end %>
+	<% if call.child_calls.any? %>
+		<li>
+			<% call.child_calls.each do |f| %>
+				<%= render '/calls/show', :call => f %>
+			<% end %>	
+		</li>
 	<% end %>	
-	<% call.conversation.aftfs.where(answer_call: call).each do |f| %>
-		<li><%= render '/aftfs/show', :aftf => f %></li>
-	<% end %>
 </ul>
 
 

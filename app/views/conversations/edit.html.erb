@@ -15,11 +15,7 @@
 		<li><%= render '/calls/show', :call => f %></li>
 	<% end %>	
 </ul>
-<ul>
-	<% @conversation.aftfs.select{|x| x.answer_call == @conversation}.each do |f| %>
-		<li><%= render '/aftfs/show', :aftf => f %></li>
-	<% end %>	
-</ul>
+
 <%= "AFTF IN THE AIR: " if @conversation.aftfs.select{|x| x.alive? }.any? %>
 <ul>
 	<% @conversation.aftfs.select{|x| x.alive? }.each do |f| %>
