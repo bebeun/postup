@@ -8,7 +8,7 @@
 <% if user_signed_in? %>
 	<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy_post?(post) %>
 	<%= button_to "Erase this post", url_for(controller: 'posts', action: 'hide', id: post ), method: :post, data: { confirm: "Are you sure?" }, form_class: "button_link" if !current_user.can_destroy_post?(post) && current_user.can_hide?(post) %>
-	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, post), method: :get if current_user.can_edit_post?(post) %>
+	<%= link_to "Edit this post",  edit_conversation_post_path(@conversation, post), method: :get, data: { confirm: "Are you sure? This will erase the recent s/u on this Post" } if current_user.can_edit_post?(post) %>
 
 	<%= button_to "Up This Post", url_for(controller: 'posts', action: 'support', id: post ), method: :post, form_class: "button_link" if current_user.can_s_post?(post)%>
 	<%= button_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: post), method: :delete, form_class: "button_link" if current_user.can_remove_s_or_u_post?(post) %>

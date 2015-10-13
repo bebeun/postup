@@ -14,6 +14,13 @@
 	<% @conversation.calls.where(parent: @conversation).each do |f| %>
 		<li><%= render '/calls/show', :call => f %></li>
 	<% end %>	
+	<% if @conversation.child_aftfs.select{|x| !x.accepted }.any? %>
+		<% @conversation.child_aftfs.select{|x| !x.accepted }.each do |x| %>
+			<li>
+			<%= render '/aftfs/show', :aftf => x %>
+			</li>
+		<% end %>
+	<% end %>
 </ul>
 
 <%= "AFTF IN THE AIR: " if @conversation.aftfs.select{|x| x.alive? }.any? %>

@@ -16,18 +16,18 @@ ActiveRecord::Schema.define(version: 20151008145821) do
   create_table "aftfs", force: :cascade do |t|
     t.integer  "creator_id"
     t.integer  "conversation_id"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.boolean  "accepted"
-    t.integer  "answer_call_id"
-    t.string   "answer_call_type"
-    t.integer  "decider_call_id"
+    t.integer  "parent_id"
+    t.string   "parent_type"
+    t.integer  "brother_call_id"
   end
 
-  add_index "aftfs", ["answer_call_type", "answer_call_id"], name: "index_aftfs_on_answer_call_type_and_answer_call_id"
+  add_index "aftfs", ["brother_call_id"], name: "index_aftfs_on_brother_call_id"
   add_index "aftfs", ["conversation_id"], name: "index_aftfs_on_conversation_id"
   add_index "aftfs", ["creator_id"], name: "index_aftfs_on_creator_id"
-  add_index "aftfs", ["decider_call_id"], name: "index_aftfs_on_decider_call_id"
+  add_index "aftfs", ["parent_type", "parent_id"], name: "index_aftfs_on_parent_type_and_parent_id"
 
   create_table "calls", force: :cascade do |t|
     t.datetime "created_at",      null: false

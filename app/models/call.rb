@@ -4,10 +4,10 @@ class Call < ActiveRecord::Base
 	#check for AFTF which this CALL could have accepted
 	before_destroy :cancel_accepted_aftfs, :transfer_down, :merge_alive_aftfs
 	def cancel_accepted_aftfs
-		authorised_aftf.update_attributes(accepted: nil, answer_call: nil, decider_call: nil) if !authorised_aftf.nil?
+		brother_aftf.update_attributes(accepted: nil, parent: nil, brother_call: nil) if !brother_aftf.nil?
 	end 
 
-	#case with 2 AFTF in the air (one was in the air and the other falls in the air because of destroying its answer_call)
+	#case with 2 AFTF in the air (one was in the air and the other falls in the air because of destroying its parent)
 	def merge_alive_aftfs
 		aftfs_to_merge = conversation.aftfs.select{|x| x.creator == callable && x.alive?}
 		if aftfs_to_merge.many?
@@ -35,16 +35,13 @@ class Call < ActiveRecord::Base
 	has_many :supporters, -> { where(object_actions: {support: "up"})}, through: :object_actions, source: "creator", class_name: "User"
 	has_many :unsupporters, -> { where(object_actions: {support: "down"})}, through: :object_actions, source: "creator", class_name: "User"
 	
-	
-	has_many :relevant_supporters, -> { where(object_actions: {support: "up", relevant: true})}, through: :object_actions, source: "creator", class_name: "User"
-
 	#USER / POTENTIAL USER who is called out
 	belongs_to :callable, polymorphic: true
 	validates :callable, presence: true	
 	
 	#AFTF which is eventually linked to this CALL (This CALL has entitled its CALLABLE to answer an AFTF )
-	has_many :answer_aftfs, as: :answer_call, class_name: "Aftf"
-	has_one :authorised_aftf, class_name: "Aftf", foreign_key: "decider_call_id"
+	has_many :child_aftfs, as: :parent, class_name: "Aftf"
+	has_one :brother_aftf, class_name: "Aftf", foreign_key: "brother_call_id"
 
 	#USER who made the call
 	def creator

@@ -19,8 +19,8 @@ class CallsController < ApplicationController
 		aftf = Aftf.select{|x| x.conversation == @call.conversation && x.creator == callable && x.alive?}.last #dirty !!!!!
 		
 		if @call.save!
-			aftf.update_attributes!(accepted: true, answer_call: @call.parent, decider_call: @call) and @call.transfer_up if aftf.alive? if !aftf.nil?
 			current_user.supports(@call)
+			aftf.update_attributes!(accepted: true, parent: @call.parent, brother_call: @call) and @call.transfer_up if aftf.alive? if !aftf.nil?
 			redirect_to @conversation
 		else
 			@post = Post.new()	

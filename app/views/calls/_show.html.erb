@@ -1,9 +1,19 @@
 <ul>
-<% if !call.authorised_aftf.nil? %>
-	<li>
-	<%= render '/aftfs/show', :aftf => call.authorised_aftf  %>
-	</li>
-<% end %>
+	<% if call.brother_aftf %>
+		<li>
+		This 
+		<%= render '/aftfs/show', :aftf => call.brother_aftf  %>
+		</li>
+	<% end %>
+
+
+	<% if call.child_aftfs.select{|x| !x.accepted }.any? %>
+		<% call.child_aftfs.select{|x| !x.accepted }.each do |x| %>
+			<li>
+			<%= render '/aftfs/show', :aftf => x %>
+			</li>
+		<% end %>
+	<% end %>
 
 	<li>
 	<h2>Call</h2>

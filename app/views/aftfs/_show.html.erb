@@ -13,7 +13,7 @@
 
 <% if user_signed_in? %> 
 	<%= button_to "Disrefuse", url_for(controller: 'aftfs', action: 'disrefuse', id: aftf ), method: :post, form_class: "button_link" if current_user.can_disrefuse_aftf?(aftf) %>
-	<%= button_to "Disaccept", url_for(controller: 'calls', action: 'destroy', id: aftf.decider_call ), method: :delete, form_class: "button_link" if current_user.can_disaccept_aftf?(aftf) %>
+	<%= button_to "Disaccept", url_for(controller: 'calls', action: 'destroy', id: aftf.brother_call ), method: :delete, form_class: "button_link" if current_user.can_disaccept_aftf?(aftf) %>
 <% end %>
 
 <% if user_signed_in? %>

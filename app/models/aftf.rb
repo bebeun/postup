@@ -5,15 +5,15 @@ class Aftf < ActiveRecord::Base
 	belongs_to :conversation
 	validates :conversation, presence: true	
 
-	belongs_to :answer_call, polymorphic: true
+	belongs_to :parent, polymorphic: true
 	#attribut accepted  => is true, false or nil
-	belongs_to :decider_call, class_name: "Call", inverse_of: :authorised_aftf
+	belongs_to :brother_call, class_name: "Call", inverse_of: :brother_aftf
 	
 	#USER who made the call
 	def decider
-		return answer_call.creator if answer_call.class.name == "Conversation"
-		return answer_call.callable if answer_call.class.name == "Call"
-		return nil if answer_call.nil?
+		return parent.creator if parent.class.name == "Conversation"
+		return parent.callable if parent.class.name == "Call"
+		return nil if parent.nil?
 	end
 		
 	MAX_AFTF_PER_CONV = 3
@@ -28,6 +28,4 @@ class Aftf < ActiveRecord::Base
 	has_many :object_actions, as: :object, dependent: :destroy
 	has_many :supporters, -> { where(object_actions: {support: "up"})}, through: :object_actions, source: "creator", class_name: "User"
 	has_many :unsupporters, -> { where(object_actions: {support: "down"})}, through: :object_actions, source: "creator", class_name: "User"
-	
-	has_many :relevant_supporters, -> { where(object_actions: {support: "up", relevant: true})}, through: :object_actions, source: "creator", class_name: "User"
 end

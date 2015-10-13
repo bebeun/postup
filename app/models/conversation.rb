@@ -8,7 +8,7 @@ class Conversation < ActiveRecord::Base
 	
 	has_many :child_calls, as: :parent, class_name: "Call"
 	has_one :child_post, as: :parent, class_name: "Post"
-	has_many :answer_aftfs, as: :answer_call, class_name: "Aftf"
+	has_many :child_aftfs, as: :parent, class_name: "Aftf"
 	
 	def has_content?
 		return posts.any? || calls.any?

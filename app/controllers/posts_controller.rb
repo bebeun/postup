@@ -1,4 +1,5 @@
 class PostsController < ApplicationController
+	include ObjectTransferModule
 	def create
 		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_post?(@conversation)
@@ -6,7 +7,7 @@ class PostsController < ApplicationController
 
 		if @post.save!
 			current_user.supports(@post)
-			@post.transfer_post_s_u_up
+			@post.transfer_up
 			redirect_to @conversation
 		else
 			@call = Call.new()
@@ -28,12 +29,12 @@ class PostsController < ApplicationController
 
 	def update
 		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_destroy_post?(@post)
+		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post)
 		@post.assign_attributes(post_params)
-		#changed = @post.changed?
-		#post_updated_at = @post.updated_at
+		changed = @post.changed?
+		post_updated_at = @post.updated_at + 1.second
 		if @post.save
-			#post.object_actions.where("updated_at >= ?", post_updated_at).destroy_all and @post.object_actions.where("updated_at >= ?", post_updated_at).destroy_all if changed 
+			@post.object_actions.select{|x| x.updated_at > post_updated_at}.each{|x| x.destroy} if changed 
 			redirect_to @post.conversation
 		else
 			@conversation = @post.conversation

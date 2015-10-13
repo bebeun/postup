@@ -33,8 +33,8 @@ class AftfsController < ApplicationController
 		aftf = Aftf.find(params[:id])
 		redirect_to aftf.conversation and return if !user_signed_in? || !current_user.can_accept_aftf?(aftf)
 		call = Call.create!(conversation: aftf.conversation, callable: aftf.creator, parent: current_user.parent_call(aftf.conversation))
-		current_user.supports(aftf)
-		aftf.update_attributes(answer_call: call.parent, decider_call: call, accepted: true)
+		current_user.supports(call)
+		aftf.update_attributes(parent: call.parent, brother_call: call, accepted: true)
 		call.transfer_up
 		redirect_to aftf.conversation
 	end
@@ -43,7 +43,7 @@ class AftfsController < ApplicationController
 		aftf = Aftf.find(params[:id])
 		redirect_to aftf.conversation and return if !user_signed_in? || !current_user.can_accept_aftf?(aftf)
 		current_user.unsupports(aftf)
-		aftf.update_attributes!(answer_call: current_user.parent_call(aftf.conversation), accepted: false)
+		aftf.update_attributes!(parent: current_user.parent_call(aftf.conversation), accepted: false)
 		redirect_to aftf.conversation
 	end
 	
@@ -51,7 +51,7 @@ class AftfsController < ApplicationController
 		aftf = Aftf.find(params[:id])
 		redirect_to aftf.conversation and return if !user_signed_in? || !current_user.can_disrefuse_aftf?(aftf) 
 		current_user.remove(aftf)
-		aftf.update_attributes!(answer_call: nil, accepted: nil)
+		aftf.update_attributes!(parent: nil, accepted: nil)
 		redirect_to aftf.conversation
 	end
 	

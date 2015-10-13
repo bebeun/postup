@@ -11,10 +11,17 @@
 
 <ul>
 	<% @conversation.calls.where(parent: @conversation).each do |f| %>
-		<li><%= render '/calls/show', :call => f %></li>
+		<li><%= render '/calls/show', :call => f  %></li>
 	<% end %>	
-</ul>
 
+	<% if @conversation.child_aftfs.select{|x| !x.accepted }.any? %>
+		<% @conversation.child_aftfs.select{|x| !x.accepted }.each do |x| %>
+			<li>
+			<%= render '/aftfs/show', :aftf => x %>
+			</li>
+		<% end %>
+	<% end %>
+</ul>
 <%= "AFTF IN THE AIR: " if @conversation.aftfs.select{|x| x.alive? }.any? %>
 <ul>
 	<% @conversation.aftfs.select{|x| x.alive? }.each do |f| %>

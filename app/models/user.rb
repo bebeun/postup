@@ -86,11 +86,11 @@ class User < ActiveRecord::Base
 	end
 
 	def can_s_aftf?(aftf)
-		return aftf.creator != self && aftf.alive? && !aftf.supporters.include?(self) && !can_call?(aftf.conversation)
+		return aftf.creator != self && aftf.alive? && !aftf.supporters.include?(self) # && !can_call?(aftf.conversation)
 	end
 	
 	def can_u_aftf?(aftf)
-		return aftf.creator != self && aftf.alive? && !aftf.unsupporters.include?(self) && !can_call?(aftf.conversation)
+		return aftf.creator != self && aftf.alive? && !aftf.unsupporters.include?(self) # && !can_call?(aftf.conversation)
 	end
 	
 	def can_remove_s_or_u_aftf?(aftf)
@@ -105,10 +105,10 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_disaccept_aftf?(aftf) 
-		if aftf.decider_call.nil?
+		if aftf.brother_call.nil?
 			return false 
 		else
-			return !aftf.alive? && aftf.accepted && aftf.decider == self && aftf.decider_call.child_post.nil? && !aftf.decider_call.child_calls.any?
+			return !aftf.alive? && aftf.accepted && aftf.decider == self && aftf.brother_call.child_post.nil? && !aftf.brother_call.child_calls.any?
 		end
 	end
 
