@@ -1,5 +1,5 @@
 class CallsController < ApplicationController
-
+	include ProfilesModule
 	def create
 		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))	
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_call?(@conversation)
@@ -19,7 +19,7 @@ class CallsController < ApplicationController
 		aftf = Aftf.select{|x| x.conversation == @call.conversation && x.creator == callable && x.alive?}.last #dirty !!!!!
 		
 		if @call.save!
-			aftf.update_attributes!(accepted: true, answer_call: @call.parent, decider_call: @call) and @call.transfer_call_s_u_up if aftf.alive? if !aftf.nil?
+			aftf.update_attributes!(accepted: true, answer_call: @call.parent, decider_call: @call) and @call.transfer_up if aftf.alive? if !aftf.nil?
 			current_user.supports(@call)
 			redirect_to @conversation
 		else

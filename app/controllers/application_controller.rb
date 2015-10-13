@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+	include GlobalIdModule
+
 	protect_from_forgery with: :exception
 	
 	#devise setup
@@ -8,8 +10,4 @@ class ApplicationController < ActionController::Base
 		devise_parameter_sanitizer.for(:sign_up) << :name
 		devise_parameter_sanitizer.for(:account_update) << :name
 	end
-	
-	#including helper
-	include ProfilesHelper
-	include CallsHelper
 end

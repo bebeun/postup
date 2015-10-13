@@ -1,8 +1,8 @@
 class Call < ActiveRecord::Base
-	include ObjectTransfer
+	include ObjectTransferModule
 	
 	#check for AFTF which this CALL could have accepted
-	before_destroy :cancel_accepted_aftfs, :transfer_call_s_u_down, :merge_alive_aftfs
+	before_destroy :cancel_accepted_aftfs, :transfer_down, :merge_alive_aftfs
 	def cancel_accepted_aftfs
 		authorised_aftf.update_attributes(accepted: nil, answer_call: nil, decider_call: nil) if !authorised_aftf.nil?
 	end 
@@ -20,8 +20,6 @@ class Call < ActiveRecord::Base
 			end
 		end
 	end 
-	
-
 	
 	#brother post
 	def brother_post

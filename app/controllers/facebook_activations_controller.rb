@@ -1,4 +1,5 @@
 class FacebookActivationsController < ApplicationController
+	include ProfilesModule
 	def new
 		redirect_to root_path and return if(!user_signed_in?)#return root for not logged users
 		@facebook = Facebook.find(params[:facebook_id])	

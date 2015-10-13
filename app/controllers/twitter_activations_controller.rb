@@ -1,4 +1,5 @@
 class TwitterActivationsController < ApplicationController
+	include ProfilesModule
 	def new
 		redirect_to root_path and return if(!user_signed_in?)#return root for not logged users
 		@twitter = Twitter.find(params[:twitter_id])	

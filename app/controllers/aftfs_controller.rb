@@ -35,7 +35,7 @@ class AftfsController < ApplicationController
 		call = Call.create!(conversation: aftf.conversation, callable: aftf.creator, parent: current_user.parent_call(aftf.conversation))
 		current_user.supports(aftf)
 		aftf.update_attributes(answer_call: call.parent, decider_call: call, accepted: true)
-		call.transfer_call_s_u_up
+		call.transfer_up
 		redirect_to aftf.conversation
 	end
 	

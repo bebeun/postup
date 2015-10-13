@@ -1,10 +1,10 @@
 class Post < ActiveRecord::Base
-	include ObjectTransfer
+	include ObjectTransferModule
 	
 	#CONVERSATION
 	belongs_to :conversation
 	validates :conversation, presence: true	
-	before_destroy :transfer_post_s_u_down
+	before_destroy :transfer_down
 	
 	#USER who wrote the POST
 	def creator

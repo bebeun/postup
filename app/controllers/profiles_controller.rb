@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-
+	include ProfilesModule
 	def attach_to_user
 		profile = get_profile(profile_params[:global_id])	if !profile_params[:global_id].nil? 
 		profile = description_by_display(profile_params[:display]) if !profile_params[:display].nil?
