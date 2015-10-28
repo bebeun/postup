@@ -1,16 +1,12 @@
 <h2>Aftf</h2>
 
-<% if user_signed_in? && (aftf.creator == current_user) %>  
-	<%= "You asked for the floor" %>  
-	<%= button_to "Remove Aftf",  url_for(controller: 'aftfs', action: 'destroy', id: aftf), method: :delete, data: { confirm: "Are you sure?" },form_class: "button_link" if aftf.alive?%>
-	<%= (aftf.accepted?) ? ("and were accepted by") : ("and were refused by") if !aftf.alive? %>
-	<%= render '/user_link', :user => aftf.decider if !aftf.alive? %>
-<% else %>
-	<%= link_to(aftf.creator.name,aftf.creator)+" asked for the floor".html_safe %>
-	<%= (aftf.accepted?) ? ("and was accepted by") : ("and was refused by") if !aftf.alive? %>
-	<%= render '/user_link', :user => aftf.decider if !aftf.alive? %>
-<% end %>
+<%= render '/user_link', :user => aftf.creator %>
+ asked for the floor
+<%= "which was refused by" if !aftf.alive? %>
+<%= render '/user_link', :user => aftf.decider if !aftf.alive? %>
 
+<%= button_to "Remove Aftf",  url_for(controller: 'aftfs', action: 'destroy', id: aftf), method: :delete, data: { confirm: "Are you sure?" },form_class: "button_link" if aftf.alive? && (aftf.creator == current_user) if user_signed_in? %>
+	
 <% if user_signed_in? %> 
 	<%= button_to "Disrefuse", url_for(controller: 'aftfs', action: 'disrefuse', id: aftf ), method: :post, form_class: "button_link" if current_user.can_disrefuse_aftf?(aftf) %>
 	<%= button_to "Disaccept", url_for(controller: 'calls', action: 'destroy', id: aftf.brother_call ), method: :delete, form_class: "button_link" if current_user.can_disaccept_aftf?(aftf) %>
@@ -26,7 +22,6 @@
 		<%= button_to "Refuse this AFTF", url_for(controller: 'aftfs', action: 'refuse', id: aftf ), method: :post, form_class: "button_link" %>
 	<% end %>
 <% end %>
-
 
 <br/>Supported by: <% aftf.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
 <br/>Unsupported by: <% aftf.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %>  <% end %>

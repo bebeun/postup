@@ -11,18 +11,12 @@ class Conversation < ActiveRecord::Base
 	has_many :child_aftfs, as: :parent, class_name: "Aftf"
 	
 	def has_content?
-		return posts.any? || calls.any?
+		return posts.any? # || calls.any?
 	end
 	
 	def title
 		if has_content?
-			if posts.any? 
-				return posts.first.title
-			else
-				user =  calls.first.callable
-				user.class.name == "User" ? name = user.name : name = user.profile.class.name+" : "+user.profile.description
-				return calls.first.supporters.collect{|x| x.name }.join(" + ").to_s+" >>  "+name
-			end
+			return posts.first.title
 		else
 			return "This is a new conversation! "
 		end

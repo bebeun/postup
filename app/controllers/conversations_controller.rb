@@ -14,7 +14,6 @@ class ConversationsController < ApplicationController
 	
 	def show
 		@conversation = Conversation.find(params[:id])
-		redirect_it root_path if @conversation.nil?
 		if user_signed_in? 
 			@aftf = Aftf.new() if current_user.can_aftf?(@conversation)
 			@post = Post.new() if current_user.can_post?(@conversation)

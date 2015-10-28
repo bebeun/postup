@@ -1,8 +1,9 @@
 class PotentialUsersController < ApplicationController
+	
 	def show
 		@potential_user = PotentialUser.find(params[:id]) 
-		@callins = @potential_user.callins
-		@conversations = @callins.collect{|x| x.conversation } 
+		callins = @potential_user.callins
+		@objects =  callins
 	end
 	
 	def support

@@ -1,6 +1,10 @@
 class Post < ActiveRecord::Base
 	include ObjectTransferModule
 	
+	def to_be_displayed?
+		return true
+	end
+	
 	#CONVERSATION
 	belongs_to :conversation
 	validates :conversation, presence: true	

@@ -37,14 +37,14 @@ class User < ActiveRecord::Base
 			#===> bouton pour dire "je ne fwd pas ?"
 			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?					#and none of his calls have been yet answered by posting
 			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?				#and none of his calls have been forwarded 
-			return child_answered && forwarded
+			return child_answered && forwarded && conversation.has_content?
 		else
 			return false
 		end
 	end
 	
 	def alert_before_call?(conversation)														# if a user call before posting,...
-		parent = parent_call(conversation)													# ...warn him he won't be able to post after.
+		parent = parent_call(conversation)														# ...warn him he won't be able to post after.
 		if !parent.nil?
 			not_answered = parent.child_post.nil?												#he has not yet posted
 			return not_answered
@@ -176,16 +176,19 @@ class User < ActiveRecord::Base
 	
 	# CALL Management
 	#CALL S/U
-	has_many :object_actions
-	has_many :callouts, through: :object_actions, source: :object, source_type: "Call"
+	has_many :object_actions, inverse_of: :creator
+	#has_many :callouts, through: :object_actions, source: :object, source_type: 'Call', foreign_key: "object_id"
+	def callouts
+		return Call.select{|x| x.creator == self}
+	end
 	has_many :callins, as: :callable, class_name: "Call"
 
 	# POST Management + POST S/U
-	has_many :posts, inverse_of: :creator
+	# has_many :posts, inverse_of: :creator
 	has_many :postsupports, through: :object_actions, source: :object, source_type: "Post"
 	
 	#AFTF Management + ASTF S/USER
-	has_many :aftfs, inverse_of: :creator
+	has_many :aftfs, inverse_of: :creator, foreign_key: "creator_id"
 	has_many :aftfsupports, through: :object_actions, source: :object, source_type: "Aftf"
 	
 	

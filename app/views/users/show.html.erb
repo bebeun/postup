@@ -5,11 +5,19 @@
 <% else %>
 	<%= "Dear #{@user.name} , this is your profile. You can also " %> 
 	<%= link_to("edit", edit_user_registration_path) %> 
-	<%= " it" %> 
+	it.
 <% end %> 
 
-<%= render '/users/edit_supports', :user => @user %>
-<%= render '/users/show_profiles', :user => @user %>
+<%# render '/users/edit_supports', :user => @user %>
+<%# render '/users/show_profiles', :user => @user %>
 
-<h1>Conversations: </h1>
-<%= @conversations.inspect.to_s %>
+<% to_display_sort = @objects.sort_by { |object| object.created_at} %>
+
+<ul>
+	<% to_display_sort.each do |f| %>
+		<% if f.class.name == "Aftf" && f.to_be_displayed? %><li><%= render '/aftfs/show', :aftf => f %></li><% end %>
+		<% if f.class.name == "Call" && f.to_be_displayed? %><li><%= render '/calls/show', :call => f %></li><% end %>
+		<% if f.class.name == "Post" && f.to_be_displayed? %><li><%= render '/posts/show', :post => f %></li><% end %>
+	<% end %>
+</ul>
+

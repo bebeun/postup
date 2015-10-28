@@ -5,7 +5,7 @@ class PostsController < ApplicationController
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_post?(@conversation)
 		@post = Post.new(post_params.merge(conversation: @conversation, parent: current_user.parent_call(@conversation)))
 
-		if @post.save!
+		if @post.save
 			current_user.supports(@post)
 			@post.transfer_up
 			redirect_to @conversation
@@ -19,6 +19,7 @@ class PostsController < ApplicationController
 		end
 	end
 	
+	#redirect_to :back ?????
 	def edit
 		@post = Post.find(params[:id])
 		@conversation = @post.conversation
@@ -27,6 +28,7 @@ class PostsController < ApplicationController
 		render '/conversations/edit' 
 	end
 
+	#redirect_to :back ?????
 	def update
 		@post = Post.find(params[:id])
 		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post)
@@ -45,43 +47,48 @@ class PostsController < ApplicationController
 
 	def support
 		post = Post.find(params[:id])
-		redirect_to post.conversation and return if !user_signed_in? || !current_user.can_s_post?(post)
+		redirect_to :back and return if !user_signed_in? || !current_user.can_s_post?(post)
 		current_user.supports(post)
-		redirect_to post.conversation
+		redirect_to :back
 	end
 	
 	def unsupport
 		post = Post.find(params[:id])
-		redirect_to post.conversation and return if !user_signed_in? || !current_user.can_u_post?(post)
+		redirect_to :back and return if !user_signed_in? || !current_user.can_u_post?(post)
 		current_user.unsupports(post)
-		redirect_to post.conversation
+		redirect_to :back
 	end
 	
 	def remove
 		post = Post.find(params[:id])
-		redirect_to post.conversation and return if !user_signed_in? || !current_user.can_remove_s_or_u_post?(post)
+		redirect_to :back and return if !user_signed_in? || !current_user.can_remove_s_or_u_post?(post)
 		current_user.remove(post)
-		redirect_to post.conversation
+		redirect_to :back
 	end
 	
 	def hide
 		post = Post.find(params[:id])
-		redirect_to post.conversation and return if !user_signed_in? || !current_user.can_hide?(post)
+		redirect_to :back and return if !user_signed_in? || !current_user.can_hide?(post)
 		post.update_attributes!(visible: false)
 		#current_user.remove(post)
-		redirect_to post.conversation
+		redirect_to :back
 	end
 	
+	#redirect_to :back ?????
 	def destroy
 		post = Post.find(params[:id])
 		conversation = post.conversation
-		redirect_to conversation and return if !user_signed_in? || !current_user.can_destroy_post?(post)
+		redirect_to :back and return if !user_signed_in? || !current_user.can_destroy_post?(post)
 		post.destroy 
-		if conversation.has_content?
-			redirect_to conversation
+		if URI(request.referer).path.split("/").include?("conversations")
+			if conversation.has_content?
+				redirect_to conversation
+			else
+				conversation.destroy
+				redirect_to new_conversation_path
+			end
 		else
-			conversation.destroy
-			redirect_to new_conversation_path
+			redirect_to :back 
 		end
 	end
 	

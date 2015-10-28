@@ -1,6 +1,10 @@
 class Call < ActiveRecord::Base
 	include ObjectTransferModule
 	
+	def to_be_displayed?
+		return child_post.nil?
+	end
+	
 	#check for AFTF which this CALL could have accepted
 	before_destroy :cancel_accepted_aftfs, :transfer_down, :merge_alive_aftfs
 	def cancel_accepted_aftfs

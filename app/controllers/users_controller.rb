@@ -1,13 +1,16 @@
 class UsersController < ApplicationController
 	def show
 		@user = User.find(params[:id]) 
-		@postscreated = Post.select{ |x| x.creator == @user }
-		@postssupported = Post.select { |w| (w.supporters.include?(@user) || w.unsupporters.include?(@user))}
-		@callins = @user.callins
-		@callouts = @user.callouts
-		@callssupported = Call.select { |w| (w.supporters.include?(@user) || w.unsupporters.include?(@user))}
+		aftfs_asked = @user.aftfs
+		aftfs_answered = Aftf.select{|x| x.decider == @user}
+		aftfs_supported = Aftf.select { |w| ((w.supporters.include?(@user) || w.unsupporters.include?(@user)) && w.creator != @user &&  w.decider != @user)}
+		callins = @user.callins
+		callouts = @user.callouts
+		callssupported = Call.select { |w| ((w.supporters.include?(@user) || w.unsupporters.include?(@user)) && w.creator != @user)}
+		posts_created = Post.select{ |x| x.creator == @user }
+		posts_supported = Post.select { |w| ((w.supporters.include?(@user) || w.unsupporters.include?(@user)) && w.creator != @user)}
 		
-		@conversations = @postscreated.collect{|x| x.conversation } + @postssupported.collect{|x| x.conversation } + @callins.collect{|x| x.conversation } + @callouts.collect{|x| x.conversation } + @callssupported.collect{|x| x.conversation }
+		@objects = aftfs_asked + aftfs_answered + aftfs_supported + callins + callouts + callssupported + posts_created + posts_supported
 	end
 	
 	def support

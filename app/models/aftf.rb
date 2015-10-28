@@ -22,6 +22,10 @@ class Aftf < ActiveRecord::Base
 		return accepted.nil?
 	end
 	
+	def to_be_displayed?
+		(accepted.nil?) ? (return true) : (return !accepted)
+	end
+	
 	validates_uniqueness_of :creator_id, :scope => [:conversation_id], conditions: -> { where(accepted: nil) }  
 	
   	#AFTF S/U
