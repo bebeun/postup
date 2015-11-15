@@ -35,25 +35,14 @@ class User < ActiveRecord::Base
 		if !parent.nil?
 			#===> parent.child_post. moins de 1h ??
 			#===> bouton pour dire "je ne fwd pas ?"
+			answered = !parent.child_post.nil?													#he has posted
 			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?					#and none of his calls have been yet answered by posting
 			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?				#and none of his calls have been forwarded 
-			return child_answered && forwarded && conversation.has_content?
+			return answered && child_answered && forwarded
 		else
 			return false
 		end
 	end
-	
-	def alert_before_call?(conversation)														# if a user call before posting,...
-		parent = parent_call(conversation)														# ...warn him he won't be able to post after.
-		if !parent.nil?
-			not_answered = parent.child_post.nil?												#he has not yet posted
-			return not_answered
-		else
-			return false
-		end
-	end
-	
-
 	
 	def can_aftf?(conversation)
 		cond = !can_post?(conversation) && !can_call?(conversation) 											#can't do anything

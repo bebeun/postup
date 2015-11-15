@@ -15,9 +15,9 @@
 
 <ul>
 	<% to_display_sort.each do |f| %>
-		<% if f.class.name == "Aftf" && f.to_be_displayed? %><li><%= render '/aftfs/show', :aftf => f %></li><% end %>
-		<% if f.class.name == "Call" && f.to_be_displayed? %><li><%= render '/calls/show', :call => f %></li><% end %>
-		<% if f.class.name == "Post" && f.to_be_displayed? %><li><%= render '/posts/show', :post => f %></li><% end %>
+		<% if f.class.name == "Aftf" && f.to_be_displayed? %><li><%= link_to f.conversation.title, f.conversation %><br/><%= render '/aftfs/show', :aftf => f %></li><% end %>
+		<% if f.class.name == "Call" && f.to_be_displayed? %><li><%= link_to f.conversation.title, f.conversation %><br/><%= render '/calls/show', :call => f %></li><% end %>
+		<% if f.class.name == "Post" && f.to_be_displayed? %><li><%= link_to f.conversation.title, f.conversation %><br/><%= render '/posts/show', :post => f %></li><% end %>
 	<% end %>
 </ul>
 

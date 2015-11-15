@@ -1,4 +1,4 @@
-<h2>New Call Partial --------------------------- </h2>
+<h2>...And Pin It To Someone'S Wall...</h2>
 
 <% if @call.errors.any? %>
 	<%= pluralize(@call.errors.count, "error") %> prohibited this conversation from being saved:
@@ -8,8 +8,6 @@
 		<% end %>
 	</ul>
 <% end %>
-
-<b><%=  "Be careful, if you call someone now, you won't be able to post after..." if current_user.alert_before_call?(@conversation) %></b>
 
 <br/><br/>
 
@@ -31,5 +29,3 @@
 	 <%= submit_tag 'Submit' %>
 	<br/>
 <% end %>
-
-<h2>--------------------------------------------- </h2>
