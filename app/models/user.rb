@@ -20,94 +20,39 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_post?(conversation)
-		parent = parent_call(conversation)													#self is called out
-		if !parent.nil?
-			answered = parent.child_post.nil?													#he has not yet posted
-			child_answered = !parent.child_calls.any?											#and has not yet called
-			return answered && child_answered
-		else
-			return false
-		end
+		return true
 	end
 	
 	def can_call?(conversation)
-		parent = parent_call(conversation)													#self is called out
-		if !parent.nil?
-			#===> parent.child_post. moins de 1h ??
-			#===> bouton pour dire "je ne fwd pas ?"
-			answered = !parent.child_post.nil?													#he has posted
-			child_answered = !parent.child_calls.collect{|x| x.child_post}.any?					#and none of his calls have been yet answered by posting
-			forwarded = !parent.child_calls.collect{|x| x.child_calls}.flatten.any?				#and none of his calls have been forwarded 
-			return answered && child_answered && forwarded
-		else
-			return false
-		end
+		return conversation.has_content?
 	end
 	
-	def can_aftf?(conversation)
-		cond = !can_post?(conversation) && !can_call?(conversation) 											#can't do anything
-		cond &&= !conversation.aftfs.select{|x| x.alive? && x.creator == self}.any?								#has not an aftf alive (not answered)
-		action = conversation.aftfs.last(Aftf::MAX_AFTF_PER_CONV).select{|x| !x.accepted && x.creator == self}	#has not been refused the floor more than 3 times in a row
-		cond &&= (action.count != Aftf::MAX_AFTF_PER_CONV)														#Max number of AFTF in a conv
-		return cond
-	end
-	
-	def parent_call(conversation)
-		#===========================================>(last is DIRTY - index on updated_at ??)	
-		parent = nil
-		parent = conversation if conversation.creator == self
-		parent = Call.where(conversation: conversation, callable: self).last if Call.where(conversation: conversation, callable: self).any?
-		return parent
-	end
-	
+		
 	#if call has given a post or child calls, the s/u have been switched to the post. the call can't be s/u anymore
 	def can_s_call?(call)
-		return call.creator != self && call.child_post.nil? && call.callable != self && !call.child_calls.any? && !call.supporters.include?(self)#==============>garder le !call.child_calls.any?
+		return call.callable != self && !call.supporters.include?(self) && !call.swept && call.post.nil?
 	end
 	def can_u_call?(call)
-		return call.creator != self && call.child_post.nil? && call.callable != self && !call.child_calls.any? && !call.unsupporters.include?(self)#==============>garder le !call.child_calls.any?
+		return call.callable != self && !call.unsupporters.include?(self) && !call.swept && call.post.nil?
 	end
 	def can_remove_s_or_u_call?(call)
-		return call.creator != self && call.child_post.nil? && call.callable != self && !call.child_calls.any? && (call.supporters.include?(self) || call.unsupporters.include?(self))#==============>garder le !call.child_calls.any?
-	end
-	def can_destroy_call?(call)
-		return call.creator == self && call.child_post.nil? && !call.child_calls.any? 
-	end
-
-	def can_s_aftf?(aftf)
-		return aftf.creator != self && aftf.alive? && !aftf.supporters.include?(self) # && !can_call?(aftf.conversation)
+		return call.callable != self && (call.supporters.include?(self) || call.unsupporters.include?(self)) && call.post.nil? && !call.swept  
 	end
 	
-	def can_u_aftf?(aftf)
-		return aftf.creator != self && aftf.alive? && !aftf.unsupporters.include?(self) # && !can_call?(aftf.conversation)
-	end
+	def can_answer_call?(call)
+		return call.callable == self && call.post.nil? && !call.swept 
+	end	
 	
-	def can_remove_s_or_u_aftf?(aftf)
-		return aftf.creator != self && (aftf.supporters.include?(self) || aftf.unsupporters.include?(self)) && aftf.alive? 
+	def can_sweep?(user)
+		return user == self
 	end
-		
-	def can_accept_aftf?(aftf)
-		can_call?(aftf.conversation) && aftf.alive?
-	end
-	def can_disrefuse_aftf?(aftf) 
-		!aftf.alive? && !aftf.accepted && aftf.decider == self && !aftf.conversation.aftfs.select{|x| x.creator == aftf.creator  && (x.created_at > aftf.created_at)}.any? 
-	end
-	
-	def can_disaccept_aftf?(aftf) 
-		if aftf.brother_call.nil?
-			return false 
-		else
-			return !aftf.alive? && aftf.accepted && aftf.decider == self && aftf.brother_call.child_post.nil? && !aftf.brother_call.child_calls.any?
-		end
-	end
-
 	
 	def can_destroy_post?(post)
-		return !post.brother_calls.any? && post.creator == self     #idealement forwarded AND answered
+		return post.creator == self   
 	end
 	
 	def can_edit_post?(post)
-		return !post.brother_calls.any? && post.creator == self && post.visible     #idealement forwarded AND answered
+		return post.creator == self  
 	end
 	
 	def can_s_post?(post)
@@ -121,32 +66,30 @@ class User < ActiveRecord::Base
 	end
 	
 	def supports(object)
-		object.unsupporters.destroy(self) if object.unsupporters.include?(self)
-		object.supporters << self if !object.supporters.include?(self) 
+		oa = ObjectAction.find_or_initialize_by(creator: self, object: object)
+		oa.support = "up"
+		oa.swept = false
+		oa.save!
 	end
 	
 	def unsupports(object)
-		object.supporters.destroy(self) if object.supporters.include?(self)
-		object.unsupporters << self if !object.unsupporters.include?(self) 
+		oa = ObjectAction.find_or_initialize_by(creator: self, object: object)
+		oa.support = "down"
+		oa.swept = false
+		oa.save!
 	end
 	
 	def remove(object)
-		object.supporters.destroy(self) if object.supporters.include?(self)
-		object.unsupporters.destroy(self) if object.unsupporters.include?(self)
+		oa = ObjectAction.find_or_initialize_by(creator: self, object: object)
+		oa.destroy if oa
 	end
 
-	#post has a parent. this parent has child_calls. 
-	#if one can't edit or destroy, the post can be made not visible
-	def can_hide?(post)
-		return post.brother_calls.any? && post.creator == self && post.visible
-	end
-	
-	def displayable_user(conversation)
+
+	def displayable_user(conversation) #pas de  call swept dans la conv
 		users = User.all - [self]
 		if !conversation.nil?
 			users -= conversation.calls.where(callable_type: "User")\
 			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self))}\
-			.select { |call| call.callable.can_post?(conversation) || call.callable.can_call?(conversation)}\
 			.collect{|call| call.callable }
 		end
 		return users
@@ -173,13 +116,9 @@ class User < ActiveRecord::Base
 	has_many :callins, as: :callable, class_name: "Call"
 
 	# POST Management + POST S/U
-	# has_many :posts, inverse_of: :creator
+	has_many :posts, inverse_of: :creator, foreign_key: "creator_id"
 	has_many :postsupports, through: :object_actions, source: :object, source_type: "Post"
-	
-	#AFTF Management + ASTF S/USER
-	has_many :aftfs, inverse_of: :creator, foreign_key: "creator_id"
-	has_many :aftfsupports, through: :object_actions, source: :object, source_type: "Aftf"
-	
+
 	
 	# USER S/U
     has_many :user_actions

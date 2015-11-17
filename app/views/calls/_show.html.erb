@@ -1,22 +1,15 @@
-<h2>Call</h2>
+<h2>Call <%= "(Declined)" if call.swept %></h2> 
 
-<% rm_string = "Remove Call" %>
 
-<% if call.brother_aftf %>
-	This Call replies an Aftf.<br/>
-	<% rm_string = "Disaccept" %>
-<% end %>
-	
 <% user =  call.callable %>
-Callout : 	( initially created by: <%= render '/user_link', :user => call.creator %> ) ===> >> <%= render '/user_link', :user => user %>
-
+<%= render '/user_link', :user => call.creator %> > <%= render '/user_link', :user => user %>
+<br/>
 <% if user_signed_in? %>
 	<%= button_to "Up This Call",  url_for(controller: 'calls', action: 'support', id: call ), method: :post, form_class: "button_link" if current_user.can_s_call?(call) %>
 	<%= button_to "Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), method: :delete, form_class: "button_link" if current_user.can_remove_s_or_u_call?(call) %>
 	<%= button_to "Down This Call",  url_for(controller: 'calls', action: 'unsupport', id: call ), method: :post, form_class: "button_link" if current_user.can_u_call?(call) %>
-	<%= button_to rm_string,  url_for(controller: 'calls', action: 'destroy', id: call ), method: :delete, form_class: "button_link" if current_user.can_destroy_call?(call) %>
+	<%= link_to "Answer This Call",  url_for(controller: 'conversations', action: 'show', id: call.conversation ), method: :get, form_class: "button_link" if current_user.can_answer_call?(call) %>
 <% end %>
-
 <br/>Supported by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
 <br/>Unsupported by: <% call.unsupporters.each do |x| %> <%= render '/user_link', :user => x %><% end %>
 	

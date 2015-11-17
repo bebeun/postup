@@ -1,0 +1,4 @@
+<% if oa.support == "up" %><h2>Supports: </h2><% else %><h2>Unsupports: </h2><% end %>
+
+<%= render '/calls/show', :call => oa.object if oa.object.class.name == "Call"  %>
+<%= render '/posts/show', :post => oa.object if oa.object.class.name == "Post"  %>

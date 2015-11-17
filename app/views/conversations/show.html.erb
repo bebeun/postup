@@ -2,20 +2,17 @@
 
 <%= @conversation.title%>
 
-<% to_display = @conversation.aftfs.select{|x| x.to_be_displayed?} + @conversation.calls.select{|x| x.to_be_displayed?} + @conversation.posts.select{|x| x.to_be_displayed?} %>
+<% to_display = @conversation.calls + @conversation.posts %>
 <% to_display_sort = to_display.sort_by { |object| object.created_at} %>
 
 <ul>
 	<% to_display_sort.each do |f| %>
-		<% if f.class.name == "Aftf" %><li><%= render '/aftfs/show', :aftf => f %></li><% end %>
 		<% if f.class.name == "Call" %><li><%= render '/calls/show', :call => f %></li><% end %>
 		<% if f.class.name == "Post" %><li><%= render '/posts/show', :post => f %></li><% end %>
 	<% end %>
 </ul>
 
 <% if user_signed_in? %>
-	<br/>
-	<%= render '/aftfs/new', :aftf => [@conversation, @aftf] if current_user.can_aftf?(@conversation)%>
 	<br/>
 	<%= render '/posts/new', :post => [@conversation, @post] if current_user.can_post?(@conversation)%>
 	<br/>

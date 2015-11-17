@@ -11,13 +11,22 @@
 <%# render '/users/edit_supports', :user => @user %>
 <%# render '/users/show_profiles', :user => @user %>
 
-<% to_display_sort = @objects.sort_by { |object| object.created_at} %>
-
 <ul>
-	<% to_display_sort.each do |f| %>
-		<% if f.class.name == "Aftf" && f.to_be_displayed? %><li><%= link_to f.conversation.title, f.conversation %><br/><%= render '/aftfs/show', :aftf => f %></li><% end %>
-		<% if f.class.name == "Call" && f.to_be_displayed? %><li><%= link_to f.conversation.title, f.conversation %><br/><%= render '/calls/show', :call => f %></li><% end %>
-		<% if f.class.name == "Post" && f.to_be_displayed? %><li><%= link_to f.conversation.title, f.conversation %><br/><%= render '/posts/show', :post => f %></li><% end %>
+	<% @objects.each do |f| %>
+		<li><%= f.inspect.to_s %>
+			<% if f.class.name == "Call" %>
+				<%= render '/calls/show', :call => f %>
+			<% end %>
+			<% if f.class.name == "Post" %>
+				<%= render '/posts/show', :post => f %>
+			<% end %> 
+			<% if f.class.name == "ObjectAction"  %>
+				<%= render '/object_actions/show', :oa => f %>
+			<% end %>
+			<br/>
+			<%= link_to "Sweep",  url_for(controller: 'users', action: 'sweep_until', time_limit: f.created_at ), method: :post, data: { confirm: "Are you sure? This can't be undone! " }, form_class: "button_link" if current_user.can_sweep?(@user)  if user_signed_in? %><br/>
+		</li>
 	<% end %>
 </ul>
+
 

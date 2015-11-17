@@ -3,11 +3,12 @@ class PostsController < ApplicationController
 	def create
 		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_post?(@conversation)
-		@post = Post.new(post_params.merge(conversation: @conversation, parent: current_user.parent_call(@conversation)))
-
+		@post = Post.new(post_params.merge(conversation: @conversation, creator: current_user))
+		call = Call.find_by(conversation: @conversation, callable: current_user, swept: false, post: nil)
+		
 		if @post.save
+			call.update_attributes(post: @post) and @post.transfer_up(call) if call
 			current_user.supports(@post)
-			@post.transfer_up
 			redirect_to @conversation
 		else
 			@call = Call.new()
@@ -37,6 +38,7 @@ class PostsController < ApplicationController
 		post_updated_at = @post.updated_at + 1.second
 		if @post.save
 			@post.object_actions.select{|x| x.updated_at > post_updated_at}.each{|x| x.destroy} if changed 
+			@post.update_attributes(edited: true)
 			redirect_to @post.conversation
 		else
 			@conversation = @post.conversation
@@ -66,19 +68,13 @@ class PostsController < ApplicationController
 		redirect_to :back
 	end
 	
-	def hide
-		post = Post.find(params[:id])
-		redirect_to :back and return if !user_signed_in? || !current_user.can_hide?(post)
-		post.update_attributes!(visible: false)
-		#current_user.remove(post)
-		redirect_to :back
-	end
 	
 	#redirect_to :back ?????
 	def destroy
 		post = Post.find(params[:id])
 		conversation = post.conversation
 		redirect_to :back and return if !user_signed_in? || !current_user.can_destroy_post?(post)
+		post.call.update_attributes( post: nil) if post.call
 		post.destroy 
 		if URI(request.referer).path.split("/").include?("conversations")
 			if conversation.has_content?

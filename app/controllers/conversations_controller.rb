@@ -15,7 +15,6 @@ class ConversationsController < ApplicationController
 	def show
 		@conversation = Conversation.find(params[:id])
 		if user_signed_in? 
-			@aftf = Aftf.new() if current_user.can_aftf?(@conversation)
 			@post = Post.new() if current_user.can_post?(@conversation)
 			@call = Call.new() if current_user.can_call?(@conversation)
 		end

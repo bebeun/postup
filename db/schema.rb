@@ -11,37 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151008145821) do
-
-  create_table "aftfs", force: :cascade do |t|
-    t.integer  "creator_id"
-    t.integer  "conversation_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-    t.boolean  "accepted"
-    t.integer  "parent_id"
-    t.string   "parent_type"
-    t.integer  "brother_call_id"
-  end
-
-  add_index "aftfs", ["brother_call_id"], name: "index_aftfs_on_brother_call_id"
-  add_index "aftfs", ["conversation_id"], name: "index_aftfs_on_conversation_id"
-  add_index "aftfs", ["creator_id"], name: "index_aftfs_on_creator_id"
-  add_index "aftfs", ["parent_type", "parent_id"], name: "index_aftfs_on_parent_type_and_parent_id"
+ActiveRecord::Schema.define(version: 20151117014837) do
 
   create_table "calls", force: :cascade do |t|
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "conversation_id"
     t.integer  "callable_id"
     t.string   "callable_type"
-    t.integer  "parent_id"
-    t.string   "parent_type"
+    t.integer  "creator_id"
+    t.integer  "post_id"
+    t.boolean  "swept",           default: false
   end
 
   add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id"
   add_index "calls", ["conversation_id"], name: "index_calls_on_conversation_id"
-  add_index "calls", ["parent_type", "parent_id"], name: "index_calls_on_parent_type_and_parent_id"
+  add_index "calls", ["creator_id"], name: "index_calls_on_creator_id"
+  add_index "calls", ["post_id"], name: "index_calls_on_post_id"
 
   create_table "conversations", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -79,27 +65,28 @@ ActiveRecord::Schema.define(version: 20151008145821) do
     t.integer  "object_id"
     t.string   "object_type"
     t.string   "support"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.integer  "creator_id"
+    t.boolean  "swept",       default: false
   end
 
   add_index "object_actions", ["creator_id"], name: "index_object_actions_on_creator_id"
   add_index "object_actions", ["object_type", "object_id"], name: "index_object_actions_on_object_type_and_object_id"
 
   create_table "posts", force: :cascade do |t|
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "conversation_id"
     t.text     "title"
     t.text     "content"
-    t.integer  "parent_id"
-    t.string   "parent_type"
-    t.boolean  "visible",         default: true
+    t.integer  "creator_id"
+    t.boolean  "edited",          default: false
+    t.boolean  "swept",           default: false
   end
 
   add_index "posts", ["conversation_id"], name: "index_posts_on_conversation_id"
-  add_index "posts", ["parent_type", "parent_id"], name: "index_posts_on_parent_type_and_parent_id"
+  add_index "posts", ["creator_id"], name: "index_posts_on_creator_id"
 
   create_table "potential_users", force: :cascade do |t|
     t.datetime "created_at", null: false

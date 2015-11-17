@@ -11,7 +11,6 @@ Rails.application.routes.draw do
 	resources :conversations do #ici ça génère trop de lignes
 		resources :posts, only: [:create, :edit]
 		resources :calls, only: [:create]
-		resources :aftfs, only: [:create]
 	end	
   
 	resources :posts, only: [:create, :destroy, :update]
@@ -24,19 +23,13 @@ Rails.application.routes.draw do
 	delete 'calls/:id/remove' => 'calls#remove'
 	post 'calls/:id/unsupport' => 'calls#unsupport'
   
-	resources :calls, only: [:create, :destroy]
-
-	resources :aftfs, only: [:create, :destroy]
-	post 'aftfs/:id/support' => 'aftfs#support'
-	delete 'aftfs/:id/remove' => 'aftfs#remove'
-	post 'aftfs/:id/unsupport' => 'aftfs#unsupport'
-	post 'aftfs/:id/accept' => 'aftfs#accept'
-	post 'aftfs/:id/refuse' => 'aftfs#refuse'
-	post 'aftfs/:id/disrefuse' => 'aftfs#disrefuse'
+	resources :calls, only: [:create]
   
 	post 'profiles/attach_to_user' => 'profiles#attach_to_user' 
 	post 'profiles/detach_from_user' => 'profiles#detach_from_user'
-  
+	
+	post 'users/:time_limit/sweep_until' => "users#sweep_until"
+	
 	resources :facebooks do #ici ça génère trop de lignes
 		resources :facebook_activations, only: [:new, :create]
 		get "/facebook_activations/:id/report_page" => 'facebook_activations#report_page' 

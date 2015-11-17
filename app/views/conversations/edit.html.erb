@@ -1,41 +1,22 @@
 <% provide(:title, "Edit a Post") %>
 
-
-<%= @conversation.title%>
+<%= @conversation.title %>
 
 <%= render '/posts/edit', :post => @post %>
+
+<% to_display = @conversation.calls.select{|x| x.to_be_displayed?} + @conversation.posts.select{|x| x.to_be_displayed?} %>
+<% to_display_sort = to_display.sort_by { |object| object.created_at} %>
+
 <ul>
-	<% @conversation.posts.where(parent: @conversation).each do |f| %>
-		<li><%= render '/posts/show', :post => f %></li>
+	<% to_display_sort.each do |f| %>
+		<% if f.class.name == "Call" %><li><%= render '/calls/show', :call => f %></li><% end %>
+		<% if f.class.name == "Post" %><li><%= render '/posts/show', :post => f %></li><% end %>
 	<% end %>
 </ul>
-
-<ul>
-	<% @conversation.calls.where(parent: @conversation).each do |f| %>
-		<li><%= render '/calls/show', :call => f %></li>
-	<% end %>	
-	<% if @conversation.child_aftfs.select{|x| !x.accepted }.any? %>
-		<% @conversation.child_aftfs.select{|x| !x.accepted }.each do |x| %>
-			<li>
-			<%= render '/aftfs/show', :aftf => x %>
-			</li>
-		<% end %>
-	<% end %>
-</ul>
-
-<%= "AFTF IN THE AIR: " if @conversation.aftfs.select{|x| x.alive? }.any? %>
-<ul>
-	<% @conversation.aftfs.select{|x| x.alive? }.each do |f| %>
-		<li><%= render '/aftfs/show', :aftf => f %></li>
-	<% end %>	
-</ul>
-
 
 <% if user_signed_in? %>
 	<br/>
-	<%= render '/aftfs/new', :aftf => [@conversation, @aftf] if current_user.can_aftf?(@conversation)%>
-	<br/>
-	<%= render '/posts/new', :post => [@conversation, @post] if current_user.can_post?(@conversation)%>
+	<%# render '/posts/new', :post => [@conversation, @post] if current_user.can_post?(@conversation)%>
 	<br/>
 	<%= render '/calls/new', :call => [@conversation, @call] if current_user.can_call?(@conversation) %> 
 	<br/>
