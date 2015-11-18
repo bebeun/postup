@@ -4,7 +4,7 @@
 
 <%= render '/posts/edit', :post => @post %>
 
-<% to_display = @conversation.calls.select{|x| x.to_be_displayed?} + @conversation.posts.select{|x| x.to_be_displayed?} %>
+<% to_display = @conversation.calls.select{|x| x.post.nil?} + @conversation.posts %>
 <% to_display_sort = to_display.sort_by { |object| object.created_at} %>
 
 <ul>

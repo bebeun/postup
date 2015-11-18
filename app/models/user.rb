@@ -30,17 +30,17 @@ class User < ActiveRecord::Base
 		
 	#if call has given a post or child calls, the s/u have been switched to the post. the call can't be s/u anymore
 	def can_s_call?(call)
-		return call.callable != self && !call.supporters.include?(self) && !call.swept && call.post.nil?
+		return call.callable != self && !call.supporters.include?(self) && !call.swept && !call.declined && call.post.nil?
 	end
 	def can_u_call?(call)
-		return call.callable != self && !call.unsupporters.include?(self) && !call.swept && call.post.nil?
+		return call.callable != self && !call.unsupporters.include?(self) && !call.swept && !call.declined && call.post.nil?
 	end
 	def can_remove_s_or_u_call?(call)
-		return call.callable != self && (call.supporters.include?(self) || call.unsupporters.include?(self)) && call.post.nil? && !call.swept  
+		return call.callable != self && (call.supporters.include?(self) || call.unsupporters.include?(self)) && !call.declined && call.post.nil? && !call.swept  
 	end
 	
 	def can_answer_call?(call)
-		return call.callable == self && call.post.nil? && !call.swept 
+		return call.callable == self && call.post.nil? && !call.swept && !call.declined
 	end	
 	
 	def can_sweep?(user)
@@ -56,13 +56,13 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_s_post?(post)
-		return post.creator != self && !post.supporters.include?(self)
+		return post.creator != self && !post.supporters.include?(self) && !post.swept
 	end
 	def can_u_post?(post)
-		return post.creator != self && !post.unsupporters.include?(self)
+		return post.creator != self && !post.unsupporters.include?(self) && !post.swept
 	end
 	def can_remove_s_or_u_post?(post)
-		return post.creator != self && (post.supporters.include?(self) || post.unsupporters.include?(self))
+		return post.creator != self && (post.supporters.include?(self) || post.unsupporters.include?(self)) && !post.swept
 	end
 	
 	def supports(object)
@@ -80,7 +80,7 @@ class User < ActiveRecord::Base
 	end
 	
 	def remove(object)
-		oa = ObjectAction.find_or_initialize_by(creator: self, object: object)
+		oa = ObjectAction.find_by(creator: self, object: object)
 		oa.destroy if oa
 	end
 
@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
 		users = User.all - [self]
 		if !conversation.nil?
 			users -= conversation.calls.where(callable_type: "User")\
-			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self))}\
+			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self)) && !call.declined }\
 			.collect{|call| call.callable }
 		end
 		return users

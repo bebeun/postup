@@ -1,5 +1,4 @@
 class Call < ActiveRecord::Base
-	
 
 	#CONVERSATION
 	belongs_to :conversation
@@ -21,5 +20,5 @@ class Call < ActiveRecord::Base
 	belongs_to :creator, class_name: "User", foreign_key: "creator_id"
 	validates :creator, presence: true	
 	
-	validates_uniqueness_of :callable_id, :scope => [:conversation_id, :callable_type], conditions: -> { where(swept: false) }, :message => "This (Potential) User is already called out in this conversation..."
+	validates_uniqueness_of :callable_id, :scope => [:conversation_id, :callable_type], conditions: -> { where(swept: false, declined: false) }, :message => "This (Potential) User is already called out in this conversation..."
 end

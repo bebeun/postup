@@ -1,10 +1,11 @@
-<h2>Post</h2>
+<% if post.swept %><font color="#555555" size="1"><% end %>
 
+<h2>Post </h2> 
 <% if post.call %>
 	(<%= render '/user_link', :user => post.call.creator %> > )	
 <% end %>
 
-<%= render '/user_link', :user => post.creator %> says: <br/>
+<%= render '/user_link', :user => post.creator %> say(s): <br/>
 
 Title: <%= post.title %><br/>
 Content: <%= post.content %><br/>
@@ -25,3 +26,4 @@ Content: <%= post.content %><br/>
 <br/>Supported by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
 <br/>Unsupported by: <% post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
 
+</font>

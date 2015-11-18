@@ -1,5 +1,6 @@
-<h2>Call <%= "(Declined)" if call.swept %></h2> 
+<% if call.swept %><font color="#555555" size="1"><% end %>
 
+<h2>Call <%= "(Declined)" if call.declined %></h2> 
 
 <% user =  call.callable %>
 <%= render '/user_link', :user => call.creator %> > <%= render '/user_link', :user => user %>
@@ -12,7 +13,7 @@
 <% end %>
 <br/>Supported by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
 <br/>Unsupported by: <% call.unsupporters.each do |x| %> <%= render '/user_link', :user => x %><% end %>
-	
+</font>
 
 
 

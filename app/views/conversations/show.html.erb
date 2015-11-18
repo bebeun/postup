@@ -2,7 +2,7 @@
 
 <%= @conversation.title%>
 
-<% to_display = @conversation.calls + @conversation.posts %>
+<% to_display = @conversation.calls.select{|x| x.post.nil?} + @conversation.posts %>
 <% to_display_sort = to_display.sort_by { |object| object.created_at} %>
 
 <ul>

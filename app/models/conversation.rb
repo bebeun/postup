@@ -6,14 +6,14 @@ class Conversation < ActiveRecord::Base
 	validates :creator, presence: true
 		
 	def has_content?
-		return posts.any? # || calls.any?
+		return posts.any? 
 	end
 	
 	def title
-		if has_content?
-			return posts.first.title
-		else
+		if self.new_record?
 			return "This is a new conversation! "
+		else
+			return posts.first.title
 		end
 	
 	end

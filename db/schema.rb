@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151117014837) do
+ActiveRecord::Schema.define(version: 20151117205122) do
 
   create_table "calls", force: :cascade do |t|
     t.datetime "created_at",                      null: false
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20151117014837) do
     t.integer  "creator_id"
     t.integer  "post_id"
     t.boolean  "swept",           default: false
+    t.boolean  "declined",        default: false
   end
 
   add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id"
