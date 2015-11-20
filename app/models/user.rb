@@ -30,17 +30,17 @@ class User < ActiveRecord::Base
 		
 	#if call has given a post or child calls, the s/u have been switched to the post. the call can't be s/u anymore
 	def can_s_call?(call)
-		return call.callable != self && !call.supporters.include?(self) && !call.swept && !call.declined && call.post.nil?
+		return call.callable != self && !call.supporters.include?(self) && call.status == "active" && !call.declined && call.post.nil?
 	end
 	def can_u_call?(call)
-		return call.callable != self && !call.unsupporters.include?(self) && !call.swept && !call.declined && call.post.nil?
+		return call.callable != self && !call.unsupporters.include?(self) && call.status == "active" && !call.declined && call.post.nil?
 	end
 	def can_remove_s_or_u_call?(call)
-		return call.callable != self && (call.supporters.include?(self) || call.unsupporters.include?(self)) && !call.declined && call.post.nil? && !call.swept  
+		return call.callable != self && (call.supporters.include?(self) || call.unsupporters.include?(self)) && !call.declined && call.post.nil? && call.status == "active"
 	end
 	
 	def can_answer_call?(call)
-		return call.callable == self && call.post.nil? && !call.swept && !call.declined
+		return call.callable == self && call.post.nil? && call.status == "active" && !call.declined
 	end	
 	
 	def can_sweep?(user)
@@ -52,36 +52,37 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_edit_post?(post)
-		return post.creator == self  
+		return post.creator == self  && post.status == "active"
 	end
 	
 	def can_s_post?(post)
-		return post.creator != self && !post.supporters.include?(self) && !post.swept
+		return post.creator != self && !post.supporters.include?(self) && post.status == "active"
 	end
 	def can_u_post?(post)
-		return post.creator != self && !post.unsupporters.include?(self) && !post.swept
+		return post.creator != self && !post.unsupporters.include?(self) && post.status == "active"
 	end
 	def can_remove_s_or_u_post?(post)
-		return post.creator != self && (post.supporters.include?(self) || post.unsupporters.include?(self)) && !post.swept
+		return post.creator != self && (post.supporters.include?(self) || post.unsupporters.include?(self)) && post.status == "active"
 	end
 	
 	def supports(object)
 		oa = ObjectAction.find_or_initialize_by(creator: self, object: object)
 		oa.support = "up"
-		oa.swept = false
+		oa.status = "active"
 		oa.save!
 	end
 	
 	def unsupports(object)
 		oa = ObjectAction.find_or_initialize_by(creator: self, object: object)
 		oa.support = "down"
-		oa.swept = false
+		oa.status = "active"
 		oa.save!
 	end
 	
 	def remove(object)
 		oa = ObjectAction.find_by(creator: self, object: object)
-		oa.destroy if oa
+		oa.status = "removed"
+		oa.save!
 	end
 
 

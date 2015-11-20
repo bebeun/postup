@@ -12,8 +12,8 @@ class CallsController < ApplicationController
 		end
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if callable.nil? || callable == current_user
 		
-		@call = Call.find_or_initialize_by(conversation: @conversation, callable: callable, swept: false, declined: false) 
-		@call.creator = current_user if @call.new_record?
+		@call = Call.find_by(conversation: @conversation, callable: callable, declined: false) 
+		@call = Call.new(conversation: @conversation, callable: callable, declined: false, creator: current_user) if (@call.nil?) ? (true) : (@call.status == "active")
 	
 		if @call.save
 			current_user.supports(@call)
@@ -46,9 +46,6 @@ class CallsController < ApplicationController
 		call = Call.find(params[:id])	
 		redirect_to :back and return if !current_user.can_remove_s_or_u_call?(call)
 		current_user.remove(call)	
-		if !call.supporters.any? && !call.unsupporters.any?
-			(ObjectAction.where(object: call).any?) ? (call.update_attributes(swept: true)) : (call.destroy)
-		end
 		redirect_to :back
 	end
 

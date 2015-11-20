@@ -1,6 +1,6 @@
-<% if call.swept %><font color="#555555" size="1"><% end %>
+<% if call.status == "swept" %><font color="#555555" size="1"><% end %>
 
-<h2>Call <%= "(Declined)" if call.declined %></h2> 
+<h2>Call  <%= call.status %>  <%= "(Declined)" if call.declined %></h2> 
 
 <% user =  call.callable %>
 <%= render '/user_link', :user => call.creator %> > <%= render '/user_link', :user => user %>

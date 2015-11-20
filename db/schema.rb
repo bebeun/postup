@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151117205122) do
+ActiveRecord::Schema.define(version: 20151119234717) do
 
   create_table "calls", force: :cascade do |t|
     t.datetime "created_at",                      null: false
@@ -21,7 +21,6 @@ ActiveRecord::Schema.define(version: 20151117205122) do
     t.string   "callable_type"
     t.integer  "creator_id"
     t.integer  "post_id"
-    t.boolean  "swept",           default: false
     t.boolean  "declined",        default: false
   end
 
@@ -66,10 +65,10 @@ ActiveRecord::Schema.define(version: 20151117205122) do
     t.integer  "object_id"
     t.string   "object_type"
     t.string   "support"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.integer  "creator_id"
-    t.boolean  "swept",       default: false
+    t.string   "status"
   end
 
   add_index "object_actions", ["creator_id"], name: "index_object_actions_on_creator_id"
@@ -83,7 +82,6 @@ ActiveRecord::Schema.define(version: 20151117205122) do
     t.text     "content"
     t.integer  "creator_id"
     t.boolean  "edited",          default: false
-    t.boolean  "swept",           default: false
   end
 
   add_index "posts", ["conversation_id"], name: "index_posts_on_conversation_id"

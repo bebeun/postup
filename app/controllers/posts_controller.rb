@@ -4,10 +4,10 @@ class PostsController < ApplicationController
 		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))
 		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_post?(@conversation)
 		@post = Post.new(post_params.merge(conversation: @conversation, creator: current_user))
-		call = Call.find_by(conversation: @conversation, callable: current_user, swept: false, post: nil, declined: false)
+		call = Call.find_by(conversation: @conversation, callable: current_user, post: nil, declined: false)
 		
 		if @post.save
-			call.update_attributes(post: @post) and @post.transfer_up(call) if call
+			call.update_attributes(post: @post) and @post.transfer_up(call) if call.status == "active" if call
 			current_user.supports(@post)
 			redirect_to @conversation
 		else
@@ -65,7 +65,6 @@ class PostsController < ApplicationController
 		post = Post.find(params[:id])
 		redirect_to :back and return if !user_signed_in? || !current_user.can_remove_s_or_u_post?(post)
 		current_user.remove(post)
-		post.update_attributes(swept: true) if !post.supporters.any? && !post.unsupporters.any? #forcément au moins le créateur qui ne peut que avoir swept...
 		redirect_to :back
 	end
 	
@@ -75,7 +74,7 @@ class PostsController < ApplicationController
 		post = Post.find(params[:id])
 		conversation = post.conversation
 		redirect_to :back and return if !user_signed_in? || !current_user.can_destroy_post?(post)
-		post.call.update_attributes( post: nil) if post.call
+		post.call.update_attributes(post: nil) if post.call
 		post.destroy 
 		if URI(request.referer).path.split("/").include?("conversations")
 			if conversation.has_content?

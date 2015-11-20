@@ -1,9 +1,15 @@
-<% if post.swept %><font color="#555555" size="1"><% end %>
+<% if post.status == "swept" %><font color="#555555" size="1"><% end %>
 
-<h2>Post </h2> 
+<h2>Post</h2> 
+
+<% post.object_actions.each do |f| %>
+	<%= f.inspect.to_s %>
+<% end %>	
+	
 <% if post.call %>
 	(<%= render '/user_link', :user => post.call.creator %> > )	
 <% end %>
+
 
 <%= render '/user_link', :user => post.creator %> say(s): <br/>
 

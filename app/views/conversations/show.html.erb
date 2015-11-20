@@ -2,8 +2,10 @@
 
 <%= @conversation.title%>
 
-<% to_display = @conversation.calls.select{|x| x.post.nil?} + @conversation.posts %>
+<% to_display = @conversation.calls.select{|x| x.post.nil? && x.status != "removed"} + @conversation.posts.select{|x| x.status != "removed"} %>
 <% to_display_sort = to_display.sort_by { |object| object.created_at} %>
+
+	
 
 <ul>
 	<% to_display_sort.each do |f| %>

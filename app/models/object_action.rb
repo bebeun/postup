@@ -6,6 +6,10 @@ class ObjectAction < ActiveRecord::Base
 	validates :creator, presence: true
 	
 	#S or U
+	validates :status, presence: true
+	validates_inclusion_of :status, in: ["swept", "active", "removed"]
+	
+	#S or U
 	validates :support, presence: true
 	validates_inclusion_of :support, in: ["up","down"]
 	
