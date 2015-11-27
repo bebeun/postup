@@ -17,5 +17,13 @@
 	<%= f.label :content %>
 	<%= f.text_area :content %>
 	
+	
+	<%= f.radio_button :feeling, 'bad'%> 
+	<%= label :feeling, 'Bad' %>
+	<%= f.radio_button :feeling, 'neutral', :checked => true %> 
+	<%= label :feeling, 'Neutral' %>
+	<%= f.radio_button :feeling, 'good' %> 
+	<%= label :feeling, 'Good' %>
+	
 	<%= f.submit %>
 <% end %>

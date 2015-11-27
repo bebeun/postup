@@ -27,6 +27,8 @@ class Post < ActiveRecord::Base
 	#POST content
 	validates :title, presence: true
 	validates :content, presence: true
+	validates :feeling, presence: true
+	validates_inclusion_of :feeling, in: ["good", "bad", "neutral"]
 
 	
 end

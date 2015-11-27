@@ -1,28 +1,38 @@
-<h2>Edit Post Partial --------------------------- </h2>
 
-<%= form_for post do |f| %>
+<% if post.feeling == "bad" %><div style="background:#C11B17; border-style:solid;"><% end %>
+<% if post.feeling == "neutral" %><div style="background:#ECE5B6;  border-style:solid;"><% end %>
+<% if post.feeling == "good" %><div style="background:#7FE817;  border-style:solid;"><% end %>
 
-	<% if post.errors.any? %>
-		<%= pluralize(post.errors.count, "error") %> prohibited this post from being updated:
-		<ul>
-			<% post.errors.full_messages.each do |msg| %>
-				<li><%= msg %></li>
-			<% end %>
-		</ul>
+	<h2>Edit Post Partial</h2>	
+	<%= form_for post do |f| %>
+
+		<% if post.errors.any? %>
+			<%= pluralize(post.errors.count, "error") %> prohibited this post from being updated:
+			<ul>
+				<% post.errors.full_messages.each do |msg| %>
+					<li><%= msg %></li>
+				<% end %>
+			</ul>
+		<% end %>
+		
+		<%= f.label :title %>
+		<%= f.text_field :title %>
+
+		<%= f.label :content %>
+		<%= f.text_area :content %>
+		
+		<%= f.radio_button :feeling, 'bad'%> 
+		<%= label :feeling, 'Bad' %>
+		<%= f.radio_button :feeling, 'neutral' %> 
+		<%= label :feeling, 'Neutral' %>
+		<%= f.radio_button :feeling, 'good' %> 
+		<%= label :feeling, 'Good' %>
+		
+		<%= f.submit %>
 	<% end %>
-	
-	<%= f.label :title %>
-	<%= f.text_field :title %>
 
-	<%= f.label :content %>
-	<%= f.text_area :content %>
-	
-	<%= f.submit %>
-<% end %>
-
-<%= button_to "Delete this post",  url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy_post?(post)%>
-<br/>Supported by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
-<br/>Unsupported by: <% post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
-<br/> <%= link_to "Cancel", post.conversation %> 
-
-<h2>------------------------------------------------------ </h2>
+	<%= button_to "Delete this post",  url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy_post?(post)%>
+	<br/>Supported by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
+	<br/>Unsupported by: <% post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
+	<br/> <%= link_to "Cancel", post.conversation %> 
+</div>
