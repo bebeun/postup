@@ -15,9 +15,6 @@ class User < ActiveRecord::Base
 		return eval(code_string)
 	end
 		
-	def add_profile(profile)
-		profile.update_attributes(owner: self)
-	end
 	
 	def can_post?(conversation)
 		return true

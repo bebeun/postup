@@ -1,0 +1,2 @@
+module WebsiteActivationsHelper
+end

@@ -2,7 +2,11 @@ module ProfilesModule
 	def description_by_display(display)
 		profile = nil
 		Profile::PROFILE_TYPES.each do |x|
-			profile = Profile.build_with(x, display) if Profile.is_it?(x,display)
+			result = /#{Profile::PROFILE_REGEXP[x]}/.match(display)
+			if result
+				profile = x.constantize.find_or_initialize_by(description: result["description"])
+				break
+			end
 			#check for priority
 		end
 		profile.owner ||= PotentialUser.new()  if !profile.nil? 

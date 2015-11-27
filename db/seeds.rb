@@ -3,6 +3,7 @@ name_a = ["Alpha","Bravo", "Charlie", "Delta", "Echo","Foxtrot","Golf", "Hotel",
 10.times do |n|
 	description  = "benoit#{n+1}"
 	description2  = "beun#{n+1}"
+	description3  = "bebeubeun#{n+1}.com"
 	email = "#{n+1}@az.fr"
 	password = "password"
 	name = name_a[n]
@@ -10,6 +11,7 @@ name_a = ["Alpha","Bravo", "Charlie", "Delta", "Echo","Foxtrot","Golf", "Hotel",
 	user = User.create(email: email,password: password,password_confirmation: password, name: name)
 	profile1  = Facebook.create(description: description, owner: user)
 	profile2  = Twitter.create(description: description2, owner: user)
+	profile3  = Website.create(description: description3, owner: user)
 end
 
 5.times do |n|
@@ -23,6 +25,13 @@ end
 	description  = "unknownTW#{n+1}"
 	potentialuser = PotentialUser.new()
 	profile = Twitter.create(description: description, owner: potentialuser)
+	potentialuser.save!
+end
+
+5.times do |n|
+	description  = "unknownWebsite#{n+1}.com"
+	potentialuser = PotentialUser.new()
+	profile = Website.create(description: description, owner: potentialuser)
 	potentialuser.save!
 end
 
