@@ -8,7 +8,7 @@ class Call < ActiveRecord::Base
 
 	#CONVERSATION
 	belongs_to :conversation
-	validates :conversation, presence: true
+	#validates :conversation, presence: true
 	
 	#POST
 	belongs_to :post, class_name: "Post", inverse_of: :call

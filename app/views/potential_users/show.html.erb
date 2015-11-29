@@ -1,11 +1,29 @@
 <% provide(:title, "Show Potential User") %>
 
 
-<%= button_to "Make this profile mine !", profiles_attach_to_user_path, method: :post, params: { "profile[global_id]" => get_profile_global_id(@potential_user.profile) }, form_class: "button_link" if user_signed_in? %>
+<%= button_to "Make this profile mine !", profiles_attach_to_user_path, method: :post, params: { "profile[global_id]" => get_profile_global_id(@user.profile) }, form_class: "button_link" if user_signed_in? %>
 
-<%= render '/potential_users/show_supports', :potential_user => @potential_user %>
+<%= render '/potential_users/show_supports', :potential_user => @user %>
 
-<h1>Callins: </h1>
-<%= @objects.inspect.to_s %>
+<ul>
+	<% @objects.each do |f| %>
+		<li>
+			<% if f.class.name == "Call" %>
+				<%= link_to(f.conversation.title,f.conversation) %>
+				<%= render '/calls/show', :call => f %>
+			<% end %>
+		</li>
+	<% end %>
+</ul>
 
+<% if user_signed_in? %> 
+	<h2>Post Up Something on this wall...</h2>
 
+	<%= form_for @conversation do |f| %>
+		<%= render '/conversations/new', f: f, object: @conversation %>
+		<%= hidden_field_tag(:from, "PotentialUser") %>
+		<%= hidden_field_tag(:user, @user.id) %>
+		<%= f.submit "Post Up"  %>
+	<% end %>
+
+<% end %> 

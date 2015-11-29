@@ -9,7 +9,7 @@ class Post < ActiveRecord::Base
 	
 	#CONVERSATION
 	belongs_to :conversation
-	validates :conversation, presence: true	
+	#validates :conversation, presence: true	
 	
 	#USER
 	belongs_to :creator, class_name: "User", foreign_key: "creator_id"
@@ -25,7 +25,6 @@ class Post < ActiveRecord::Base
 
 	
 	#POST content
-	validates :title, presence: true
 	validates :content, presence: true
 	validates :feeling, presence: true
 	validates_inclusion_of :feeling, in: ["good", "bad", "neutral"]

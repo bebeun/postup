@@ -15,10 +15,3 @@
 	<% end %>
 </ul>
 
-<% if user_signed_in? %>
-	<br/>
-	<%# render '/posts/new', :post => [@conversation, @post] if current_user.can_post?(@conversation)%>
-	<br/>
-	<%= render '/calls/new', :call => [@conversation, @call] if current_user.can_call?(@conversation) %> 
-	<br/>
-<% end %>

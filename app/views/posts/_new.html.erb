@@ -1,29 +1,22 @@
-<h2>Just Write Something...</h2>
-
-<%= form_for post do |f| %>
-
-	<% if @post.errors.any? %>
-		<%= pluralize(@post.errors.count, "error") %> prohibited this post from being added to the conversation:
+<% if !object.nil? %>
+	<% if object.errors.any? %>
+		<%= pluralize(object.errors.count, "error") %> prohibited this post from being added to the conversation:
 		<ul>
-			<% @post.errors.full_messages.each do |msg| %>
+			<% object.errors.full_messages.each do |msg| %>
 				<li><%= msg %></li>
 			<% end %>
 		</ul>
 	<% end %>
-	
-	<%= f.label :title %>
-	<%= f.text_field :title %>
-
-	<%= f.label :content %>
-	<%= f.text_area :content %>
-	
-	
-	<%= f.radio_button :feeling, 'bad'%> 
-	<%= label :feeling, 'Bad' %>
-	<%= f.radio_button :feeling, 'neutral', :checked => true %> 
-	<%= label :feeling, 'Neutral' %>
-	<%= f.radio_button :feeling, 'good' %> 
-	<%= label :feeling, 'Good' %>
-	
-	<%= f.submit %>
 <% end %>
+
+<%= f.label :content %>
+<%= f.text_area :content %>
+	
+<%= f.radio_button :feeling, 'bad'%> 
+<%= label :feeling, 'Bad' %>
+<%= f.radio_button :feeling, 'neutral', :checked => true %> 
+<%= label :feeling, 'Neutral' %>
+<%= f.radio_button :feeling, 'good' %> 
+<%= label :feeling, 'Good' %>
+	
+

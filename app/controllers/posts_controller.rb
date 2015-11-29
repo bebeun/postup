@@ -1,8 +1,11 @@
 class PostsController < ApplicationController
 	include ObjectTransferModule
 	def create
-		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))
-		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_post?(@conversation)
+		flash[:danger] = "Please sign in before creating a post." and redirect_to new_user_session_path  and return if !user_signed_in?
+
+		@conversation = Conversation.find(params[:conversation_id]) rescue nil
+		redirect_to new_conversation_path and return if @conversation.nil?
+		
 		@post = Post.new(post_params.merge(conversation: @conversation, creator: current_user))
 		call = Call.find_by(conversation: @conversation, callable: current_user, post: nil, declined: false)
 		
@@ -12,11 +15,7 @@ class PostsController < ApplicationController
 			redirect_to @conversation
 		else
 			@call = Call.new()
-			if @conversation.has_content?
-				render '/conversations/show'
-			else
-				render '/conversations/new'
-			end
+			render '/conversations/show'
 		end
 	end
 	
@@ -69,20 +68,16 @@ class PostsController < ApplicationController
 	end
 	
 	
-	#redirect_to :back ?????
 	def destroy
 		post = Post.find(params[:id])
 		conversation = post.conversation
 		redirect_to :back and return if !user_signed_in? || !current_user.can_destroy_post?(post)
 		post.call.update_attributes(post: nil) if post.call
 		post.destroy 
+		post.conversation.destroy and conv_destroy = true if !post.conversation.posts.any?
+		#redirect to original page !!
 		if URI(request.referer).path.split("/").include?("conversations")
-			if conversation.has_content?
-				redirect_to conversation
-			else
-				conversation.destroy
-				redirect_to new_conversation_path
-			end
+			(conv_destroy) ? (redirect_to new_conversation_path) : (redirect_to conversation)
 		else
 			redirect_to :back 
 		end
@@ -90,6 +85,6 @@ class PostsController < ApplicationController
 	
 	private
 		def post_params
-    		params.require(:post).permit(:title, :content, :feeling)
+    		params.require(:post).permit(:content, :feeling)
 		end
 end

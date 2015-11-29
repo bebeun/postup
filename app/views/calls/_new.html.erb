@@ -1,9 +1,7 @@
-<h2>...And Pin It To Someone'S Wall...</h2>
-
-<% if @call.errors.any? %>
-	<%= pluralize(@call.errors.count, "error") %> prohibited this conversation from being saved:
+<% if object.errors.any? %>
+	<%= pluralize(object.errors.count, "error") %> prohibited this conversation from being saved:
 	<ul>
-		<% @call.errors.full_messages.each do |msg| %>
+		<% object.errors.full_messages.each do |msg| %>
 			<li><%= msg %></li>
 		<% end %>
 	</ul>

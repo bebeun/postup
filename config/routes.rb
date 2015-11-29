@@ -6,14 +6,15 @@ Rails.application.routes.draw do
 	resources :potential_users, only: [ :show]
   
 	root 'static_pages#home'
-	resources :conversations, only: [:new, :show] 
+	resources :conversations, only: [:new, :create, :show] 
   
 	resources :conversations do #ici ça génère trop de lignes
 		resources :posts, only: [:create, :edit]
 		resources :calls, only: [:create]
 	end	
   
-	resources :posts, only: [:create, :destroy, :update]
+	resources :posts, only: [:destroy, :update]
+	
 	post 'posts/:id/support' => 'posts#support'
 	delete 'posts/:id/remove' => 'posts#remove'
 	post 'posts/:id/unsupport' => 'posts#unsupport' 
@@ -23,7 +24,6 @@ Rails.application.routes.draw do
 	delete 'calls/:id/remove' => 'calls#remove'
 	post 'calls/:id/unsupport' => 'calls#unsupport'
   
-	resources :calls, only: [:create]
   
 	post 'profiles/attach_to_user' => 'profiles#attach_to_user' 
 	post 'profiles/detach_from_user' => 'profiles#detach_from_user'

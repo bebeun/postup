@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151127155538) do
+ActiveRecord::Schema.define(version: 20151129142222) do
 
   create_table "calls", force: :cascade do |t|
     t.datetime "created_at",                      null: false
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "creator_id"
+    t.string   "title"
   end
 
   add_index "conversations", ["creator_id"], name: "index_conversations_on_creator_id"
@@ -78,7 +79,6 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.integer  "conversation_id"
-    t.text     "title"
     t.text     "content"
     t.integer  "creator_id"
     t.boolean  "edited",          default: false

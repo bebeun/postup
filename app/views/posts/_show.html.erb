@@ -1,33 +1,26 @@
-<% if post.status == "swept" %><font color="#555555" size="1"><% end %>
+<% if post.feeling == "bad" %><div style="background:#C11B17; border-style:solid;"><% end %>
+<% if post.feeling == "neutral" %><div style="background:#ECE5B6;  border-style:solid;"><% end %>
+<% if post.feeling == "good" %><div style="background:#7FE817;  border-style:solid;"><% end %>
 
-	<% if post.feeling == "bad" %><div style="background:#C11B17; border-style:solid;"><% end %>
-	<% if post.feeling == "neutral" %><div style="background:#ECE5B6;  border-style:solid;"><% end %>
-	<% if post.feeling == "good" %><div style="background:#7FE817;  border-style:solid;"><% end %>
-
+	<% if post.status == "swept" %><font color="#555555" size="1"><% end %>
 		<h2>Post</h2> 
 		<% if post.call %>
 			(<%= render '/user_link', :user => post.call.creator %> > )	
 		<% end %>
-
 		<%= render '/user_link', :user => post.creator %> say(s): <br/>
-
-		Title: <%= post.title %><br/>
 		Content: <%= post.content %><br/>
-
 		<% if post.edited? %>
 			Post edited at <%= post.updated_at %><br/>
 		<% end %>
-
 		<% if user_signed_in? %>
 			<%= button_to "Delete this post", url_for(controller: 'posts', action: 'destroy', id: post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy_post?(post) %>
 			<%= link_to "Edit this post",  edit_conversation_post_path(post.conversation, post), method: :get, data: { confirm: "Are you sure? This will erase the recent s/u on this Post" } if current_user.can_edit_post?(post) %>
-
-			<%= button_to "Up This Post", url_for(controller: 'posts', action: 'support', id: post ), method: :post, form_class: "button_link" if current_user.can_s_post?(post)%>
+			<%= button_to "Post Up", url_for(controller: 'posts', action: 'support', id: post ), method: :post, form_class: "button_link" if current_user.can_s_post?(post)%>
 			<%= button_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: post), method: :delete, form_class: "button_link" if current_user.can_remove_s_or_u_post?(post) %>
 			<%= button_to "Down This Post",  url_for(controller: 'posts', action: 'unsupport', id: post  ), method: :post, form_class: "button_link" if current_user.can_u_post?(post) %>
 		<% end %>
-	
-		<br/>Supported by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
+
+		<br/>Posted Up by: <% post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
 		<br/>Unsupported by: <% post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
-	</div>
-</font>
+	</font>
+</div>

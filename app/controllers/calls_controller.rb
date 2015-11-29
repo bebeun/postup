@@ -1,8 +1,11 @@
 class CallsController < ApplicationController
 	include ProfilesModule
 	def create
-		(params[:conversation_id].nil?) ? (@conversation = Conversation.new(creator: current_user)) : (@conversation = Conversation.find(params[:conversation_id]))	
-		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if !current_user.can_call?(@conversation)
+		flash[:danger] = "Please sign in before creating a call." and redirect_to new_user_session_path  and return if !user_signed_in?
+
+		@conversation = Conversation.find(params[:conversation_id]) rescue nil
+		redirect_to new_conversation_path and return if @conversation.nil?	
+		
 		case	
 			when !call_params[:display].nil?
 				profile = description_by_display(call_params[:display]) 
@@ -10,7 +13,8 @@ class CallsController < ApplicationController
 			when !call_params[:global_id].nil? 
 				callable = get_user(call_params[:global_id])
 		end
-		(@conversation.has_content?) ? (redirect_to @conversation and return) : (redirect_to new_conversation_path and return) if callable.nil? || callable == current_user
+		
+		redirect_to @conversation and return if callable.nil? || callable == current_user
 		
 		@call = Call.find_by(conversation: @conversation, callable: callable, declined: false) 
 		@call = Call.new(conversation: @conversation, callable: callable, declined: false, creator: current_user) if (@call.nil?) ? (true) : (@call.status == "active")
@@ -20,11 +24,7 @@ class CallsController < ApplicationController
 			redirect_to @conversation
 		else
 			@post = Post.new()	
-			if @conversation.has_content? 
-				render '/conversations/show'
-			else
-				render '/conversations/new'
-			end
+			render '/conversations/show'
 		end
 	end
 	

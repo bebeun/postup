@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
 	end
 	
 	def can_call?(conversation)
-		return conversation.has_content?
+		return conversation.persisted?
 	end
 	
 		
