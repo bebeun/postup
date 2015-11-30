@@ -4,24 +4,7 @@
 FOR EXISTING PROFILES:
 <%= form_for(profile, url: profiles_attach_to_user_path, html: { method: :post }) do |f| %>
 	Select the Profile you want to make yours: <br/> 
-	<%= select("profile", "global_id", \
-		PotentialUser.all.collect{|p| p.profile}. \
-		select{|p| p.class.name == "Twitter"}. \
-		select{|p| !current_user.has_this_profile?(p)}.  \
-		collect{|p| [p.class.name+" : "+p.description, get_profile_global_id(p) ]} + \
-		
-		PotentialUser.all.collect{|p| p.profile}. \
-		select{|p| p.class.name == "Website"}. \
-		select{|p| !current_user.has_this_profile?(p)}.  \
-		collect{|p| [p.class.name+" : "+p.description, get_profile_global_id(p) ]} + \
-		
-		PotentialUser.all.collect{|p| p.profile}. \
-		select{|p| p.class.name == "Facebook"}. \
-		select{|p| !current_user.has_this_profile?(p) && !current_user.has_pending_facebook_activations?(p) && !current_user.has_been_reported_for_facebook?(p)}.  \
-		collect{|p| [p.class.name+" : "+p.description, get_profile_global_id(p) ]} \
-		, {prompt: 'Select Profile'} \
-		,:onchange => "this.form.submit()") \
-	%>
+	<%= select("profile", "global_id", available_profiles(current_user), {prompt: 'Select Profile'} ,:onchange => "this.form.submit()") %>
 	<br/><br/>
 <% end %>
 

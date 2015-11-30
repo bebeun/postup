@@ -5,9 +5,6 @@ class ConversationsController < ApplicationController
 
 		@conversation = Conversation.new()
 		@conversation.posts.build()
-		
-		@profiles = Profile::PROFILE_TYPES.collect{|x|  x.constantize.all}.flatten
-		@profiles -= current_user.profiles 
 	end
 	
 	def create

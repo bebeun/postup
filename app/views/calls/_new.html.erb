@@ -11,11 +11,7 @@
 
 <%= form_tag(call) do %>
 	Select the Name of the user you want to call out: <br/>
-	<%= select_tag 'call[global_id]', \
-	options_for_select(current_user.displayable_user(@conversation).collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| x.class.name+" "+x.description }.join(", "), get_user_global_id(p) ]} + \
-	current_user.displayable_potential_user(@conversation).to_a.collect{|p| [ "POTENTIAL USER : "+p.profile.class.name+" : "+p.profile.description, get_user_global_id(p) ]}), \
-	prompt: "Select User", \
-	:onchange => "this.form.submit()"  %>
+	<%= select_tag 'call[global_id]', callable_user(@conversation, current_user), prompt: "Select User", :onchange => "this.form.submit()"  %>
 <% end %>
 
 

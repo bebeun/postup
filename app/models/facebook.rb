@@ -17,4 +17,8 @@ class Facebook < ActiveRecord::Base
 	def send_activation_email
 		PostMailer.post_validation(self).deliver_now
 	end
+	
+	def is_available_for(user)
+		return !user.has_this_profile?(self) && !user.has_pending_facebook_activations?(self) && !user.has_been_reported_for_facebook?(self)
+	end
 end

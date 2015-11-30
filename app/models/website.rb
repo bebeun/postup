@@ -12,4 +12,8 @@ class Website < ActiveRecord::Base
 	
 	#USER it belongs to
 	belongs_to :owner, polymorphic: true
+	
+	def is_available_for(user)
+		return !user.has_this_profile?(self) 
+	end
 end

@@ -83,26 +83,6 @@ class User < ActiveRecord::Base
 	end
 
 
-	def displayable_user(conversation) #pas de  call swept dans la conv
-		users = User.all - [self]
-		if !conversation.nil?
-			users -= conversation.calls.where(callable_type: "User")\
-			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self)) && !call.declined }\
-			.collect{|call| call.callable }
-		end
-		return users
-	end
-	
-	def displayable_potential_user(conversation)
-		potential_users = PotentialUser.all
-		if !conversation.nil?
-			potential_users -= conversation.calls.where(callable_type: "PotentialUser")\
-			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self)) }\
-			.collect{|call| call.callable } 
-		end
-		return potential_users
-	end
-	
 	
 	# CALL Management
 	#CALL S/U
