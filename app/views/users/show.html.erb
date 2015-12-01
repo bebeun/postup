@@ -38,7 +38,7 @@
 	<h2>Post Up Something on <%= (@user == current_user) ? ("your") : (@user.name+"\'s")  %> wall...</h2>
 
 	<%= form_for @conversation do |f| %>
-		<%= render '/conversations/new', f: f, object: @conversation %>
+		<%= render '/conversations/new', f: f, object: @conversation %>		
 		<%= hidden_field_tag(:from, "User") %>
 		<%= hidden_field_tag(:user, @user.id) %>
 		<%= f.submit "Post Up"  %>

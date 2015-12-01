@@ -1,7 +1,7 @@
 class ConversationsController < ApplicationController
 	include UserObjectsModule
 	def new
-		flash[:danger] = "Please sign in before creating a new conversation." and redirect_to new_user_session_path and return if !user_signed_in?
+		flash[:danger] = "Please sign in before creating a new conversation." and redirect_to new_user_session_path(redirect_to: new_conversation_path) and return if !user_signed_in?
 
 		@conversation = Conversation.new()
 		@conversation.posts.build()
@@ -43,6 +43,6 @@ class ConversationsController < ApplicationController
 	
 	private
 		def conversation_params
-    		params.require(:conversation).permit( :posts_attributes => [:content, :feeling])
+    		params.require(:conversation).permit( :posts_attributes => [:content, :feeling], :calls_attributes => [:callable_type, :callable_id])
 		end
 end
