@@ -13,7 +13,7 @@ class ConversationsController < ApplicationController
 		@conversation = Conversation.new(conversation_params)
 		@conversation.creator = current_user
 		@conversation.posts[0].creator = current_user
-		@conversation.title = @conversation.posts[0].content[0, 25]
+		@conversation.title = @conversation.posts[0].content[0, 140]
 		
 		if params[:from] == "User" || params[:from] == "PotentialUser"
 			@user = params[:from].constantize.find(params[:user]) 

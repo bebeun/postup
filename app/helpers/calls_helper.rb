@@ -3,14 +3,14 @@ module CallsHelper
 		callable_users = User.all - [current_user]
 		if !conversation.nil?
 			callable_users -= conversation.calls.where(callable_type: "User")\
-			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self)) && !call.declined }\
+			.select { |call| ((call.supporters.include?(current_user) || call.unsupporters.include?(current_user)) && call.status == "active" && !call.declined) }\
 			.collect{|call| call.callable }
 		end
 		
 		callable_potential_users = PotentialUser.all
 		if !conversation.nil?
 			callable_potential_users -= conversation.calls.where(callable_type: "PotentialUser")\
-			.select { |call| (call.supporters.include?(self) || call.unsupporters.include?(self)) }\
+			.select { |call| (call.supporters.include?(current_user) || call.unsupporters.include?(current_user)) }\
 			.collect{|call| call.callable } 
 		end
 		

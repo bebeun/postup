@@ -36,6 +36,7 @@ class PostsController < ApplicationController
 		changed = @post.changed?
 		post_updated_at = @post.updated_at + 1.second
 		if @post.save
+			@post.conversation.update_attributes(title: @post.content[0, 140]) if changed && @post == @post.conversation.posts[0]
 			@post.object_actions.select{|x| x.updated_at > post_updated_at}.each{|x| x.destroy} if changed 
 			@post.update_attributes(edited: true)
 			redirect_to @post.conversation

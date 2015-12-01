@@ -17,7 +17,7 @@ class CallsController < ApplicationController
 		redirect_to @conversation and return if callable.nil? || callable == current_user
 		
 		@call = Call.find_by(conversation: @conversation, callable: callable, declined: false) 
-		@call = Call.new(conversation: @conversation, callable: callable, declined: false, creator: current_user) if (@call.nil?) ? (true) : (@call.status == "active")
+		@call = Call.new(conversation: @conversation, callable: callable, declined: false, creator: current_user) if ((@call.nil?) ? (true) : (@call.status != "active"))
 	
 		if @call.save
 			current_user.supports(@call)

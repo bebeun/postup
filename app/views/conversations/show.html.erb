@@ -1,6 +1,6 @@
 <% provide(:title, "Show conversation") %>
 
-<%= @conversation.title%>
+<h1><%= @conversation.title%>...</h1>
 
 <% to_display = @conversation.calls.select{|x| x.post.nil? && x.status != "removed"} + @conversation.posts.select{|x| x.status != "removed"} %>
 <% to_display_sort = to_display.sort_by { |object| object.created_at} %>
