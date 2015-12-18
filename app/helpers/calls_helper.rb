@@ -14,8 +14,8 @@ module CallsHelper
 			.collect{|call| call.callable } 
 		end
 		
-		return options_for_select(callable_users.collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| x.class.name+" "+x.description }.join(", "), get_user_global_id(p) ]} + \
-		callable_potential_users.to_a.collect{|p| [ "POTENTIAL USER : "+p.profile.class.name+" : "+p.profile.description, get_user_global_id(p) ]})
+		return options_for_select(callable_users.collect{|p| [ "USER : "+p.name+" : "+p.profiles.collect{|x| Profile::PROFILE_SYMBOL[x.class.name]+" "+x.description }.join(", "), get_user_global_id(p) ]} + \
+		callable_potential_users.to_a.collect{|p| [ "POTENTIAL USER : "+Profile::PROFILE_SYMBOL[p.profile.class.name]+" : "+p.profile.description, get_user_global_id(p) ]})
 	end
 end
 

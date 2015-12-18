@@ -1,4 +1,5 @@
 class PotentialUser < ActiveRecord::Base
+	include SupportModule
 	#CALL to this POTENTIAL USER
 	has_many :callins, as: :callable, class_name: "Call"
 	

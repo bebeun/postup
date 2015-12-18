@@ -9,7 +9,7 @@
 	<% @objects.each do |f| %>
 		<li>
 			<% if f.class.name == "Call" %>
-				<%= link_to(f.conversation.title,f.conversation) %>
+				<%= link_to(f.conversation.posts[0].content[0, 140]+"...",f.conversation) %>
 				<%= render '/calls/show', :call => f %>
 			<% end %>
 		</li>
@@ -17,7 +17,7 @@
 </ul>
 
 <% if user_signed_in? %> 
-	<h2>Post Up Something on this wall...</h2>
+	<h2>Post Up Something on  <%= render '/user_link', :user => @user %>'s wall...</h2>
 
 	<%= form_for @conversation do |f| %>
 		<%= render '/conversations/new', f: f, object: @conversation %>

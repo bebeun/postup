@@ -8,22 +8,25 @@
 	it.
 <% end %> 
 
-<%# render '/users/edit_supports', :user => @user %>
-<%# render '/users/show_profiles', :user => @user %>
+<%= render '/users/edit_supports', :user => @user %>
+<%= render '/users/show_profiles', :user => @user %>
+		
+S : <%= @user.s %><br/>
+U : <%= @user.u %><br/>
 
 <ul>
 	<% @objects.each do |f| %>
 		<li>
 			<% if f.class.name == "Call" %>
-				<%= link_to(f.conversation.title,f.conversation) %>
+				<%= link_to(f.conversation.posts[0].content[0, 140]+"...",f.conversation) %>
 				<%= render '/calls/show', :call => f %>
 			<% end %>
 			<% if f.class.name == "Post" %>
-				<%= link_to(f.conversation.title, f.conversation) %>
+				<%= link_to(f.conversation.posts[0].content[0, 140]+"...", f.conversation) %>
 				<%= render '/posts/show', :post => f %>
 			<% end %> 
 			<% if f.class.name == "ObjectAction"  %>
-				<%= link_to(f.object.conversation.title,f.object.conversation) %>
+				<%= link_to(f.object.conversation.posts[0].content[0, 140]+"...",f.object.conversation) %>
 				<%= render '/object_actions/show', :oa => f %>
 			<% end %>
 			<br/>

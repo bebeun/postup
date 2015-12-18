@@ -1,8 +1,6 @@
 <% provide(:title, "New Website Activation") %>
 
-Confirm this profile is yours:<br/><br/>
-<%=@website.description%><br/><br/>
-
+Confirm this profile is yours: <%= render '/user_link', :user => @website.owner %><br/><br/>
 
 <%= link_to "I confim this is my profile!", url_for(controller: 'website_activations', action: 'validate' ), method: :get %><br/><br/>
 <%= link_to "Sorry, this is not my profile!", url_for(controller: 'website_activations', action: 'fail' ), method: :get %>

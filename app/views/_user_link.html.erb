@@ -1,4 +1,4 @@
-<% (user.class.name == "User") ? (name = user.name) : (name = user.profile.class.name+" : "+user.profile.description) %>
+<% (user.class.name == "User") ? (name = user.name) : (name = Profile::PROFILE_SYMBOL[user.profile.class.name]+" : "+user.profile.description) %>
 <% if user_signed_in? %>
 	<% if current_user == user %>
 		<% name = "You" %>

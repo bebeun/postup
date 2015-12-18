@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+	include SupportModule
 	# DEVISE
 	devise 	:database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 	validates :name, presence: true
@@ -14,8 +15,7 @@ class User < ActiveRecord::Base
 		code_string = code_string.join(" + ")
 		return eval(code_string)
 	end
-		
-	
+			
 	def can_post?(conversation)
 		return true
 	end
@@ -23,7 +23,6 @@ class User < ActiveRecord::Base
 	def can_call?(conversation)
 		return conversation.persisted?
 	end
-	
 		
 	#if call has given a post or child calls, the s/u have been switched to the post. the call can't be s/u anymore
 	def can_s_call?(call)

@@ -8,11 +8,11 @@ Rails.application.routes.draw do
 	resources :conversations, only: [:new, :create, :show] 
   
 	resources :conversations do #ici ça génère trop de lignes
-		resources :posts, only: [:create, :edit]
+		resources :posts, only: [:create]
 		resources :calls, only: [:create]
 	end	
   
-	resources :posts, only: [:destroy, :update]
+	resources :posts, only: [:destroy, :update, :edit]
 	
 	post 'posts/:id/support' => 'posts#support'
 	delete 'posts/:id/remove' => 'posts#remove'

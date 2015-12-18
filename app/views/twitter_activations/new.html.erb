@@ -1,7 +1,6 @@
 <% provide(:title, "New Twitter Activation") %>
 
-Confirm this profile is yours:<br/><br/>
-www.twitter.com/<%= @twitter.description %><br/><br/>
+Confirm this profile is yours: <%= render '/user_link', :user => @twitter.owner %><br/><br/>
 
 
 <%= link_to "I confim this is my profile!", url_for(controller: 'twitter_activations', action: 'validate' ), method: :get %><br/><br/>

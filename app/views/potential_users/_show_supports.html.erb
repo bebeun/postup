@@ -1,6 +1,6 @@
 <h2>Show Potential User Supports and Unsupports Partial ------------------------------------ ></h2>
 
-This is <%= potential_user.profile.class.name+" : "+potential_user.profile.description %> profile<br/>
+This is <%= Profile::PROFILE_SYMBOL[potential_user.profile.class.name]+" : "+potential_user.profile.description %> profile<br/>
 
 <% if user_signed_in?  %> 
 	<%= button_to "Support this profile", url_for(controller: 'potential_users', action: 'support', id: potential_user.id ), method: :post, form_class: "button_link" if user_signed_in? && !potential_user.supporters.include?(current_user)%>
@@ -11,10 +11,10 @@ This is <%= potential_user.profile.class.name+" : "+potential_user.profile.descr
 <% end %> 
 
 <ul>
-	<li><%= potential_user.profile.class.name+" : "+potential_user.profile.description %> is supported by:
+	<li><%= Profile::PROFILE_SYMBOL[potential_user.profile.class.name]+" : "+potential_user.profile.description %> is supported by:
 		<%  potential_user.supporters.each do |x| %><%= render '/user_link', :user => x %><% end %>		
 	</li>
-	<li><%= potential_user.profile.class.name+" : "+potential_user.profile.description %> is unsupported by:
+	<li><%= Profile::PROFILE_SYMBOL[potential_user.profile.class.name]+" : "+potential_user.profile.description %> is unsupported by:
 		<%  potential_user.unsupporters.each do |x| %><%= render '/user_link', :user => x %><% end %>
 	</li>
 </ul>

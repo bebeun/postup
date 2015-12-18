@@ -2,7 +2,7 @@
 <ul>
 	<% user.profiles.each do |ff| %>
 		<li> 
-			<%= ff.class.name+" : "+ff.description %> 
+			<%= Profile::PROFILE_SYMBOL[ff.class.name]+" : "+ff.description %> 
 		</li>
 	<% end %>
 </ul>

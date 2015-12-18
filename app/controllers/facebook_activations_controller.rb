@@ -5,6 +5,7 @@ class FacebookActivationsController < ApplicationController
 		@facebook = Facebook.find(params[:facebook_id])	
 		
 		cond1 = @facebook.nil?																	#refuse access to new fba page if facebook doesn't exist
+			#=============>
 		cond2 = current_user.has_pending_facebook_activations?(@facebook)						#refuse access to new fba page if creator already asked for this facebook
 		cond3 = current_user.has_this_profile?(@facebook)										#refuse access to new fba page if user already owns this facebook
 		cond4 = @facebook.owner.is_user?														#refuse access to new fba page if this facebook is already owned by a User
@@ -19,6 +20,7 @@ class FacebookActivationsController < ApplicationController
 		facebook = Facebook.find(params[:facebook_id])
 				
 		cond1 = facebook.nil?																	#refuse to create fba if facebook doesn't exist
+			#=============>
 		cond2 = current_user.has_pending_facebook_activations?(facebook)						#refuse to create fba if creator already asked for this facebook
 		cond3 = current_user.has_this_profile?(facebook)										#refuse to create fba if creator already owns this facebook
 		cond4 = facebook.owner.is_user?															#refuse to create fba if this facebook is already owned by a User
@@ -39,6 +41,7 @@ class FacebookActivationsController < ApplicationController
 		facebook_activation = FacebookActivation.find(params[:id])
 		
 		cond1 = facebook_activation.nil?   												#if the activation was never created
+			#=============>
 		cond2 = !current_user.has_this_facebook_activation?(facebook_activation)		#or was created by another user (not current_user)
 		cond3 = facebook_activation.activated											#or is already activated
 		cond4 = facebook_activation.mailnumber > 4										#or too many activation mails sent
@@ -61,7 +64,8 @@ class FacebookActivationsController < ApplicationController
 		facebook_activation = FacebookActivation.find_by(token: params[:token], facebook_id: params[:facebook_id], user_id: params[:uid] )
 		facebook = Facebook.find(params[:facebook_id])
 		
-		cond1 = facebook_activation.nil? || facebook.nil?								#if the activation was never created or the facebook doesn t exist
+		cond1 = facebook_activation.nil? || facebook.nil?								#if the activation was never created or the facebook doesn t exist*
+			#=============>
 		cond2 = !current_user.has_this_facebook_activation?(facebook_activation)		#or was created by another user (not current_user)
 		cond3 = facebook_activation.activated											#or is already activated
 		cond4 = facebook_activation.reported											#the activation has been reported as fraudulent
@@ -81,6 +85,7 @@ class FacebookActivationsController < ApplicationController
 		@facebook_activation = FacebookActivation.find_by(id: params[:id], facebook: params[:facebook_id], token: params[:token])
 	
 		cond1 = @facebook_activation.nil? 												#if the activation was never created 
+			#=============>
 		cond2 = @facebook_activation.activated											#or is already activated
 		cond3 = @facebook_activation.reported											#the activation has been reported as fraudulent
 		(user_signed_in? ) ? (cond4 = current_user.has_this_facebook_activation?(@facebook_activation)) : (cond4 = false)#current_user certainly made a mistake by trying to report instead of validating the activation
@@ -97,6 +102,7 @@ class FacebookActivationsController < ApplicationController
 		facebook = Facebook.find(params[:facebook_id])
 	
 		cond1 = facebook_activation.nil? || facebook.nil?								#if the activation was never created or the facebook doesn t exist
+			#=============>
 		cond2 = facebook_activation.activated											#or is already activated
 		cond3 = facebook_activation.reported											#the activation has been reported as fraudulent
 		
@@ -118,6 +124,7 @@ class FacebookActivationsController < ApplicationController
 		facebook_activation = FacebookActivation.find(params[:id])
 		
 		cond1 = facebook_activation.nil?   												#if the activation was never created
+			#=============>
 		cond2 = !current_user.has_this_facebook_activation?(facebook_activation)		#or was created by another user (not current_user)
 		cond3 = facebook_activation.activated											#or is already activated
 		cond4 = facebook_activation.reported											#the activation has been reported as fraudulent

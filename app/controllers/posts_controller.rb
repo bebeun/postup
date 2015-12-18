@@ -21,29 +21,26 @@ class PostsController < ApplicationController
 	
 	#redirect_to :back ?????
 	def edit
+		@back = request.referer
 		@post = Post.find(params[:id])
-		@conversation = @post.conversation
-		redirect_to @conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post)
-		@call = Call.new()		
-		render '/conversations/edit' 
+		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post)
 	end
 
 	#redirect_to :back ?????
 	def update
 		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post)
+		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post) || (params[:back] != conversation_url(@post.conversation) && params[:back] != user_url(@post.creator))
 		@post.assign_attributes(post_params)
 		changed = @post.changed?
 		post_updated_at = @post.updated_at + 1.second
 		if @post.save
-			@post.conversation.update_attributes(title: @post.content[0, 140]) if changed && @post == @post.conversation.posts[0]
 			@post.object_actions.select{|x| x.updated_at > post_updated_at}.each{|x| x.destroy} if changed 
 			@post.update_attributes(edited: true)
-			redirect_to @post.conversation
+			redirect_to @post.conversation and return if params[:back] == conversation_url(@post.conversation)
+			redirect_to @post.creator and return if params[:back] == user_url(@post.creator)
 		else
-			@conversation = @post.conversation
-			@call = Call.new()
-			render '/conversations/edit'
+			@back = params[:back]
+			render '/posts/edit'
 		end
 	end
 
