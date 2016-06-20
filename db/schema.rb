@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20151127155538) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "calls", force: :cascade do |t|
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
@@ -24,10 +27,10 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.boolean  "declined",        default: false
   end
 
-  add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id"
-  add_index "calls", ["conversation_id"], name: "index_calls_on_conversation_id"
-  add_index "calls", ["creator_id"], name: "index_calls_on_creator_id"
-  add_index "calls", ["post_id"], name: "index_calls_on_post_id"
+  add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id", using: :btree
+  add_index "calls", ["conversation_id"], name: "index_calls_on_conversation_id", using: :btree
+  add_index "calls", ["creator_id"], name: "index_calls_on_creator_id", using: :btree
+  add_index "calls", ["post_id"], name: "index_calls_on_post_id", using: :btree
 
   create_table "conversations", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -35,7 +38,7 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.integer  "creator_id"
   end
 
-  add_index "conversations", ["creator_id"], name: "index_conversations_on_creator_id"
+  add_index "conversations", ["creator_id"], name: "index_conversations_on_creator_id", using: :btree
 
   create_table "facebook_activations", force: :cascade do |t|
     t.integer  "user_id"
@@ -48,8 +51,8 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.boolean  "reported",    default: false
   end
 
-  add_index "facebook_activations", ["facebook_id"], name: "index_facebook_activations_on_facebook_id"
-  add_index "facebook_activations", ["user_id"], name: "index_facebook_activations_on_user_id"
+  add_index "facebook_activations", ["facebook_id"], name: "index_facebook_activations_on_facebook_id", using: :btree
+  add_index "facebook_activations", ["user_id"], name: "index_facebook_activations_on_user_id", using: :btree
 
   create_table "facebooks", force: :cascade do |t|
     t.string   "description"
@@ -59,7 +62,7 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.string   "owner_type"
   end
 
-  add_index "facebooks", ["owner_type", "owner_id"], name: "index_facebooks_on_owner_type_and_owner_id"
+  add_index "facebooks", ["owner_type", "owner_id"], name: "index_facebooks_on_owner_type_and_owner_id", using: :btree
 
   create_table "object_actions", force: :cascade do |t|
     t.integer  "object_id"
@@ -71,8 +74,8 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.string   "status"
   end
 
-  add_index "object_actions", ["creator_id"], name: "index_object_actions_on_creator_id"
-  add_index "object_actions", ["object_type", "object_id"], name: "index_object_actions_on_object_type_and_object_id"
+  add_index "object_actions", ["creator_id"], name: "index_object_actions_on_creator_id", using: :btree
+  add_index "object_actions", ["object_type", "object_id"], name: "index_object_actions_on_object_type_and_object_id", using: :btree
 
   create_table "posts", force: :cascade do |t|
     t.datetime "created_at",                          null: false
@@ -84,8 +87,8 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.string   "feeling",         default: "neutral"
   end
 
-  add_index "posts", ["conversation_id"], name: "index_posts_on_conversation_id"
-  add_index "posts", ["creator_id"], name: "index_posts_on_creator_id"
+  add_index "posts", ["conversation_id"], name: "index_posts_on_conversation_id", using: :btree
+  add_index "posts", ["creator_id"], name: "index_posts_on_creator_id", using: :btree
 
   create_table "potential_users", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -100,7 +103,7 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.string   "owner_type"
   end
 
-  add_index "twitters", ["owner_type", "owner_id"], name: "index_twitters_on_owner_type_and_owner_id"
+  add_index "twitters", ["owner_type", "owner_id"], name: "index_twitters_on_owner_type_and_owner_id", using: :btree
 
   create_table "user_actions", force: :cascade do |t|
     t.datetime "created_at",       null: false
@@ -111,8 +114,8 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.string   "support"
   end
 
-  add_index "user_actions", ["supportable_type", "supportable_id"], name: "index_user_actions_on_supportable_type_and_supportable_id"
-  add_index "user_actions", ["user_id"], name: "index_user_actions_on_user_id"
+  add_index "user_actions", ["supportable_type", "supportable_id"], name: "index_user_actions_on_supportable_type_and_supportable_id", using: :btree
+  add_index "user_actions", ["user_id"], name: "index_user_actions_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at",                          null: false
@@ -131,8 +134,8 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.datetime "deleted_at"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "websites", force: :cascade do |t|
     t.string   "description"
@@ -142,6 +145,12 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.string   "owner_type"
   end
 
-  add_index "websites", ["owner_type", "owner_id"], name: "index_websites_on_owner_type_and_owner_id"
+  add_index "websites", ["owner_type", "owner_id"], name: "index_websites_on_owner_type_and_owner_id", using: :btree
 
+  add_foreign_key "calls", "conversations"
+  add_foreign_key "calls", "posts"
+  add_foreign_key "facebook_activations", "facebooks"
+  add_foreign_key "facebook_activations", "users"
+  add_foreign_key "posts", "conversations"
+  add_foreign_key "user_actions", "users"
 end
