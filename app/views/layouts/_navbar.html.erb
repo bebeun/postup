@@ -1,5 +1,12 @@
-<header>
-    <%= link_to "PostUp", root_path%><br/>
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="navbar-header">
+    		<%= link_to root_path, class: "navbar-brand" do %>
+    			<img alt="Brand" src=asset_path('brand.png') >
+			<% end %>
+		</div>
+    </div>
+
 	<% if user_signed_in? %>
 		 <ul>Welcome <%= link_to current_user.name , current_user %> <%= %> ! <br/>
 		<li><%= link_to "Edit Profile", edit_user_registration_path %></li>
@@ -10,4 +17,5 @@
 			<li><%= link_to "Sign Up", new_user_registration_path  %></li>
 		</ul>
     <% end %>
-</header>
+	</div>
+</nav>
