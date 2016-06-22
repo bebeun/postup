@@ -1,6 +1,14 @@
 <% provide(:title, "Show User") %>
 <div id="modal-window" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
 
+<script language="javascript">
+window.onload = function(e) {
+        $("#modal-window").bind("hidden.bs.modal", function () {
+			location.reload();
+		});    
+};
+</script>
+
 <h2>Welcome on <%= (@user == current_user) ? ("your") : (@user.name+"\'s")  %> wall...</h2></br>
 
 <div class="container">
