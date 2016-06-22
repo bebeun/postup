@@ -17,9 +17,8 @@ class PostsController < ApplicationController
 
 		@call = Call.new()
 		respond_to do |format|
-			format.js {render "/conversations/show", layout: false, content_type: 'text/javascript' }
+			format.js {render "/conversations/show"}
     	end
-
 	end
 	
 	#redirect_to :back ?????
@@ -51,21 +50,36 @@ class PostsController < ApplicationController
 		post = Post.find(params[:id])
 		redirect_to :back and return if !user_signed_in? || !current_user.can_s_post?(post)
 		current_user.supports(post)
-		redirect_to :back
+		@conversation = post.conversation and @post = Post.new() and @call = Call.new()
+		
+		respond_to do |format|
+			format.js {render "/conversations/show"}
+			format.html {redirect_to :back}
+    	end
 	end
 	
 	def unsupport
 		post = Post.find(params[:id])
 		redirect_to :back and return if !user_signed_in? || !current_user.can_u_post?(post)
 		current_user.unsupports(post)
-		redirect_to :back
+		@conversation = post.conversation and @post = Post.new() and @call = Call.new()
+
+		respond_to do |format|
+			format.js {render "/conversations/show"}
+			format.html {redirect_to :back}
+    	end
 	end
 	
 	def remove
 		post = Post.find(params[:id])
 		redirect_to :back and return if !user_signed_in? || !current_user.can_remove_s_or_u_post?(post)
 		current_user.remove(post)
-		redirect_to :back
+		@conversation = post.conversation and @post = Post.new() and @call = Call.new()
+
+		respond_to do |format|
+			format.js {render "/conversations/show"}
+			format.html {redirect_to :back}
+    	end
 	end
 	
 

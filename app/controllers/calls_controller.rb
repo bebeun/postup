@@ -27,7 +27,7 @@ class CallsController < ApplicationController
 		
 		@post = Post.new()
 		respond_to do |format|
-			format.js {render "/conversations/show", layout: false, content_type: 'text/javascript' }
+			format.js {render "/conversations/show" }
     	end
 	end
 	
@@ -35,10 +35,11 @@ class CallsController < ApplicationController
 		@call = Call.find(params[:id])
 		redirect_to :back and return if !current_user.can_s_call?(@call)
 		current_user.supports(@call) 
-		@conversation = @call.conversation
+
+		@conversation = @call.conversation and @post = Post.new() and @call = Call.new()
 		respond_to do |format|
+			format.js {render "/conversations/show"}
 			format.html {redirect_to :back}
-			format.js {render "/conversations/show", layout: false, content_type: 'text/javascript' }
     	end
 	end
 
@@ -46,10 +47,11 @@ class CallsController < ApplicationController
 		@call = Call.find(params[:id])
 		redirect_to :back and return if !current_user.can_u_call?(@call)
 		current_user.unsupports(@call) 
-		@conversation = @call.conversation
+
+		@conversation = @call.conversation and @post = Post.new() and @call = Call.new()
 		respond_to do |format|
+			format.js {render "/conversations/show"}
 			format.html {redirect_to :back}
-			format.js {render "/conversations/show", layout: false, content_type: 'text/javascript' }
     	end
 	end
 	
@@ -57,10 +59,23 @@ class CallsController < ApplicationController
 		@call = Call.find(params[:id])	
 		redirect_to :back and return if !current_user.can_remove_s_or_u_call?(@call)
 		current_user.remove(@call)	
-		@conversation = @call.conversation
+
+		@conversation = @call.conversation and @post = Post.new() and @call = Call.new()
 		respond_to do |format|
+			format.js {render "/conversations/show"}
 			format.html {redirect_to :back}
-			format.js {render "/conversations/show", layout: false, content_type: 'text/javascript' }
+    	end
+	end
+
+	def decline  
+		@call = Call.find(params[:id])	
+		redirect_to :back and return if !current_user.can_answer_call?(@call)
+		@call.update_attributes(declined: true)
+
+		@conversation = @call.conversation and @post = Post.new() and @call = Call.new()
+		respond_to do |format|
+			format.js {render "/conversations/show"}
+			format.html {redirect_to :back}
     	end
 	end
 

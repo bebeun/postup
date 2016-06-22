@@ -9,6 +9,7 @@
 			<%= button_to("Post Up",  url_for(controller: 'calls', action: 'support', id: call ), remote: true, method: :post, class: "btn-link") if  current_user.can_s_call?(call)%>
 			<%= button_to("Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), remote: true, method: :delete, class: "btn-link") if current_user.can_remove_s_or_u_call?(call) %>
 			<%= button_to( "Discard",  url_for(controller: 'calls', action: 'unsupport', id: call ), remote: true, method: :post, class: "btn-link") if current_user.can_u_call?(call)  %>
+			<%= button_to( "Decline This Call",  url_for(controller: 'calls', action: 'decline', id: call ), remote: true, class: "btn-link") if current_user.can_answer_call?(call) %>
 			<br/>
 	<% end %>
 	<br/>Posted Up by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>

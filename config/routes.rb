@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 	post 'calls/:id/support' => 'calls#support'
 	delete 'calls/:id/remove' => 'calls#remove'
 	post 'calls/:id/unsupport' => 'calls#unsupport'
+	post 'calls/:id/decline' => 'calls#decline'
   
   
 	post 'profiles/attach_to_user' => 'profiles#attach_to_user' 

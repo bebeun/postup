@@ -16,7 +16,8 @@
 			<%= button_to("Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), method: :delete, class: "btn-link") if current_user.can_remove_s_or_u_call?(call) %>
 			<%= button_to( "Discard",  url_for(controller: 'calls', action: 'unsupport', id: call ), method: :post, class: "btn-link") if current_user.can_u_call?(call)  %>
 			<br/>
-			<%= link_to "Answer This Call",  url_for(controller: 'conversations', action: 'show', id: call.conversation ), method: :get if current_user.can_answer_call?(call) %>
+			<%= link_to "Answer This Call",  url_for(controller: 'conversations', action: 'show', id: call.conversation ),  {:remote => true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window', method: :get} if current_user.can_answer_call?(call) %>
+			<%= button_to( "Decline This Call",  url_for(controller: 'calls', action: 'decline', id: call ), method: :post, class: "btn-link") if current_user.can_answer_call?(call) %>
 	<% end %>
 	<br/>Posted Up by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
 	<br/>Discarded by: <% call.unsupporters.each do |x| %> <%= render '/user_link', :user => x %><% end %>
