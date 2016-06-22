@@ -1,5 +1,5 @@
 class PotentialUser < ActiveRecord::Base
-	include SupportModule
+	
 	#CALL to this POTENTIAL USER
 	has_many :callins, as: :callable, class_name: "Call"
 	
@@ -34,14 +34,6 @@ class PotentialUser < ActiveRecord::Base
 		# errors.add(:user, "There must be one and only one profile") if profile.nil? 
 	# end
 	
-	#S/U
-	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
-	def supporters
-		user_actions_supporters.select{|x| x.support == "up"}.collect{|x| x.creator}
-	end
-	def unsupporters
-		user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.creator}
-	end
 	def is_potential_user?
 		true
 	end

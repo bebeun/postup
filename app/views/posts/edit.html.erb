@@ -30,9 +30,7 @@
 		
 		<%= f.submit %>
 	<% end %>
-	
-	<%(@post.conversation.posts.many?) ? (delete_string = "Delete this post") : (delete_string = "Delete these post and conversation")%> 
-	<%= button_to delete_string,  url_for(controller: 'posts', action: 'destroy', id: @post ), method: :delete, data: { confirm: "Are you sure?" }, form_class: "button_link" if current_user.can_destroy_post?(@post)%>
+
 	<br/>Posted Up by: <% @post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
 	<br/>Unsupported by: <% @post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
 	<br/> <%= link_to "Cancel", @back %> 

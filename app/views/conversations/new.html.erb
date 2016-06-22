@@ -1,9 +1,0 @@
-<% provide(:title, "New conversation") %>
-<h2>Post Up Something...</h2>
-
-<%= form_for @conversation do |f| %>
-	<%= render '/conversations/new', f: f, object: @conversation %>
-	<%= hidden_field_tag(:from, "Conversation") %>
-	<%= f.submit "Post Up" %>
-<% end %>
-

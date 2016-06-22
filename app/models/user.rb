@@ -1,5 +1,5 @@
+
 class User < ActiveRecord::Base
-	include SupportModule
 	# DEVISE
 	devise 	:database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 	validates :name, presence: true
@@ -39,26 +39,18 @@ class User < ActiveRecord::Base
 		return call.callable == self && call.post.nil? && call.status == "active" && !call.declined
 	end	
 	
-	def can_sweep?(user)
-		return user == self
-	end
-	
-	def can_destroy_post?(post)
-		return post.creator == self   
-	end
-	
 	def can_edit_post?(post)
-		return post.creator == self  && post.status == "active"
+		return post.creator == self  
 	end
 	
 	def can_s_post?(post)
-		return post.creator != self && !post.supporters.include?(self) && post.status == "active"
+		return !post.supporters.include?(self) && post.status == "active"
 	end
 	def can_u_post?(post)
 		return post.creator != self && !post.unsupporters.include?(self) && post.status == "active"
 	end
 	def can_remove_s_or_u_post?(post)
-		return post.creator != self && (post.supporters.include?(self) || post.unsupporters.include?(self)) && post.status == "active"
+		return (post.supporters.include?(self) || post.unsupporters.include?(self)) && post.status == "active"
 	end
 	
 	def supports(object)
@@ -87,8 +79,9 @@ class User < ActiveRecord::Base
 	#CALL S/U
 	has_many :object_actions, inverse_of: :creator
 	#has_many :callouts, through: :object_actions, source: :object, source_type: 'Call', foreign_key: "object_id"
+
 	def callouts
-		return Call.select{|x| x.creator == self}
+		return Call.select{|x| x.supporters.include?(self) || x.unsupporters.include?(self)}
 	end
 	has_many :callins, as: :callable, class_name: "Call"
 
@@ -96,30 +89,6 @@ class User < ActiveRecord::Base
 	has_many :posts, inverse_of: :creator, foreign_key: "creator_id"
 	has_many :postsupports, through: :object_actions, source: :object, source_type: "Post"
 
-	
-	# USER S/U
-    has_many :user_actions
-	has_many :user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'User', dependent: :destroy
-    has_many :potential_user_supports, -> { where(user_actions: { support: 'up' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser', dependent: :destroy
-	has_many :user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'User', dependent: :destroy
-    has_many :potential_user_unsupports, -> { where(user_actions: { support: 'down' }) }, through: :user_actions,  source: :supportable, source_type: 'PotentialUser', dependent: :destroy
-	has_many :user_actions_supporters, as: :supportable, :class_name => "UserAction"
-	
-	def supporters
-		user_actions_supporters.select{|x| x.support == "up" }.collect{|x| x.creator}
-	end
-	
-	def unsupporters
-		user_actions_supporters.select{|x| x.support == "down"}.collect{|x| x.creator}
-	end
-	
-	def supporting
-		user_supports + potential_user_supports
-	end
-
-	def unsupporting
-		user_unsupports + potential_user_unsupports
-	end
 	
 	# FB Activations	
 	# MAKE MORE GENERAL
@@ -164,5 +133,3 @@ class User < ActiveRecord::Base
 		!deleted_at ? super : :deleted_account  
 	end 
 end	
-
-

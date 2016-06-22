@@ -22,14 +22,12 @@ ActiveRecord::Schema.define(version: 20151127155538) do
     t.integer  "conversation_id"
     t.integer  "callable_id"
     t.string   "callable_type"
-    t.integer  "creator_id"
     t.integer  "post_id"
     t.boolean  "declined",        default: false
   end
 
   add_index "calls", ["callable_type", "callable_id"], name: "index_calls_on_callable_type_and_callable_id", using: :btree
   add_index "calls", ["conversation_id"], name: "index_calls_on_conversation_id", using: :btree
-  add_index "calls", ["creator_id"], name: "index_calls_on_creator_id", using: :btree
   add_index "calls", ["post_id"], name: "index_calls_on_post_id", using: :btree
 
   create_table "conversations", force: :cascade do |t|
@@ -105,18 +103,6 @@ ActiveRecord::Schema.define(version: 20151127155538) do
 
   add_index "twitters", ["owner_type", "owner_id"], name: "index_twitters_on_owner_type_and_owner_id", using: :btree
 
-  create_table "user_actions", force: :cascade do |t|
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-    t.integer  "supportable_id"
-    t.string   "supportable_type"
-    t.integer  "user_id"
-    t.string   "support"
-  end
-
-  add_index "user_actions", ["supportable_type", "supportable_id"], name: "index_user_actions_on_supportable_type_and_supportable_id", using: :btree
-  add_index "user_actions", ["user_id"], name: "index_user_actions_on_user_id", using: :btree
-
   create_table "users", force: :cascade do |t|
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
@@ -152,5 +138,4 @@ ActiveRecord::Schema.define(version: 20151127155538) do
   add_foreign_key "facebook_activations", "facebooks"
   add_foreign_key "facebook_activations", "users"
   add_foreign_key "posts", "conversations"
-  add_foreign_key "user_actions", "users"
 end

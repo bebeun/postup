@@ -2,9 +2,8 @@ class Post < ActiveRecord::Base
 	include ObjectTransferModule
 	
 	def status
-		return "swept" if self.object_actions.select{|oa| oa.status == "swept"}.any? && !self.object_actions.select{|oa| oa.status == "active"}.any?
 		return "active" if self.object_actions.select{|oa| oa.status == "active"}.any?
-		return "removed" if !self.object_actions.select{|oa| oa.status == "swept"}.any? && !self.object_actions.select{|oa| oa.status == "active"}.any? && self.object_actions.select{|oa| oa.status == "removed"}.any?
+		return "removed" if !self.object_actions.select{|oa| oa.status == "active"}.any? && self.object_actions.select{|oa| oa.status == "removed"}.any?
 	end	
 	
 	#CONVERSATION

@@ -1,10 +1,9 @@
 <% provide(:title, "Edit Profile") %>
 
-<%= render '/users/edit_supports', :user => current_user %>
+
 <%= render '/users/edit_profiles', :user => current_user %>
 <%= render '/users/add_profiles', :profile => @profile %>
 	
-
 <h2>Edit your details</h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>

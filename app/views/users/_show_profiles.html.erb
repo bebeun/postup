@@ -1,9 +1,0 @@
-<h2>Show User Profiles Partial ------------------------------------ ></h2>
-<ul>
-	<% user.profiles.each do |ff| %>
-		<li> 
-			<%= Profile::PROFILE_SYMBOL[ff.class.name]+" : "+ff.description %> 
-		</li>
-	<% end %>
-</ul>
-<h2>------------------------------------------------------------------------  </h2>

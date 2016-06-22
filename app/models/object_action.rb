@@ -7,7 +7,7 @@ class ObjectAction < ActiveRecord::Base
 	
 	#S or U
 	validates :status, presence: true
-	validates_inclusion_of :status, in: ["swept", "active", "removed"]
+	validates_inclusion_of :status, in: ["active", "removed"]
 	
 	#S or U
 	validates :support, presence: true

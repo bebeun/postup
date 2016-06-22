@@ -1,0 +1,40 @@
+<div class="container bg-info" >
+<div class="modal-header">
+    <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <h3 id="myModalLabel">Conversation</h3>
+</div>
+<div class="modal-body">
+
+<% to_display = @conversation.calls.select{|x| x.post.nil? } + @conversation.posts %>
+<% to_display_sort = to_display.sort_by { |object| object.created_at} %>
+
+<div class="container">
+  <% to_display_sort.each do |f| %>
+  <div class="row">
+    <div class="col-sm-10">
+      <% if f.class.name == "Call" %><%= render '/calls/show_conversation', :call => f %><% end %>
+      <% if f.class.name == "Post" %><%= render '/posts/show_conversation', :post => f %><% end %>
+    </div>
+  </div>
+  <% end %>
+</div>
+
+<% if user_signed_in? %>
+  <br/>
+  <h2>Post this Up on Someone'S Wall...</h2>
+  <%= render '/calls/new', :call => [@conversation, @call], object: @call if current_user.can_call?(@conversation) %>
+
+  </br>
+  <h2>Post Up Something...</h2>
+  <%= form_for([@conversation, @post],remote: true) do |f| %>
+    <%= render '/posts/new', f: f, object: @post %>
+    <%= f.submit "Post Up" %>
+  <% end %>
+  <br/>
+<% end %>
+</div>
+
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+</div>
+</div>

@@ -1,0 +1,27 @@
+<% if call.conversation.posts[0].feeling == "bad" %><div style="background:#FA5858; border-style:solid;"><% end %>
+<% if call.conversation.posts[0].feeling == "neutral" %><div style="background:#ECE5B6;  border-style:solid;"><% end %>
+<% if call.conversation.posts[0].feeling == "good" %><div style="background:#82FA58;  border-style:solid;"><% end %>
+
+	<%= "(Removed)" if call.status == "removed" %>
+	<%= "(Declined)" if call.declined %>
+	<% user =  call.callable %>
+	
+	<%= link_to(call.conversation,  {:remote => true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window'}) do %>
+		<%= call.conversation.posts[0].content %>
+	<% end %>			
+	> <%= render '/user_link', :user => user %>
+	
+	<% if user_signed_in? %>
+			<%= button_to("Post Up",  url_for(controller: 'calls', action: 'support', id: call ), method: :post, class: "btn-link") if  current_user.can_s_call?(call)%>
+			<%= button_to("Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), method: :delete, class: "btn-link") if current_user.can_remove_s_or_u_call?(call) %>
+			<%= button_to( "Discard",  url_for(controller: 'calls', action: 'unsupport', id: call ), method: :post, class: "btn-link") if current_user.can_u_call?(call)  %>
+			<br/>
+			<%= link_to "Answer This Call",  url_for(controller: 'conversations', action: 'show', id: call.conversation ), method: :get if current_user.can_answer_call?(call) %>
+	<% end %>
+	<br/>Posted Up by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
+	<br/>Discarded by: <% call.unsupporters.each do |x| %> <%= render '/user_link', :user => x %><% end %>
+</div>
+
+
+
+

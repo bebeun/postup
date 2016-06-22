@@ -1,8 +1,7 @@
 class Call < ActiveRecord::Base
 	def status
-		return "swept" if self.object_actions.select{|oa| oa.status == "swept"}.any? && !self.object_actions.select{|oa| oa.status == "active"}.any?
 		return "active" if self.object_actions.select{|oa| oa.status == "active"}.any?
-		return "removed" if !self.object_actions.select{|oa| oa.status == "swept"}.any? && !self.object_actions.select{|oa| oa.status == "active"}.any? && self.object_actions.select{|oa| oa.status == "removed"}.any?
+		return "removed" if !self.object_actions.select{|oa| oa.status == "active"}.any? && self.object_actions.select{|oa| oa.status == "removed"}.any?
 	end	
 
 	#CONVERSATION
@@ -22,8 +21,6 @@ class Call < ActiveRecord::Base
 	validates :callable, presence: true	
 
 	#USER who made the call
-	belongs_to :creator, class_name: "User", foreign_key: "creator_id"
-	validates :creator, presence: true	
 	
 	validates_uniqueness_of :callable_id, :scope => [:conversation_id, :callable_type], conditions: -> { where( declined: false) }, :message => "This (Potential) User is already called out in this conversation..."
 end

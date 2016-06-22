@@ -1,10 +1,10 @@
 class PostsController < ApplicationController
-	include ObjectTransferModule
+	#include ObjectTransferModule
 	def create
-		flash[:danger] = "Please sign in before creating a post." and redirect_to new_user_session_path  and return if !user_signed_in?
+		return if !user_signed_in?
 
 		@conversation = Conversation.find(params[:conversation_id]) rescue nil
-		redirect_to new_conversation_path and return if @conversation.nil?
+		return if @conversation.nil?
 		
 		@post = Post.new(post_params.merge(conversation: @conversation, creator: current_user))
 		call = Call.find_by(conversation: @conversation, callable: current_user, post: nil, declined: false)
@@ -12,11 +12,14 @@ class PostsController < ApplicationController
 		if @post.save
 			call.update_attributes(post: @post) and @post.transfer_up(call) if call.status == "active" if call
 			current_user.supports(@post)
-			redirect_to @conversation
-		else
-			@call = Call.new()
-			render '/conversations/show'
+			@post = Post.new()
 		end
+
+		@call = Call.new()
+		respond_to do |format|
+			format.js {render "/conversations/show", layout: false, content_type: 'text/javascript' }
+    	end
+
 	end
 	
 	#redirect_to :back ?????
@@ -65,21 +68,7 @@ class PostsController < ApplicationController
 		redirect_to :back
 	end
 	
-	
-	def destroy
-		post = Post.find(params[:id])
-		conversation = post.conversation
-		redirect_to :back and return if !user_signed_in? || !current_user.can_destroy_post?(post)
-		post.call.update_attributes(post: nil) if post.call
-		post.destroy 
-		post.conversation.destroy and conv_destroy = true if !post.conversation.posts.any?
-		#redirect to original page !!
-		if URI(request.referer).path.split("/").include?("conversations")
-			(conv_destroy) ? (redirect_to new_conversation_path) : (redirect_to conversation)
-		else
-			redirect_to :back 
-		end
-	end
+
 	
 	private
 		def post_params

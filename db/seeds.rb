@@ -33,23 +33,7 @@ end
 	profile1  = Facebook.create(description: description, owner: user)
 	profile2  = Twitter.create(description: description2, owner: user)
 	profile3  = Website.create(description: description3, owner: user)
-	if n >= 1
-		(n-1).times do |m|
-			ua = UserAction.new()
-			ua.support = "up" if n%2 == 0 
-			ua.support = "down" if n%2 == 1
-			ua.creator = user
-			ua.supportable = User.find(m+1)
-			ua.save!
-			
-			ua2 = UserAction.new()
-			ua2.support = "up" if n%2 == 0 
-			ua2.support = "down" if n%2 == 1
-			ua2.creator = user
-			ua2.supportable = PotentialUser.find(m+1)
-			ua2.save!
-		end
-	end
+
 end
 
 

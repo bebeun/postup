@@ -1,44 +1,34 @@
 <% provide(:title, "Show User") %>
+<div id="modal-window" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
 
-<% if (user_signed_in? && @user != current_user) || !user_signed_in?%> 
-	<%= "This is #{@user.name} profile" %> 
-<% else %>
-	<%= "Dear #{@user.name} , this is your profile. You can also " %> 
-	<%= link_to("edit", edit_user_registration_path) %> 
-	it.
-<% end %> 
+<h2>Welcome on <%= (@user == current_user) ? ("your") : (@user.name+"\'s")  %> wall...</h2></br>
 
-<%= render '/users/edit_supports', :user => @user %>
-<%= render '/users/show_profiles', :user => @user %>
-		
-S : <%= @user.s %><br/>
-U : <%= @user.u %><br/>
-
-<ul>
+<div class="container">
 	<% @objects.each do |f| %>
-		<li>
+	<div class="row">
+		<div class="col-sm-10">
 			<% if f.class.name == "Call" %>
-				<%= link_to(f.conversation.posts[0].content[0, 140]+"...",f.conversation) %>
-				<%= render '/calls/show', :call => f %>
+					<%= render '/calls/show_wall', call: f %>
 			<% end %>
+
 			<% if f.class.name == "Post" %>
-				<%= link_to(f.conversation.posts[0].content[0, 140]+"...", f.conversation) %>
-				<%= render '/posts/show', :post => f %>
+					<%= render '/posts/show_wall', :post => f %>
 			<% end %> 
+
 			<% if f.class.name == "ObjectAction"  %>
-				<%= link_to(f.object.conversation.posts[0].content[0, 140]+"...",f.object.conversation) %>
-				<%= render '/object_actions/show', :oa => f %>
+				<%= link_to(f.object.conversation) do %>
+					<% if f.object_type == "Post" %> <%= render '/posts/show_wall', post: f.object %><% end %>
+					<% if f.object_type == "Call" %><%= render '/calls/show_wall', call: f.object %><% end %>
+				<% end %>
 			<% end %>
 			<br/>
-			<%= link_to "Sweep",  url_for(controller: 'users', action: 'sweep_until', time_limit: f.created_at ), method: :post, data: { confirm: "Are you sure? This can't be undone! " }, form_class: "button_link" if current_user.can_sweep?(@user)  if user_signed_in? %><br/>
-		</li>
+		</div>
+	</div>
 	<% end %>
-</ul>
-
-
+</div>
 
 <% if user_signed_in? %> 
-	<h2>Post Up Something on <%= (@user == current_user) ? ("your") : (@user.name+"\'s")  %> wall...</h2>
+	<h2>Post Up Something...</h2>
 
 	<%= form_for @conversation do |f| %>
 		<%= render '/conversations/new', f: f, object: @conversation %>		

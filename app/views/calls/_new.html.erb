@@ -9,13 +9,17 @@
 
 <br/><br/>
 
-<%= form_tag(call) do %>
+<%= form_tag(url_for(call), {:remote => true}) do %>
+<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+<%= hidden_field_tag :format, :js %>
 	Select the Name of the user you want to call out: <br/>
-	<%= select_tag 'call[global_id]', callable_user(@conversation, current_user), prompt: "Select User", :onchange => "this.form.submit()"  %>
+	<%= select_tag 'call[global_id]', callable_user(@conversation, current_user), prompt: "Select User"  %>
+	<%= submit_tag 'Submit' %>
 <% end %>
 
-
-<%= form_tag(call) do %>
+<%= form_tag(url_for(call), {:remote => true}) do %>
+<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+<%= hidden_field_tag :format, :js %>
 	Or enter a new profil URL <br/>
 	(example: www.facebook.com/bebeun92 or www.twitter.com/benoit81) <br/>
 	<%= text_field_tag 'call[display]', nil, placeholder: 'Entire a new profile URL...' %>

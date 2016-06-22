@@ -1,0 +1,21 @@
+<div style="border-style:dotted;">
+	<%= "(Removed)" if call.status == "removed" %>
+	<%= "(Declined)" if call.declined %>
+	<% user =  call.callable %>
+
+	> <%= render '/user_link', :user => user %>
+	<br/>
+	<% if user_signed_in? %>
+			<%= button_to("Post Up",  url_for(controller: 'calls', action: 'support', id: call ), remote: true, method: :post, class: "btn-link") if  current_user.can_s_call?(call)%>
+			<%= button_to("Remove feeling",  url_for(controller: 'calls', action: 'remove', id: call), remote: true, method: :delete, class: "btn-link") if current_user.can_remove_s_or_u_call?(call) %>
+			<%= button_to( "Discard",  url_for(controller: 'calls', action: 'unsupport', id: call ), remote: true, method: :post, class: "btn-link") if current_user.can_u_call?(call)  %>
+			<br/>
+	<% end %>
+	<br/>Posted Up by: <% call.supporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
+	<br/>Discarded by: <% call.unsupporters.each do |x| %> <%= render '/user_link', :user => x %><% end %>
+
+</div>
+
+
+
+
