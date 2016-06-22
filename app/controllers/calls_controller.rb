@@ -71,6 +71,7 @@ class CallsController < ApplicationController
 		@call = Call.find(params[:id])	
 		redirect_to :back and return if !current_user.can_answer_call?(@call)
 		@call.update_attributes(declined: true)
+		oa = ObjectAction.where(creator: current_user, status: "active").where("created_at < ?", @call.created_at).each{ |oa| oa.update_attributes(status: "removed") }
 
 		@conversation = @call.conversation and @post = Post.new() and @call = Call.new()
 		respond_to do |format|
