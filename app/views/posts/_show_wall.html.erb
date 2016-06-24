@@ -1,23 +1,21 @@
-
-<% if post.status == "swept" %><font color="#555555" size="1"><% end %>
-
 <% if post.feeling == "bad" %><div style="background:#FA5858; border-style:solid;"><% end %>
 <% if post.feeling == "neutral" %><div style="background:#ECE5B6;  border-style:solid;"><% end %>
 <% if post.feeling == "good" %><div style="background:#82FA58;  border-style:solid;"><% end %>
 
 <%= "(Removed)" if post.status == "removed" %>
+<%= "C'est une réponse" if post.call %>
+<%= "Post edited at #{post.updated_at}" if post.edited? %>
 
 <% if post.conversation.posts[0] != post %>
-	<%= link_to(post.conversation.posts[0].content, post.conversation,  {:remote => true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window'}) %>
+<%= link_to(post.conversation.posts[0].content, post.conversation,{remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window'})%>
 <% end %>
 
-		<%= render '/user_link', :user => post.creator %> : <%= link_to(post.content , post.conversation,{:remote => true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window'}) %>
-		<br/>
-		<% if post.edited? %>
-			Post edited at <%= post.updated_at %><br/>
-		<% end %>
+<%= render '/user_link', :user => post.creator %> : <%= link_to(post.content , post.conversation,{remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window'}) %>
+<br/>
+
+			
 		<% if user_signed_in? %>
-			<%= link_to "Edit this post",  edit_post_path(post), method: :get, data: { confirm: "Are you sure? This will erase the recent s/u on this Post" } if current_user.can_edit_post?(post) %>
+			<%= link_to("Edit this post",  edit_post_path(post), {remote: true, 'data-toggle' =>  "modal", 'data-target' => '#modal-window-post'}) if current_user.can_edit_post?(post) %>
 			<%= button_to "Post Up", url_for(controller: 'posts', action: 'support', id: post ), method: :post,  class: "btn-link" if current_user.can_s_post?(post)%>
 			<%= button_to "Remove feeling",  url_for(controller: 'posts', action: 'remove', id: post), method: :delete,  class: "btn-link" if current_user.can_remove_s_or_u_post?(post) %>
 			<%= button_to "Discard",  url_for(controller: 'posts', action: 'unsupport', id: post  ), method: :post,  class: "btn-link" if current_user.can_u_post?(post) %>

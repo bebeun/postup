@@ -23,27 +23,38 @@ class PostsController < ApplicationController
 	
 	#redirect_to :back ?????
 	def edit
-		@back = request.referer
+		#@back = request.referer
 		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post)
+		#redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post)
+		respond_to do |format|
+			format.js {render "/posts/edit"}
+    	end
 	end
 
 	#redirect_to :back ?????
 	def update
 		@post = Post.find(params[:id])
-		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post) || (params[:back] != conversation_url(@post.conversation) && params[:back] != user_url(@post.creator))
+		redirect_to @post.conversation and return if !user_signed_in? || !current_user.can_edit_post?(@post) #|| (params[:back] != conversation_url(@post.conversation) && params[:back] != user_url(@post.creator))
 		@post.assign_attributes(post_params)
-		changed = @post.changed?
-		post_updated_at = @post.updated_at + 1.second
+		#changed = @post.changed?
+		#post_updated_at = @post.updated_at + 1.second
 		if @post.save
-			@post.object_actions.select{|x| x.updated_at > post_updated_at}.each{|x| x.destroy} if changed 
+			#@post.object_actions.select{|x| x.updated_at > post_updated_at}.each{|x| x.destroy} if changed 
 			@post.update_attributes(edited: true)
-			redirect_to @post.conversation and return if params[:back] == conversation_url(@post.conversation)
-			redirect_to @post.creator and return if params[:back] == user_url(@post.creator)
+			#redirect_to @post.conversation and return if params[:back] == conversation_url(@post.conversation)
+			#redirect_to @post.creator and return if params[:back] == user_url(@post.creator)
+			@updated = true
+			@conversation = @post.conversation
+			@call = Call.new()
+			@post = Post.new()
 		else
-			@back = params[:back]
-			render '/posts/edit'
+			#@back = params[:back]
+			#render '/posts/edit'
+			@updated = false
 		end
+		respond_to do |format|
+			format.js {render "/posts/update"}
+    	end
 	end
 
 	def support

@@ -1,0 +1,11 @@
+<% if !@updated %>
+	$("#modal-window-post").html("<%= escape_javascript(render 'posts/edit') %>");
+<% else %>
+	$("#modal-window-post").modal('hide');
+	if($("#modal-window").is(':visible'))
+		{
+		$("#modal-window").html("<%= escape_javascript(render 'conversations/show') %>");
+		}
+	else
+		{location.reload();}
+<% end %>

@@ -1,11 +1,16 @@
-<% provide(:title, "Edit a Post") %>
+<div class="container bg-warning" >
+<div class="modal-header">
+		<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<h3 id="myModalLabel">Conversation</h3>
+</div>
+<div class="modal-body">
 
 <% if @post.feeling == "bad" %><div style="background:#FA5858; border-style:solid;"><% end %>
 <% if @post.feeling == "neutral" %><div style="background:#ECE5B6;  border-style:solid;"><% end %>
 <% if @post.feeling == "good" %><div style="background:#82FA58;  border-style:solid;"><% end %>
 
 	<h2>Edit Post Partial</h2>	
-	<%= form_for @post do |f| %>
+	<%= form_for(@post, remote: true) do |f| %>
 
 		<% if @post.errors.any? %>
 			<%= pluralize(@post.errors.count, "error") %> prohibited this post from being updated:
@@ -33,5 +38,10 @@
 
 	<br/>Posted Up by: <% @post.supporters.each do |x| %>  <%= render '/user_link', :user => x %> <% end %>
 	<br/>Unsupported by: <% @post.unsupporters.each do |x| %>  <%= render '/user_link', :user => x %><% end %>
-	<br/> <%= link_to "Cancel", @back %> 
+	<br/> <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+</div>
+
+<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+</div>
 </div>

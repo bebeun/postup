@@ -1,11 +1,12 @@
 <% provide(:title, "Show User") %>
 <div id="modal-window" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<div id="modal-window-post" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
 
 <script language="javascript">
 window.onload = function(e) {
         $("#modal-window").bind("hidden.bs.modal", function () {
 			location.reload();
-		});    
+		});  
 };
 </script>
 
@@ -24,10 +25,8 @@ window.onload = function(e) {
 			<% end %> 
 
 			<% if f.class.name == "ObjectAction"  %>
-				<%= link_to(f.object.conversation) do %>
-					<% if f.object_type == "Post" %> <%= render '/posts/show_wall', post: f.object %><% end %>
+					<% if f.object_type == "Post" %><%= render '/posts/show_wall', post: f.object %><% end %>
 					<% if f.object_type == "Call" %><%= render '/calls/show_wall', call: f.object %><% end %>
-				<% end %>
 			<% end %>
 			<br/>
 		</div>
